@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA Dashboard - Enhanced with Onboarding</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* [ALL PREVIOUS CSS REMAINS THE SAME] */
+        
+        /* Additional styles for admin panels */
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            z-index: 3000;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .admin-panel h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .admin-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .admin-form-group label {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .admin-form-group input, 
+        .admin-form-group select, 
+        .admin-form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .admin-form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .api-doc-content {
+            line-height: 1.6;
+        }
+        
+        .api-endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .api-method {
+            display: inline-block;
+            padding: 3px 8px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- [ALL PREVIOUS HTML REMAINS THE SAME UNTIL USER DROPDOWN] -->
+
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <h1>AURA Dashboard</h1>
+            <div class="header-actions">
+                <button class="header-btn" onclick="refreshData()">
+                    <span>Refresh Data</span>
+                </button>
+                <button class="header-btn" id="toggle-auto-refresh" onclick="toggleAutoRefresh()">
+                    Auto-Refresh: ON
+                </button>
+                <button class="header-btn" onclick="simulateAPIError()">
+                    Simulate API Error
+                </button>
+                <button class="header-btn" onclick="startFeatureTour()">
+                    Start Tour
+                </button>
+                <div class="user-menu">
+                    <button class="user-btn" onclick="toggleUserMenu()">
+                        <span>Admin User</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="user-dropdown" id="user-dropdown">
+                        <a href="#" onclick="showAdminPanel('profile')">Profile</a>
+                        <a href="#" onclick="showAdminPanel('settings')">Settings</a>
+                        <a href="#" onclick="showAdminPanel('api-config')">API Configuration</a>
+                        <a href="#" onclick="showAdminPanel('api-docs')">API Documentation</a>
+                        <a href="#" onclick="handleLogout()">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- [REST OF DASHBOARD CONTENT REMAINS THE SAME] -->
+    </div>
+
+    <!-- [NOTIFICATIONS AND ONBOARDING COMPONENTS REMAIN THE SAME] -->
+
+    <!-- Admin Panels -->
+    <div class="admin-panel" id="admin-profile">
+        <h2>User Profile</h2>
+        <div class="admin-form">
+            <div class="admin-form-group">
+                <label for="profile-name">Full Name</label>
+                <input type="text" id="profile-name" value="Admin User">
+            </div>
+            <div class="admin-form-group">
+                <label for="profile-email">Email Address</label>
+                <input type="email" id="profile-email" value="admin@auradashboard.com">
+            </div>
+            <div class="admin-form-group">
+                <label for="profile-role">Role</label>
+                <input type="text" id="profile-role" value="Administrator" disabled>
+            </div>
+            <div class="admin-form-group">
+                <label for="profile-department">Department</label>
+                <input type="text" id="profile-department" value="IT Operations">
+            </div>
+            <div class="admin-actions">
+                <button class="header-btn" onclick="hideAdminPanel()">Cancel</button>
+                <button class="btn" onclick="saveProfile()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-panel" id="admin-settings">
+        <h2>Dashboard Settings</h2>
+        <div class="admin-form">
+            <div class="admin-form-group">
+                <label for="setting-theme">Theme</label>
+                <select id="setting-theme">
+                    <option value="light">Light Theme</option>
+                    <option value="dark">Dark Theme</option>
+                    <option value="auto">Auto (System)</option>
+                </select>
+            </div>
+            <div class="admin-form-group">
+                <label for="setting-refresh">Auto-Refresh Interval</label>
+                <select id="setting-refresh">
+                    <option value="5">5 seconds</option>
+                    <option value="10" selected>10 seconds</option>
+                    <option value="30">30 seconds</option>
+                    <option value="60">1 minute</option>
+                </select>
+            </div>
+            <div class="admin-form-group">
+                <label>
+                    <input type="checkbox" id="setting-notifications" checked> 
+                    Enable Desktop Notifications
+                </label>
+            </div>
+            <div class="admin-form-group">
+                <label>
+                    <input type="checkbox" id="setting-sounds" checked> 
+                    Enable Alert Sounds
+                </label>
+            </div>
+            <div class="admin-form-group">
+                <label for="setting-timezone">Timezone</label>
+                <select id="setting-timezone">
+                    <option value="utc">UTC</option>
+                    <option value="local" selected>Local Time</option>
+                </select>
+            </div>
+            <div class="admin-actions">
+                <button class="header-btn" onclick="hideAdminPanel()">Cancel</button>
+                <button class="btn" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-panel" id="admin-api-config">
+        <h2>API Configuration</h2>
+        <div class="admin-form">
+            <div class="admin-form-group">
+                <label for="api-base-url">Base API URL</label>
+                <input type="text" id="api-base-url" value="https://api.auradashboard.com/v1">
+            </div>
+            <div class="admin-form-group">
+                <label for="api-key">API Key</label>
+                <input type="password" id="api-key" value="••••••••••••••••">
+            </div>
+            <div class="admin-form-group">
+                <label for="api-timeout">Request Timeout (seconds)</label>
+                <input type="number" id="api-timeout" value="30" min="5" max="120">
+            </div>
+            <div class="admin-form-group">
+                <label for="api-retry">Retry Attempts</label>
+                <input type="number" id="api-retry" value="3" min="0" max="10">
+            </div>
+            <div class="admin-form-group">
+                <label>
+                    <input type="checkbox" id="api-cache" checked> 
+                    Enable Response Caching
+                </label>
+            </div>
+            <div class="admin-form-group">
+                <label>
+                    <input type="checkbox" id="api-compression" checked> 
+                    Enable Compression
+                </label>
+            </div>
+            <div class="admin-form-group">
+                <label for="api-log-level">Log Level</label>
+                <select id="api-log-level">
+                    <option value="error">Error Only</option>
+                    <option value="warn">Warnings</option>
+                    <option value="info" selected>Information</option>
+                    <option value="debug">Debug</option>
+                </select>
+            </div>
+            <div class="admin-actions">
+                <button class="header-btn" onclick="testApiConnection()">Test Connection</button>
+                <button class="header-btn" onclick="hideAdminPanel()">Cancel</button>
+                <button class="btn" onclick="saveApiConfig()">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-panel" id="admin-api-docs">
+        <h2>API Documentation</h2>
+        <div class="api-doc-content">
+            <p>Complete API documentation for integrating with AURA Dashboard.</p>
+            
+            <h3>Authentication</h3>
+            <div class="api-endpoint">
+                <span class="api-method">POST</span>
+                <strong>/api/v1/auth/login</strong>
+                <p>Authenticate and receive API token</p>
+                <p><strong>Headers:</strong> Content-Type: application/json</p>
+                <p><strong>Body:</strong> {"username": "string", "password": "string"}</p>
+            </div>
+            
+            <h3>Metrics Endpoints</h3>
+            <div class="api-endpoint">
+                <span class="api-method">GET</span>
+                <strong>/api/v1/metrics/system</strong>
+                <p>Retrieve system metrics</p>
+                <p><strong>Headers:</strong> Authorization: Bearer {token}</p>
+            </div>
+            
+            <div class="api-endpoint">
+                <span class="api-method">GET</span>
+                <strong>/api/v1/metrics/cpu</strong>
+                <p>Retrieve CPU usage data</p>
+                <p><strong>Parameters:</strong> range (optional) - time range for data</p>
+            </div>
+            
+            <div class="api-endpoint">
+                <span class="api-method">GET</span>
+                <strong>/api/v1/metrics/memory</strong>
+                <p>Retrieve memory usage data</p>
+            </div>
+            
+            <h3>Alert Endpoints</h3>
+            <div class="api-endpoint">
+                <span class="api-method">GET</span>
+                <strong>/api/v1/alerts</strong>
+                <p>Retrieve active alerts</p>
+            </div>
+            
+            <div class="api-endpoint">
+                <span class="api-method">POST</span>
+                <strong>/api/v1/alerts</strong>
+                <p>Create a new alert</p>
+            </div>
+            
+            <div class="admin-actions">
+                <button class="header-btn" onclick="hideAdminPanel()">Close</button>
+                <button class="btn" onclick="downloadApiDocs()">Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // ADDITIONAL ADMIN FUNCTIONS
+        // =========================================================================
+        
+        function showAdminPanel(panelType) {
+            // Hide all admin panels first
+            hideAdminPanel();
+            
+            // Show the requested panel
+            const panel = document.getElementById(`admin-${panelType}`);
+            if (panel) {
+                panel.style.display = 'block';
+            }
+            
+            // Close the user dropdown
+            toggleUserMenu();
+        }
+        
+        function hideAdminPanel() {
+            const panels = document.querySelectorAll('.admin-panel');
+            panels.forEach(panel => {
+                panel.style.display = 'none';
+            });
+        }
+        
+        function saveProfile() {
+            const name = document.getElementById('profile-name').value;
+            const email = document.getElementById('profile-email').value;
+            const department = document.getElementById('profile-department').value;
+            
+            // In a real application, you would save this to a backend
+            showNotification('Profile updated successfully', 'success');
+            hideAdminPanel();
+            
+            // Update the user display name if changed
+            const userBtn = document.querySelector('.user-btn span');
+            if (userBtn && name !== 'Admin User') {
+                userBtn.textContent = name;
+            }
+        }
+        
+        function saveSettings() {
+            const theme = document.getElementById('setting-theme').value;
+            const refreshInterval = document.getElementById('setting-refresh').value;
+            const notifications = document.getElementById('setting-notifications').checked;
+            const sounds = document.getElementById('setting-sounds').checked;
+            const timezone = document.getElementById('setting-timezone').value;
+            
+            // Update auto-refresh if interval changed
+            if (refreshInterval && autoRefreshEnabled) {
+                stopLiveUpdates();
+                startLiveUpdates();
+            }
+            
+            // In a real application, you would save these settings
+            showNotification('Settings saved successfully', 'success');
+            hideAdminPanel();
+        }
+        
+        function saveApiConfig() {
+            const baseUrl = document.getElementById('api-base-url').value;
+            const timeout = document.getElementById('api-timeout').value;
+            const retry = document.getElementById('api-retry').value;
+            const cache = document.getElementById('api-cache').checked;
+            const compression = document.getElementById('api-compression').checked;
+            const logLevel = document.getElementById('api-log-level').value;
+            
+            // In a real application, you would save this configuration
+            showNotification('API configuration saved successfully', 'success');
+            hideAdminPanel();
+            
+            // Update the mock service with new configuration
+            if (mockDataService) {
+                mockDataService.baseUrl = baseUrl;
+                mockDataService.timeout = timeout * 1000; // Convert to milliseconds
+            }
+        }
+        
+        function testApiConnection() {
+            showNotification('Testing API connection...', 'info');
+            
+            // Simulate API connection test
+            setTimeout(() => {
+                if (Math.random() > 0.3) {
+                    showNotification('API connection test successful', 'success');
+                } else {
+                    showNotification('API connection test failed', 'error');
+                }
+            }, 1500);
+        }
+        
+        function downloadApiDocs() {
+            showNotification('Downloading API documentation...', 'info');
+            
+            // Simulate download
+            setTimeout(() => {
+                showNotification('API documentation downloaded successfully', 'success');
+            }, 2000);
+        }
+        
+        // Close admin panels when clicking outside
+        document.addEventListener('click', function(event) {
+            const adminPanels = document.querySelectorAll('.admin-panel');
+            let isClickInsidePanel = false;
+            
+            adminPanels.forEach(panel => {
+                if (panel.contains(event.target)) {
+                    isClickInsidePanel = true;
+                }
+            });
+            
+            // Also check if click is on the user menu button
+            const userBtn = document.querySelector('.user-btn');
+            if (userBtn && userBtn.contains(event.target)) {
+                isClickInsidePanel = true;
+            }
+            
+            // Close panels if click is outside
+            if (!isClickInsidePanel) {
+                hideAdminPanel();
+                
+                // Also close user dropdown if open
+                const userDropdown = document.getElementById('user-dropdown');
+                if (userDropdown && userDropdown.classList.contains('show')) {
+                    userDropdown.classList.remove('show');
+                }
+            }
+        });
+
+        // =========================================================================
+        // ENHANCED USER MENU FUNCTIONALITY
+        // =========================================================================
+        
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('user-dropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+        
+        // Close user dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.querySelector('.user-menu');
+            const userBtn = document.querySelector('.user-btn');
+            const dropdown = document.getElementById('user-dropdown');
+            
+            if (userMenu && !userMenu.contains(event.target) && dropdown && dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // =========================================================================
+        // UPDATED INITIALIZATION
+        // =========================================================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('AURA Dashboard Enhanced - All functionality initialized');
+            
+            // Initialize services
+            mockDataService = new MockDataService();
+
+            // Initialize components
+            initializeTabs();
+            initializeUserMenu();
+            initializeEventListeners();
+            initializeOnboarding();
+
+            // Check existing session
+            if (localStorage.getItem('aura_logged_in') === 'true') {
+                showDashboard();
+                initializeWebSocket();
+                startLiveUpdates();
+            }
+
+            // Set initial API status
+            updateAPIStatus('online', 'API Connected');
+            
+            // Load any saved settings
+            loadSavedSettings();
+        });
+        
+        function loadSavedSettings() {
+            // In a real application, you would load these from localStorage or a backend
+            // For now, we'll set some defaults
+            const savedTheme = localStorage.getItem('aura_theme') || 'light';
+            const savedRefresh = localStorage.getItem('aura_refresh_interval') || '10';
+            
+            if (document.getElementById('setting-theme')) {
+                document.getElementById('setting-theme').value = savedTheme;
+            }
+            if (document.getElementById('setting-refresh')) {
+                document.getElementById('setting-refresh').value = savedRefresh;
+            }
+        }
+
+        // [ALL OTHER PREVIOUS JAVASCRIPT FUNCTIONS REMAIN THE SAME]
+    </script>
+</body>
+</html>
