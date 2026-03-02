@@ -1,0 +1,339 @@
+═══════════════════════════════════════════════════════════════════════
+🪟 WINDOWS SETUP GUIDE - Contract Review Tool
+═══════════════════════════════════════════════════════════════════════
+
+You have all the files! Here's how to get your app running on Windows.
+
+═══════════════════════════════════════════════════════════════════════
+📂 STEP 1: ORGANIZE YOUR FILES
+═══════════════════════════════════════════════════════════════════════
+
+Your current directory: C:\Users\hneal\OneDrive\Desktop\production-parser
+
+1. Download ALL these files from Claude:
+   ✓ app.py
+   ✓ requirements.txt
+   ✓ README.md
+   ✓ start_server.bat
+   ✓ index.html
+   ✓ results.html
+   ✓ style.css
+
+2. Organize them like this:
+
+PowerShell Commands:
+────────────────────
+# Create directories
+mkdir templates
+mkdir static
+
+# Move HTML files to templates folder
+move index.html templates\
+move results.html templates\
+
+# Move CSS file to static folder
+move style.css static\
+
+Your final structure should look like:
+production-parser/
+├── app.py
+├── requirements.txt
+├── README.md
+├── start_server.bat
+├── templates/
+│   ├── index.html
+│   └── results.html
+└── static/
+    └── style.css
+
+═══════════════════════════════════════════════════════════════════════
+🔧 STEP 2: INSTALL PYTHON DEPENDENCIES
+═══════════════════════════════════════════════════════════════════════
+
+Run this in PowerShell:
+
+pip install -r requirements.txt
+
+This will install:
+✓ Flask (web framework)
+✓ anthropic (AI API)
+✓ pypdf (PDF processing)
+✓ python-docx (Word docs)
+✓ Werkzeug (utilities)
+
+═══════════════════════════════════════════════════════════════════════
+🔑 STEP 3: SET YOUR API KEY (IMPORTANT!)
+═══════════════════════════════════════════════════════════════════════
+
+METHOD 1: Temporary (This Session Only)
+────────────────────────────────────────
+In PowerShell:
+
+$env:ANTHROPIC_API_KEY = "your-api-key-here"
+
+Note: This only lasts until you close PowerShell!
+
+
+METHOD 2: Permanent (Recommended)
+──────────────────────────────────
+Option A - Windows Environment Variables GUI:
+
+1. Press Windows key + R
+2. Type: sysdm.cpl
+3. Click "Advanced" tab
+4. Click "Environment Variables"
+5. Under "User variables", click "New"
+6. Variable name: ANTHROPIC_API_KEY
+7. Variable value: your-api-key-here
+8. Click OK on everything
+9. RESTART PowerShell for it to take effect!
+
+
+Option B - PowerShell Command (Run as Administrator):
+
+[System.Environment]::SetEnvironmentVariable('ANTHROPIC_API_KEY', 'your-api-key-here', 'User')
+
+Then restart PowerShell.
+
+
+GET YOUR API KEY:
+─────────────────
+1. Go to: https://console.anthropic.com/
+2. Sign up or log in
+3. Go to API Keys section
+4. Create a new key
+5. Copy it (starts with "sk-ant-...")
+
+═══════════════════════════════════════════════════════════════════════
+🚀 STEP 4: START YOUR SERVER
+═══════════════════════════════════════════════════════════════════════
+
+OPTION A: Use the Batch File (Easiest)
+───────────────────────────────────────
+Double-click: start_server.bat
+
+Or in PowerShell:
+.\start_server.bat
+.\
+
+OPTION B: Manual Start
+──────────────────────
+python app.py
+
+
+You should see:
+✓ WARNING about API key (if not set)
+✓ "Running on http://127.0.0.1:5000"
+✓ "Running on http://[your-ip]:5000"
+
+═══════════════════════════════════════════════════════════════════════
+🌐 STEP 5: OPEN YOUR BROWSER
+═══════════════════════════════════════════════════════════════════════
+
+Go to: http://localhost:5000
+
+You should see:
+✓ Beautiful purple gradient interface
+✓ "Contract Review Tool" header
+✓ File upload area
+✓ Feature cards showing what you'll get
+
+═══════════════════════════════════════════════════════════════════════
+🧪 STEP 6: TEST IT OUT
+═══════════════════════════════════════════════════════════════════════
+
+1. Find any PDF, DOCX, or TXT file with contract-like text
+2. Upload it
+3. Click "Analyze Contract"
+4. Wait 60-90 seconds
+5. See your results!
+
+If API key is set correctly, you'll see:
+✓ Key terms extracted
+✓ Risk analysis with severity levels
+✓ Fairness assessment
+✓ Negotiation points
+
+═══════════════════════════════════════════════════════════════════════
+🐛 TROUBLESHOOTING (Windows-Specific)
+═══════════════════════════════════════════════════════════════════════
+
+PROBLEM: "Python is not recognized"
+SOLUTION:
+1. Check Python is installed: python --version
+2. Add Python to PATH:
+   - Search "Environment Variables" in Windows
+   - Add Python directory to PATH
+   - Typical location: C:\Users\YourName\AppData\Local\Programs\Python\Python314\
+
+PROBLEM: "pip is not recognized"
+SOLUTION:
+python -m pip install -r requirements.txt
+
+PROBLEM: "Permission denied" when running script
+SOLUTION:
+1. Run PowerShell as Administrator
+2. Or try: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+3. Then run: .\start_server.bat
+
+PROBLEM: Port 5000 already in use
+SOLUTION:
+1. Find what's using port 5000:
+   netstat -ano | findstr :5000
+2. Kill that process:
+   taskkill /PID [process-id] /F
+3. Or change port in app.py:
+   app.run(debug=True, host='0.0.0.0', port=5001)
+
+PROBLEM: API key not working
+SOLUTION:
+1. Verify it's set:
+   PowerShell: $env:ANTHROPIC_API_KEY
+   CMD: echo %ANTHROPIC_API_KEY%
+2. Make sure you restarted PowerShell after setting it
+3. Try the temporary method first to test
+4. Check key starts with "sk-ant-"
+
+PROBLEM: Can't access from another device on network
+SOLUTION:
+1. Check Windows Firewall
+2. Allow Python through firewall:
+   - Windows Defender Firewall
+   - Allow an app
+   - Find Python
+   - Check both Private and Public
+
+PROBLEM: ModuleNotFoundError
+SOLUTION:
+pip install --upgrade -r requirements.txt
+
+═══════════════════════════════════════════════════════════════════════
+🔍 VERIFY YOUR SETUP
+═══════════════════════════════════════════════════════════════════════
+
+Run these commands to verify everything:
+
+# Check Python version (should be 3.14.0)
+python --version
+
+# Check installed packages
+pip list | Select-String "Flask|anthropic|pypdf|docx"
+
+# Check API key is set
+$env:ANTHROPIC_API_KEY
+
+# Check file structure
+tree /F
+
+You should see your organized folders and files!
+
+═══════════════════════════════════════════════════════════════════════
+📝 QUICK REFERENCE COMMANDS
+═══════════════════════════════════════════════════════════════════════
+
+Start server:
+    .\start_server.bat
+    # or
+    python app.py
+
+Stop server:
+    Press CTRL+C in the terminal
+
+Set API key (temporary):
+    $env:ANTHROPIC_API_KEY = "your-key"
+
+Check if server is running:
+    curl http://localhost:5000/health
+
+View server in browser:
+    start http://localhost:5000
+
+Install dependencies:
+    pip install -r requirements.txt
+
+Check Python packages:
+    pip list
+
+═══════════════════════════════════════════════════════════════════════
+🎯 WHAT'S NEXT?
+═══════════════════════════════════════════════════════════════════════
+
+Once your server is running:
+
+1. TEST THOROUGHLY
+   - Upload different file types
+   - Test with real contracts
+   - Try on mobile browser
+
+2. FOLLOW THE LAUNCH PLAN
+   - Open: LAUNCH_PLAN_30_DAYS.txt
+   - Follow day-by-day instructions
+   - Start getting customers!
+
+3. CREATE YOUR DEMO
+   - Use: DEMO_VIDEO_SCRIPT.txt
+   - Record a 5-minute demo
+   - Upload to YouTube
+
+4. BUILD LANDING PAGE
+   - Use: LANDING_PAGE_COPY.txt
+   - Set up on Carrd.co
+   - Connect your domain
+
+5. START OUTREACH
+   - Use: EMAIL_TEMPLATES.txt
+   - Email 50 potential customers
+   - Book demo calls
+
+═══════════════════════════════════════════════════════════════════════
+💡 PRO TIPS FOR WINDOWS
+═══════════════════════════════════════════════════════════════════════
+
+1. USE WINDOWS TERMINAL
+   - Better than regular PowerShell
+   - Get it from Microsoft Store (free)
+   - Supports tabs, colors, etc.
+
+2. CREATE A DESKTOP SHORTCUT
+   - Right-click start_server.bat
+   - Send to > Desktop (create shortcut)
+   - Rename to "Contract Tool"
+   - Now you can start with one click!
+
+3. AUTO-START ON WINDOWS BOOT (Optional)
+   - Press Win+R
+   - Type: shell:startup
+   - Copy start_server.bat shortcut there
+   - Server starts when Windows starts!
+
+4. KEEP TERMINAL OPEN
+   - Server needs to run continuously
+   - Don't close the PowerShell window
+   - Minimize it instead
+
+5. TEST LOCALLY FIRST
+   - Always test on localhost:5000
+   - Fix any issues before sharing
+   - Then share your network IP with others
+
+═══════════════════════════════════════════════════════════════════════
+🎉 YOU'RE READY!
+═══════════════════════════════════════════════════════════════════════
+
+Your Contract Review Tool is ready to launch on Windows!
+
+Steps to success:
+1. ✅ Download all files (from Claude links above)
+2. ✅ Organize into folders (templates/, static/)
+3. ✅ Install dependencies (pip install -r requirements.txt)
+4. ✅ Set API key (environment variable)
+5. ✅ Start server (.\start_server.bat)
+6. ✅ Open browser (http://localhost:5000)
+7. ✅ Test it works!
+8. 🚀 Follow launch plan!
+
+═══════════════════════════════════════════════════════════════════════
+
+Questions? Check README.md or the troubleshooting section above!
+
+Good luck! 🎊

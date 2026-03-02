@@ -1,0 +1,112 @@
+/**
+ * Charts Initialization and Configuration
+ * Enhanced for Budget Analysis Application
+ */
+
+// Wait for DOM to be ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Charts.js loaded and ready');
+    
+    // Global Chart.js configuration
+    if (typeof Chart !== 'undefined') {
+        Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        Chart.defaults.font.size = 14;
+        Chart.defaults.color = '#2c3e50';
+        
+        // Enable animations
+        Chart.defaults.animation.duration = 1000;
+        Chart.defaults.animation.easing = 'easeInOutQuart';
+        
+        console.log('Chart.js defaults configured');
+    }
+    
+    // Initialize all charts on the page
+    initializeCharts();
+});
+
+/**
+ * Initialize all charts found on the page
+ */
+function initializeCharts() {
+    // Find all canvas elements with data-chart attribute
+    const chartElements = document.querySelectorAll('canvas[data-chart]');
+    
+    if (chartElements.length === 0) {
+        console.log('No charts found on page');
+        return;
+    }
+    
+    console.log(`Found ${chartElements.length} charts to initialize`);
+    
+    chartElements.forEach(canvas => {
+        try {
+            const chartData = JSON.parse(canvas.getAttribute('data-chart'));
+            createChart(canvas, chartData);
+        } catch (error) {
+            console.error('Error initializing chart:', error);
+        }
+    });
+}
+
+/**
+ * Create a chart from configuration data
+ */
+function createChart(canvas, config) {
+    const ctx = canvas.getContext('2d');
+    
+    // Apply enhanced styling based on chart type
+    if (config.type === 'pie' || config.type === 'doughnut') {
+        config.options = config.options || {};
+        config.options.plugins = config.options.plugins || {};
+        config.options.plugins.legend = {
+            position: 'bottom',
+            labels: {
+                padding: 15,
+                font: {
+                    size: 13,
+                    weight: 500
+                }
+            }
+        };
+    }
+    
+    if (config.type === 'bar' || config.type === 'line') {
+        config.options = config.options || {};
+        config.options.scales = config.options.scales || {};
+        config.options.scales.y = {
+            beginAtZero: true,
+            ticks: {
+                callback: function(value) {
+                    return '$' + value.toLocaleString();
+                }
+            }
+        };
+    }
+    
+    // Create the chart
+    new Chart(ctx, config);
+}
+
+/**
+ * Utility: Format currency
+ */
+function formatCurrency(value) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(value);
+}
+
+/**
+ * Utility: Generate random color
+ */
+function generateColor(index) {
+    const colors = [
+        '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
+        '#1abc9c', '#34495e', '#e67e22', '#95a5a6', '#d35400',
+        '#27ae60', '#2980b9', '#8e44ad', '#16a085', '#c0392b'
+    ];
+    return colors[index % colors.length];
+}

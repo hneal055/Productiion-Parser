@@ -1,0 +1,26 @@
+Description,Department,Category,Vendor,Amount
+Design Tools expense - Creative,Creative,Design Tools,Talent Agency Plus,3000
+Stock Media expense - Creative,Creative,Stock Media,ABC Equipment Co,2100
+Banking Fees expense - Finance,Finance,Banking Fees,Professional Services,1800
+Accounting expense - Finance,Finance,Accounting,Tech Solutions Inc,1700
+Training expense - Human Resources,Human Resources,Training,Innovate Tech,4400
+Training expense - Human Resources,Human Resources,Training,Global Services LLC,1500
+Recruitment expense - Human Resources,Human Resources,Recruitment,Tech Solutions Inc,490
+TV commercial - Marketing,Marketing,Advertising,ABC Equipment Co,14600
+Events expense - Marketing,Marketing,Events,Tech Solutions Inc,4500
+Social Media expense - Marketing,Marketing,Social Media,XYZ Productions,2800
+Utilities expense - Operations,Operations,Utilities,Media Experts,3300
+Utilities expense - Operations,Operations,Utilities,Digital Marketing Pro,2400
+Printer paper - Operations,Operations,Office Supplies,Tech Solutions Inc,670
+Location scouting - Production,Production,Location,Premier Rentals,12100
+Location rental - Production,Production,Location,Media Experts,5000
+Props expense - Production,Production,Props,Professional Services,3400
+Studio gear - Production,Production,Equipment,Creative Studios,3400
+Catering expense - Production,Production,Catering,Tech Solutions Inc,2500
+Catering expense - Production,Production,Catering,XYZ Productions,1900
+CRM Software expense - Sales,Sales,CRM Software,Creative Studios,3700
+Client Entertainment expense - Sales,Sales,Client Entertainment,Tech Solutions Inc,3500
+CRM Software expense - Sales,Sales,CRM Software,Innovate Tech,3400
+IT Support expense - Technology,Technology,IT Support,Modern Office Supply,3000
+IT Support expense - Technology,Technology,IT Support,Tech Solutions Inc,2400
+IT Support expense - Technology,Technology,IT Support,XYZ Productions,1200

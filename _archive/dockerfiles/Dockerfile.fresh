@@ -1,0 +1,23 @@
+FROM python:3.11-alpine
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apk update && apk add --no-cache \
+    postgresql-dev \
+    gcc \
+    python3-dev \
+    musl-dev \
+    linux-headers \
+    curl \
+    libpq
+
+# Copy requirements first
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY backend/ .
+
+# Simple startup command
+CMD ["python", "run.py"]

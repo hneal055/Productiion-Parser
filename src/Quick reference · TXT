@@ -1,0 +1,220 @@
+════════════════════════════════════════════════════════════════════════════════
+📋 QUICK REFERENCE CARD - Keep This Handy!
+Budget Analysis App - Common Commands
+════════════════════════════════════════════════════════════════════════════════
+
+DAILY STARTUP (Choose One Method)
+════════════════════════════════════════════════════════════════════════════════
+
+METHOD 1: Batch File (EASIEST) ⭐
+   Double-click: START_BUDGET_APP.bat
+
+METHOD 2: Desktop Shortcut
+   Double-click: Budget Analysis App icon
+
+METHOD 3: Manual Commands
+   cd C:\Users\hneal\OneDrive\Desktop\production-parser
+   venv\Scripts\activate
+   python web_app_COMPLETE_WITH_COMPARISON.py
+
+METHOD 4: One-Liner
+   cd C:\Users\hneal\OneDrive\Desktop\production-parser && venv\Scripts\activate && python web_app_COMPLETE_WITH_COMPARISON.py
+
+
+AFTER STARTING
+════════════════════════════════════════════════════════════════════════════════
+
+Open Browser:
+   http://localhost:8080
+   (or http://127.0.0.1:8080)
+
+Verify It's Running:
+   Look for: "Running on http://127.0.0.1:8080"
+   Browser should show purple gradient homepage
+
+
+STOPPING THE APP
+════════════════════════════════════════════════════════════════════════════════
+
+In Command Prompt:
+   Press: Ctrl+C
+
+Then (optional):
+   deactivate
+
+
+TROUBLESHOOTING
+════════════════════════════════════════════════════════════════════════════════
+
+Port Already in Use:
+   netstat -ano | findstr :8080
+   taskkill /PID [NUMBER] /F
+
+Check If Files Present:
+   cd C:\Users\hneal\OneDrive\Desktop\production-parser
+   dir *.py
+
+Run Pre-Flight Check:
+   python preflight_check.py
+
+Check Python:
+   python --version
+
+Reinstall Packages:
+   venv\Scripts\activate
+   pip install Flask==3.0.3 pandas openpyxl reportlab
+
+Clear Browser Cache:
+   Ctrl+Shift+Delete
+   Or hard refresh: Ctrl+F5
+
+
+COMMON ERRORS & FIXES
+════════════════════════════════════════════════════════════════════════════════
+
+"python is not recognized"
+   → Add Python to PATH or use full path
+
+"No module named 'flask'"
+   → Activate venv: venv\Scripts\activate
+   → Install: pip install Flask==3.0.3
+
+"Address already in use"
+   → Kill existing process (see above)
+
+"Permission denied"
+   → Run Command Prompt as Administrator
+
+"Can't find file"
+   → Check you're in right folder: cd [project folder]
+
+
+FILE LOCATIONS
+════════════════════════════════════════════════════════════════════════════════
+
+Project Folder:
+   C:\Users\hneal\OneDrive\Desktop\production-parser
+
+Main App:
+   web_app_COMPLETE_WITH_COMPARISON.py
+
+Startup Script:
+   START_BUDGET_APP.bat
+
+Virtual Environment:
+   venv\
+
+CSS Files:
+   static\css\
+
+JavaScript:
+   static\js\
+
+
+VERIFICATION CHECKLIST
+════════════════════════════════════════════════════════════════════════════════
+
+✓ Command Prompt shows "Running on..."
+✓ No red error messages
+✓ Browser opens to http://localhost:8080
+✓ Homepage displays (purple gradient)
+✓ Can upload CSV file
+✓ Charts display after upload
+✓ Compare Budgets button works
+
+
+USEFUL LINKS (When App is Running)
+════════════════════════════════════════════════════════════════════════════════
+
+Homepage:
+   http://localhost:8080/
+
+Upload Budget:
+   http://localhost:8080/ (main page)
+
+Budget History:
+   http://localhost:8080/budget-history
+
+Compare Budgets:
+   http://localhost:8080/budget-history
+
+
+KEYBOARD SHORTCUTS
+════════════════════════════════════════════════════════════════════════════════
+
+Stop Flask Server:    Ctrl+C
+Clear Command Line:   cls
+Navigate Up Folder:   cd ..
+List Files:          dir
+Browser Refresh:     F5
+Hard Refresh:        Ctrl+F5
+Developer Console:   F12
+New Browser Tab:     Ctrl+T
+
+
+QUICK COMMANDS
+════════════════════════════════════════════════════════════════════════════════
+
+Navigate to project:
+cd C:\Users\hneal\OneDrive\Desktop\production-parser
+
+Activate environment:
+venv\Scripts\activate
+
+Start app:
+python web_app_COMPLETE_WITH_COMPARISON.py
+
+Open browser:
+start http://localhost:8080
+
+Check port:
+netstat -ano | findstr :8080
+
+List Python files:
+dir *.py
+
+Update pip:
+python -m pip install --upgrade pip
+
+
+EMERGENCY RECOVERY
+════════════════════════════════════════════════════════════════════════════════
+
+If Everything Breaks:
+
+1. Close all Command Prompts
+2. Kill any Python processes:
+   taskkill /IM python.exe /F
+3. Restart computer
+4. Navigate to project folder
+5. Run batch file: START_BUDGET_APP.bat
+6. If still broken, re-download files from Claude
+
+
+DAILY ROUTINE
+════════════════════════════════════════════════════════════════════════════════
+
+Morning:
+1. Double-click START_BUDGET_APP.bat
+2. Wait for "Running on..." message
+3. Browser opens automatically
+4. Start using app
+
+Evening:
+1. Close browser
+2. Press Ctrl+C in Command Prompt
+3. Close Command Prompt
+
+
+NEED HELP?
+════════════════════════════════════════════════════════════════════════════════
+
+1. Check error message carefully
+2. Try troubleshooting steps above
+3. Run: python preflight_check.py
+4. Ask Claude with the specific error message
+
+
+════════════════════════════════════════════════════════════════════════════════
+💡 PRO TIP: Save this file to Desktop for quick reference!
+════════════════════════════════════════════════════════════════════════════════

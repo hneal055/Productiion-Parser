@@ -1,0 +1,41 @@
+Description,Department,Category,Vendor,Amount
+Freelancers expense - Creative,Creative,Freelancers,Modern Office Supply,7900
+Studio Rental expense - Creative,Creative,Studio Rental,Professional Services,5900
+Design Tools expense - Creative,Creative,Design Tools,Digital Marketing Pro,4600
+Stock Media expense - Creative,Creative,Stock Media,Innovate Tech,4000
+Studio Rental expense - Creative,Creative,Studio Rental,Tech Solutions Inc,3900
+Design Tools expense - Creative,Creative,Design Tools,Quality Catering,3600
+Banking Fees expense - Finance,Finance,Banking Fees,Media Experts,1400
+Benefits expense - Human Resources,Human Resources,Benefits,Modern Office Supply,8600
+Training expense - Human Resources,Human Resources,Training,Professional Services,6800
+Benefits expense - Human Resources,Human Resources,Benefits,Professional Services,6200
+Training expense - Human Resources,Human Resources,Training,Elite Consulting,4800
+Training expense - Human Resources,Human Resources,Training,Digital Marketing Pro,3900
+Recruitment expense - Human Resources,Human Resources,Recruitment,Premier Rentals,1200
+Recruitment expense - Human Resources,Human Resources,Recruitment,Digital Marketing Pro,150
+PR expense - Marketing,Marketing,PR,Tech Solutions Inc,9600
+Social Media expense - Marketing,Marketing,Social Media,Cloud Systems,6500
+Social Media expense - Marketing,Marketing,Social Media,ABC Equipment Co,5800
+Social Media expense - Marketing,Marketing,Social Media,Global Services LLC,5500
+Maintenance expense - Operations,Operations,Maintenance,Cloud Systems,7300
+Maintenance expense - Operations,Operations,Maintenance,ABC Equipment Co,4500
+Utilities expense - Operations,Operations,Utilities,Metro Supplies,4200
+Utilities expense - Operations,Operations,Utilities,Global Services LLC,2900
+Utilities expense - Operations,Operations,Utilities,Design Hub,1300
+Crew wages - Production,Production,Talent,XYZ Productions,31000
+Crew wages - Production,Production,Talent,Design Hub,16100
+Catering expense - Production,Production,Catering,Innovate Tech,9100
+Location scouting - Production,Production,Location,Innovate Tech,9000
+Catering expense - Production,Production,Catering,Quality Catering,5800
+Catering expense - Production,Production,Catering,Talent Agency Plus,1800
+Client Entertainment expense - Sales,Sales,Client Entertainment,Talent Agency Plus,9400
+CRM Software expense - Sales,Sales,CRM Software,ABC Equipment Co,7000
+CRM Software expense - Sales,Sales,CRM Software,Digital Marketing Pro,4000
+Client Entertainment expense - Sales,Sales,Client Entertainment,Creative Studios,2200
+Flight tickets - Sales,Sales,Travel,Quality Catering,2000
+Hardware expense - Technology,Technology,Hardware,Premier Rentals,6700
+Adobe Creative Cloud - Technology,Technology,Software Licenses,Modern Office Supply,4200
+Hardware expense - Technology,Technology,Hardware,Premier Rentals,4200
+Microsoft 365 - Technology,Technology,Software Licenses,Media Experts,3900
+Microsoft 365 - Technology,Technology,Software Licenses,Global Services LLC,3200
+Adobe Creative Cloud - Technology,Technology,Software Licenses,Media Experts,240

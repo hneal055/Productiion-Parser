@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div x-data="analyzer()">
+    <!-- Page Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Screenplay Analysis</h1>
+        <p class="text-gray-600">AI-powered commercial potential assessment by Scene Reader Studio Technologies</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Input Panel -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Analyze Screenplay</h2>
+            
+            <!-- Writer Information -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Writer Information (Optional)</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" x-model="writerInfo.name" placeholder="Writer Name" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select x-model="writerInfo.experience" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Select Experience</option>
+                        <option value="new">New Writer</option>
+                        <option value="emerging">Emerging Writer</option>
+                        <option value="professional">Professional Writer</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- File Upload -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Screenplay File</label>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                    <p class="text-gray-600">Drag & drop your screenplay file or click to browse</p>
+                    <input type="file" @change="handleFileUpload" accept=".txt,.fountain,.pdf,.docx" 
+                           class="hidden" id="fileInput">
+                    <button @click="document.getElementById('fileInput').click()" 
+                            class="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200">
+                        Choose File
+                    </button>
+                    <p class="text-xs text-gray-500 mt-2" x-text="uploadStatus"></p>
+                </div>
+            </div>
+
+            <!-- Text Input -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Or Paste Screenplay Content</label>
+                <textarea x-model="screenplayContent" placeholder="Paste your screenplay content here...
+                    
+INT. OFFICE - DAY
+
+ALEX types on a computer...
+
+ALEX
+This is where your screenplay content goes."
+                      rows="12"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"></textarea>
+            </div>
+
+            <!-- Analyze Button -->
+            <button @click="analyzeScreenplay" 
+                    :disabled="!screenplayContent.trim() || loading"
+                    :class="!screenplayContent.trim() || loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'"
+                    class="w-full text-white py-3 px-4 rounded-lg transition duration-200 font-bold">
+                <i class="fas fa-search mr-2"></i>
+                <span x-text="loading ? 'Analyzing...' : 'Analyze Screenplay'"></span>
+            </button>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Analysis Results</h2>
+            
+            <div x-show="!result" class="text-center py-12 text-gray-500">
+                <i class="fas fa-chart-bar text-4xl mb-4"></i>
+                <p>Analysis results will appear here</p>
+            </div>
+
+            <div x-show="result" class="space-y-6">
+                <!-- Quick Verdict -->
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold" x-text="result.quick_verdict.commercial_score + '/100'"></h3>
+                            <p class="text-blue-100" x-text="result.quick_verdict.recommendation"></p>
+                        </div>
+                        <div class="text-right">
+                            <span class="bg-white text-blue-600 px-3 py-1 rounded-full text-sm font-bold" 
+                                  x-text="result.quick_verdict.priority_level"></span>
+                            <p class="text-blue-100 mt-1" x-text="'ROI: ' + result.quick_verdict.estimated_roi"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Structural Analysis</h4>
+                        <p class="text-sm text-gray-600" x-text="'Pacing: ' + result.detailed_analysis.structural_breakdown.pacing_score + '/100'"></p>
+                        <p class="text-sm text-gray-600" x-text="'Act Structure: ' + JSON.stringify(result.detailed_analysis.structural_breakdown.act_breakdown)"></p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Character Analysis</h4>
+                        <p class="text-sm text-gray-600" x-text="'Main Characters: ' + result.detailed_analysis.character_analysis.main_characters"></p>
+                        <p class="text-sm text-gray-600" x-text="'Depth Score: ' + result.detailed_analysis.character_analysis.character_depth_score + '/100'"></p>
+                    </div>
+                </div>
+
+                <!-- Technical Metrics -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-800 mb-2">Technical Metrics</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-600">Genre</p>
+                            <p class="font-semibold" x-text="result.technical_metrics.document_metrics.primary_genre"></p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Pages</p>
+                            <p class="font-semibold" x-text="result.technical_metrics.document_metrics.estimated_pages"></p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Characters</p>
+                            <p class="font-semibold" x-text="result.technical_metrics.document_metrics.character_count"></p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Processing Time</p>
+                            <p class="font-semibold" x-text="result.technical_metrics.processing_time"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Analysis -->
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h4 class="font-semibold text-yellow-800 mb-2">Market Potential</h4>
+                    <p class="text-sm text-yellow-700" x-text="result.detailed_analysis.market_potential.market_potential"></p>
+                    <p class="text-sm text-yellow-600" x-text="'Target: ' + result.detailed_analysis.market_potential.target_audience"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function analyzer() {
+    return {
+        loading: false,
+        screenplayContent: '',
+        writerInfo: {
+            name: '',
+            experience: ''
+        },
+        result: null,
+        uploadStatus: 'Supported formats: .txt, .fountain, .pdf, .docx',
+        
+        async analyzeScreenplay() {
+            if (!this.screenplayContent.trim()) return;
+            
+            this.loading = true;
+            this.result = null;
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        screenplay: this.screenplayContent,
+                        writer_info: this.writerInfo
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.result = data.result;
+                } else {
+                    alert('Analysis failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Analysis failed: ' + error.message);
+            } finally {
+                this.loading = false;
+            }
+        },
+        
+        handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            this.uploadStatus = `Processing: ${file.name}`;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.screenplayContent = e.target.result;
+                this.uploadStatus = `Loaded: ${file.name}`;
+            };
+            reader.readAsText(file);
+        }
+    }
+}
+</script>
+{% endblock %}

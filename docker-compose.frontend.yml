@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: aura-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "8080:80"
+    networks:
+      - aura-network
+
+networks:
+  aura-network:
+    external: true

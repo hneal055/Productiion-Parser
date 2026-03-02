@@ -1,0 +1,29 @@
+/root/EnhancedAURA
+
+/root/EnhancedAURA
+├── Dockerfile
+├── docker-compose.yml
+├── start-aura.sh
+│
+├── api_core/
+│   ├── aura_server.py
+│   ├── parser_core.py
+│   └── (all API-related modules)
+│
+├── dashboard/
+│   ├── index.html
+│   ├── css/
+│   ├── js/
+│   └── (dashboard files)
+│
+├── logs/
+│   └── aura.log
+│
+├── reverse_proxy/
+│   └── nginx.conf
+│
+├── certbot/
+│   ├── www/                ← ACME webroot
+│   └── (EMPTY — docker will populate)
+│
+└── letsecrypt/ (optional backup)

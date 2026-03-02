@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(robocopy \"C:\\\\Users\\\\hneal\\\\OneDrive\\\\Desktop\\\\production-parser\" \"C:\\\\projects\\\\production-parser\" /E /XD venv __pycache__ .git /XF \"*.pyc\" /NFL /NDL /NJH /NJS /NC /NS)",
+      "Bash(robocopy \"C:\\\\Users\\\\hneal\\\\OneDrive\\\\Desktop\\\\production-parser\" \"C:\\\\projects\\\\production-parser\" /E /XD venv __pycache__ /XF \"*.pyc\" /NFL /NDL /NJH /NJS /NC /NS)",
+      "Bash(python3 -c \":*)"
+    ]
+  }
+}

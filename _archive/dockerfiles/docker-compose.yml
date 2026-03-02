@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: devcontainer-app
+    ports:
+      - "8080:80"
+    volumes:
+      - ..:/workspace
+    restart: unless-stopped
+
+networks:
+  default:
+    name: devcontainer-network

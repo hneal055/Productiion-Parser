@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Production Parser · Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-elevated: #020617;
+      --card: #020617;
+      --card-soft: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.1);
+      --accent-strong: #0ea5e9;
+      --border-subtle: #1f2937;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+      --good: #4ade80;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.9);
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --radius-pill: 999px;
+      --transition-fast: 160ms ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 48%, #020617 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 28px 14px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .title-block h1 {
+      font-size: 1.7rem;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-pill {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-muted);
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .header-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .status-pill {
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(34, 197, 94, 0.1);
+      color: #bbf7d0;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.95fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .header-badge {
+        align-items: flex-start;
+      }
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, #020617 0, #020617 60%);
+      border-radius: 18px;
+      border: 1px solid rgba(30, 64, 175, 0.55);
+      box-shadow: var(--shadow-soft);
+      padding: 16px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle at top right,
+        rgba(56, 189, 248, 0.12),
+        transparent 60%
+      );
+      mix-blend-mode: screen;
+      opacity: 0.7;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title span.icon {
+      font-size: 0.95rem;
+    }
+
+    .panel-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .badge-soft {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: radial-gradient(circle at top, #020617 0, #020617 80%);
+      color: var(--text-muted);
+    }
+
+    .textarea-wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 250px;
+      resize: vertical;
+      padding: 12px 12px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: radial-gradient(circle at top left, #020617 0, #020617 90%);
+      color: var(--text-main);
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+        Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      outline: none;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.85);
+    }
+
+    textarea::placeholder {
+      color: rgba(148, 163, 184, 0.8);
+    }
+
+    textarea:focus {
+      border-color: var(--accent-strong);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4),
+        0 18px 40px rgba(15, 23, 42, 0.9);
+    }
+
+    .input-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+    }
+
+    .mode-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    select {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 5px 24px 5px 10px;
+      font-size: 0.78rem;
+      appearance: none;
+      position: relative;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .select-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .select-wrap::after {
+      content: "▾";
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-52%);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    button.primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.84rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: #0b1120;
+      background: linear-gradient(120deg, #38bdf8, #0ea5e9);
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.5);
+      transition: transform var(--transition-fast),
+        box-shadow var(--transition-fast), filter var(--transition-fast),
+        background 200ms ease-out;
+      min-width: 120px;
+    }
+
+    button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 45px rgba(56, 189, 248, 0.65);
+      filter: brightness(1.05);
+    }
+
+    button.primary:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.9);
+      filter: brightness(0.96);
+    }
+
+    button.primary[disabled] {
+      opacity: 0.7;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn-spinner {
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      border: 2px solid rgba(15, 23, 42, 0.25);
+      border-top-color: rgba(15, 23, 42, 0.9);
+      animation: spin 600ms linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .status-line {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .status-line .pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 0.7rem;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    /* Results panel */
+
+    .result-shell {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .result-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .result-meta span.strong {
+      color: var(--accent);
+    }
+
+    .result-window {
+      border-radius: 12px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      background: radial-gradient(circle at top left, #020617 0, #020617 44%);
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.9);
+      padding: 8px 10px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-height: 190px;
+    }
+
+    .result-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .result-toolbar .dots {
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .result-toolbar .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+    }
+
+    .dot.red {
+      background: #f97373;
+    }
+
+    .dot.yellow {
+      background: #facc15;
+    }
+
+    .dot.green {
+      background: #4ade80;
+    }
+
+    .result-body {
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.92);
+      padding: 8px 10px 9px;
+      max-height: 260px;
+      overflow: auto;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+        Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.78rem;
+      color: #e5e7eb;
+      border: 1px solid rgba(31, 41, 55, 0.95);
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .result-empty {
+      color: rgba(148, 163, 184, 0.7);
+      font-size: 0.78rem;
+    }
+
+    .pill-success {
+      color: #bbf7d0;
+    }
+
+    .pill-error {
+      color: #fecaca;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="title-block">
+        <h1>
+          Production Parser
+          <span class="title-pill">Contracts · Budgets · Scripts</span>
+        </h1>
+        <p class="subtitle">
+          Paste contract or budget text, select a mode, and inspect the parsed JSON output.
+        </p>
+      </div>
+      <div class="header-badge">
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          Live · Flask backend
+        </div>
+        <span>Environment: <strong>local-dev</strong></span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- LEFT: INPUT PANEL -->
+      <section class="panel" aria-label="Parser Input">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">
+              <span class="icon">📝</span>
+              <span>Source Text</span>
+            </div>
+            <div class="panel-subtitle">
+              Paste any contract, budget block, or production note for analysis.
+            </div>
+          </div>
+          <span class="badge-soft">Step 1 · Provide text</span>
+        </div>
+
+        <div class="textarea-wrap">
+          <textarea
+            id="input-text"
+            spellcheck="false"
+            placeholder="Example: Employment contract, NDA, or budget snippet with dollar amounts..."
+          ></textarea>
+        </div>
+
+        <div class="input-footer">
+          <div class="mode-group">
+            <span>Mode</span>
+            <div class="select-wrap">
+              <select id="mode-select">
+                <option value="auto">Auto Detect</option>
+                <option value="contract">Contract Focus</option>
+                <option value="budget">Budget Focus</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+            <button id="process-btn" class="primary" type="button">
+              <span>Process</span>
+            </button>
+            <div id="status-line" class="status-line">
+              <span class="pill">Ready</span>
+              <span>Waiting for input…</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: RESULTS PANEL -->
+      <section class="panel" aria-label="Parser Results">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">
+              <span class="icon">📊</span>
+              <span>Structured Output</span>
+            </div>
+            <div class="panel-subtitle">
+              JSON summary of detected money values, key phrases, and high-level classification.
+            </div>
+          </div>
+          <span class="badge-soft">Step 2 · Review results</span>
+        </div>
+
+        <div class="result-shell">
+          <div class="result-meta">
+            <span>Last run mode: <span id="meta-mode" class="strong">—</span></span>
+            <span id="meta-lines">Lines: 0</span>
+          </div>
+
+          <div class="result-window">
+            div class="result-toolbar"
+
+  <script>
+    const processBtn = document.getElementById("process-btn");
+    const inputEl = document.getElementById("input-text");
+    const modeSelect = document.getElementById("mode-select");
+    const statusLine = document.getElementById("status-line");
+    const resultEl = document.getElementById("result-json");
+    const metaMode = document.getElementById("meta-mode");
+    const metaLines = document.getElementById("meta-lines");
+
+    function setStatus(label, detail, kind = "idle") {
+      const pill = statusLine.querySelector(".pill");
+      pill.textContent = label;
+
+      pill.classList.remove("pill-success", "pill-error");
+      if (kind === "success") pill.classList.add("pill-success");
+      if (kind === "error") pill.classList.add("pill-error");
+
+      statusLine.lastChild.nodeType === Node.TEXT_NODE
+        ? (statusLine.lastChild.textContent = " " + detail)
+        : (statusLine.appendChild(document.createTextNode(" " + detail)));
+    }
+
+    function setLoading(isLoading) {
+      if (isLoading) {
+        processBtn.disabled = true;
+        if (!processBtn.querySelector(".btn-spinner")) {
+          const spinner = document.createElement("span");
+          spinner.className = "btn-spinner";
+          processBtn.insertBefore(spinner, processBtn.firstChild);
+        }
+      } else {
+        processBtn.disabled = false;
+        const spinner = processBtn.querySelector(".btn-spinner");
+        if (spinner) spinner.remove();
+      }
+    }
+
+    async function runParse() {
+      const text = inputEl.value.trim();
+      const mode = modeSelect.value;
+
+      if (!text) {
+        setStatus("No input", "Paste some text first.", "error");
+        return;
+      }
+
+      setLoading(true);
+      setStatus("Processing…", "Sending text to backend…");
+
+      try {
+        const res = await fetch("/api/parse", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ text, mode })
+        });
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok) {
+          const msg =
+            (data && (data.error || data.message)) ||
+            `HTTP ${res.status}`;
+          throw new Error(msg);
+        }
+
+        const lineCount = text.split(/\r\n|\r|\n/).length;
+
+        resultEl.classList.remove("result-empty");
+        resultEl.textContent = JSON.stringify(data, null, 2);
+
+        metaMode.textContent = mode;
+        metaLines.textContent = `Lines: ${lineCount}`;
+
+        setStatus("Done", "Parser completed successfully.", "success");
+      } catch (err) {
+        console.error(err);
+        resultEl.classList.add("result-empty");
+        resultEl.textContent =
+          "An error occurred while processing the text:\n\n" +
+          (err.message || err.toString());
+
+        setStatus("Error", err.message || "Unexpected error.", "error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    processBtn.addEventListener("click", runParse);
+
+    inputEl.addEventListener("keydown", (evt) => {
+      if (evt.key === "Enter" && (evt.metaKey || evt.ctrlKey)) {
+        evt.preventDefault();
+        runParse();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+FROM nginx:alpine
+
+# Install required packages for database connectivity and basic auth
+RUN apk add --no-cache \
+    postgresql-client \
+    nodejs \
+    npm \
+    python3 \
+    py3-pip
+
+# Create app directory
+WORKDIR /app
+
+# Copy application files
+COPY dashboard/ /usr/share/nginx/html/
+COPY auth/ /etc/nginx/auth/
+COPY nginx-db.conf /etc/nginx/nginx.conf
+
+# Install Python dependencies for API
+COPY api/ /app/api/
+RUN pip3 install -r /app/api/requirements.txt
+
+# Install Node.js dependencies for frontend
+COPY package.json ./
+RUN npm install
+
+# Create startup script
+COPY start-db.sh /start-db.sh
+RUN chmod +x /start-db.sh
+
+# Expose port
+EXPOSE 80
+
+# Start application
+CMD ["/start-db.sh"]

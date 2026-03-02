@@ -1,0 +1,273 @@
+"""
+AUTO-PATCH SCRIPT
+Automatically enhances your comparison view
+
+Run this in your project folder:
+python auto_enhance_comparison.py
+"""
+
+import os
+import re
+
+print("=" * 80)
+print("🎨 AUTO-ENHANCING COMPARISON VIEW")
+print("=" * 80)
+print()
+
+# Check if file exists
+flask_app = "web_app_COMPLETE_WITH_COMPARISON.py"
+if not os.path.exists(flask_app):
+    print(f"❌ File not found: {flask_app}")
+    print("Make sure you're in the correct directory!")
+    exit(1)
+
+print(f"✅ Found: {flask_app}")
+print()
+
+# Create backup
+backup_file = flask_app.replace(".py", "_BACKUP.py")
+print(f"📦 Creating backup: {backup_file}")
+
+with open(flask_app, 'r', encoding='utf-8') as f:
+    original_content = f.read()
+
+with open(backup_file, 'w', encoding='utf-8') as f:
+    f.write(original_content)
+
+print(f"✅ Backup saved!")
+print()
+
+# Enhanced function (the new comparison HTML generator)
+enhanced_function = '''def generate_comparison_html(comparison):
+    """Generate enhanced HTML page for comparison results with better visuals"""
+    
+    # Calculate change direction and styling
+    total_change = comparison['total_change']
+    percent_change = comparison['percent_change']
+    is_increase = total_change > 0
+    
+    change_color = '#ef4444' if is_increase else '#22c55e'  # Red or Green
+    change_icon = '📈' if is_increase else '📉'
+    change_direction = 'INCREASE' if is_increase else 'DECREASE'
+    change_bg = '#fee2e2' if is_increase else '#dcfce7'
+    
+    # Executive Summary Section
+    executive_summary = f"""
+    <div class="executive-summary fade-in">
+        <div class="summary-banner" style="background: {change_bg}; border-left: 6px solid {change_color}; padding: 40px; border-radius: 16px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 30px; margin: 30px 0;">
+            <div style="font-size: 64px; flex-shrink: 0;">{change_icon}</div>
+            <div style="flex: 1;">
+                <h2 style="margin: 0; color: {change_color}; font-size: 32px; font-weight: bold;">
+                    {abs(percent_change):.1f}% {change_direction}
+                </h2>
+                <p style="font-size: 24px; margin: 10px 0 0 0; color: #1e293b;">
+                    <strong>${abs(total_change):,.0f}</strong> {'more' if is_increase else 'less'} than previous budget
+                </p>
+                <p style="margin: 15px 0 0 0; color: #64748b; font-size: 16px;">
+                    Comparing <strong>{comparison['budget1_name']}</strong> vs <strong>{comparison['budget2_name']}</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    # Enhanced Summary Cards
+    summary_html = f"""
+    <div class="comparison-summary-grid">
+        <div class="comparison-summary-card" style="border-top: 4px solid #9333ea;">
+            <div style="color: #9333ea; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">ORIGINAL</div>
+            <h3 style="margin: 10px 0 5px 0;">{comparison['budget1_name']}</h3>
+            <div class="big-number" style="color: #9333ea;">${comparison['budget1_total']:,.0f}</div>
+            <div style="background: #f3f4f6; padding: 10px; border-radius: 8px; margin-top: 15px;">
+                <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                    <strong>{comparison['budget1_items']}</strong> line items
+                </p>
+            </div>
+        </div>
+        
+        <div class="comparison-arrow-card">
+            <div style="color: {change_color}; font-size: 64px; margin-bottom: 10px;">
+                {change_icon}
+            </div>
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <div style="color: {change_color}; font-weight: bold; font-size: 28px;">
+                    {abs(percent_change):.1f}%
+                </div>
+                <div style="color: #64748b; font-size: 14px; margin-top: 5px;">
+                    ${abs(total_change):,.0f} {change_direction.lower()}
+                </div>
+            </div>
+        </div>
+        
+        <div class="comparison-summary-card" style="border-top: 4px solid #3b82f6;">
+            <div style="color: #3b82f6; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">CURRENT</div>
+            <h3 style="margin: 10px 0 5px 0;">{comparison['budget2_name']}</h3>
+            <div class="big-number" style="color: #3b82f6;">${comparison['budget2_total']:,.0f}</div>
+            <div style="background: #f3f4f6; padding: 10px; border-radius: 8px; margin-top: 15px;">
+                <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                    <strong>{comparison['budget2_items']}</strong> line items
+                    ({comparison['budget2_items'] - comparison['budget1_items']:+d} change)
+                </p>
+            </div>
+        </div>
+    </div>
+    """
+    
+    # Enhanced Insights
+    insights_html = '<div class="section fade-in"><h2 style="font-size: 28px; margin-bottom: 20px;">💡 AI-Powered Insights</h2><div class="insights-list">'
+    
+    for i, insight in enumerate(comparison.get('insights', []), 1):
+        if 'increased' in insight.lower():
+            icon, border, bg = '🔴', '#ef4444', '#fef2f2'
+        elif 'decreased' in insight.lower():
+            icon, border, bg = '🟢', '#22c55e', '#f0fdf4'
+        elif 'warning' in insight.lower() or '⚠️' in insight:
+            icon, border, bg = '⚠️', '#f59e0b', '#fffbeb'
+        else:
+            icon, border, bg = '💡', '#3b82f6', '#eff6ff'
+        
+        insights_html += f"""
+        <div class="insight-card" style="border-left: 4px solid {border}; background: {bg};">
+            <div class="insight-icon" style="font-size: 40px;">{icon}</div>
+            <div class="insight-text" style="font-size: 16px; line-height: 1.8;">
+                <strong>Insight #{i}:</strong> {insight}
+            </div>
+        </div>
+        """
+    insights_html += '</div></div>'
+    
+    # Charts HTML
+    charts_html = generate_comparison_chart_html(comparison)
+    
+    # Enhanced Department Table
+    dept_changes = comparison.get('department_changes', {})
+    sorted_depts = sorted(dept_changes.items(), key=lambda x: abs(x[1]['difference']), reverse=True)
+    
+    dept_table = '<div class="section fade-in"><h2 style="font-size: 28px;">🏢 Department Analysis</h2><div class="table-responsive"><table class="comparison-table">'
+    dept_table += f"""
+    <thead>
+        <tr>
+            <th>Department</th>
+            <th>{comparison['budget1_name']}</th>
+            <th>{comparison['budget2_name']}</th>
+            <th>Change ($)</th>
+            <th>Change (%)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    """
+    
+    for dept, data in sorted_depts:
+        change_class = 'increase' if data['difference'] > 0 else ('decrease' if data['difference'] < 0 else 'unchanged')
+        change_icon = '🔴' if data['difference'] > 0 else ('🟢' if data['difference'] < 0 else '⚪')
+        change_badge_color = '#ef4444' if data['difference'] > 0 else ('#22c55e' if data['difference'] < 0 else '#94a3b8')
+        
+        dept_table += f"""
+        <tr class="{change_class}">
+            <td><strong style="font-size: 16px;">{dept}</strong></td>
+            <td style="font-weight: 600;">${data['budget1_amount']:,.0f}</td>
+            <td style="font-weight: 600;">${data['budget2_amount']:,.0f}</td>
+            <td><span style="font-weight: 600; color: {change_badge_color};">${abs(data['difference']):,.0f}</span></td>
+            <td><span style="display: inline-block; padding: 4px 12px; border-radius: 12px; background: {change_badge_color}; color: white; font-weight: 600; font-size: 14px;">{abs(data['percent_change']):.1f}%</span></td>
+            <td style="font-size: 20px; text-align: center;">{change_icon}</td>
+        </tr>
+        """
+    
+    dept_table += '</tbody></table></div></div>'
+    
+    # New/Removed Items (keeping simple version)
+    new_items_html = ''
+    if comparison.get('total_new_items', 0) > 0:
+        new_items_html = '<div class="section fade-in"><h2>➕ New Items</h2><div class="table-responsive"><table class="comparison-table"><thead><tr><th>Description</th><th>Department</th><th>Category</th><th>Amount</th></tr></thead><tbody>'
+        for item in comparison.get('new_items', []):
+            new_items_html += f'<tr class="new-item"><td>{item["description"]}</td><td>{item["department"]}</td><td>{item["category"]}</td><td style="font-weight:600;color:#22c55e;">${item["amount"]:,.0f}</td></tr>'
+        new_items_html += '</tbody></table></div></div>'
+    
+    removed_items_html = ''
+    if comparison.get('total_removed_items', 0) > 0:
+        removed_items_html = '<div class="section fade-in"><h2>➖ Removed Items</h2><div class="table-responsive"><table class="comparison-table"><thead><tr><th>Description</th><th>Department</th><th>Category</th><th>Amount</th></tr></thead><tbody>'
+        for item in comparison.get('removed_items', []):
+            removed_items_html += f'<tr class="removed-item"><td>{item["description"]}</td><td>{item["department"]}</td><td>{item["category"]}</td><td style="font-weight:600;color:#ef4444;">${item["amount"]:,.0f}</td></tr>'
+        removed_items_html += '</tbody></table></div></div>'
+    
+    # Complete Page
+    complete_html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Budget Comparison Results</title>
+        <link rel="stylesheet" href="/static/css/modern-styles.css">
+        <link rel="stylesheet" href="/static/css/comparison-styles.css">
+        <script src="/static/js/chart.umd.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header fade-in">
+                <h1 style="font-size: 36px;">🔄 Budget Comparison Results</h1>
+                <p style="font-size: 18px;">Detailed analysis of budget changes and trends</p>
+            </div>
+            
+            {executive_summary}
+            {summary_html}
+            {insights_html}
+            {charts_html}
+            {dept_table}
+            {new_items_html}
+            {removed_items_html}
+            
+            <div class="btn-group fade-in" style="margin: 40px 0;">
+                <a href="/budget-history" class="btn btn-primary">← Back to History</a>
+                <a href="/" class="btn btn-secondary">🏠 Dashboard</a>
+                <button onclick="window.print()" class="btn btn-warning">🖨️ Print Report</button>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return complete_html
+'''
+
+# Find and replace the function
+print("🔍 Finding old function...")
+
+# Pattern to match the entire function
+pattern = r'def generate_comparison_html\(comparison\):.*?return complete_html'
+
+if re.search(pattern, original_content, re.DOTALL):
+    print("✅ Found old function!")
+    print()
+    print("🔄 Replacing with enhanced version...")
+    
+    updated_content = re.sub(pattern, enhanced_function, original_content, flags=re.DOTALL)
+    
+    # Write updated file
+    with open(flask_app, 'w', encoding='utf-8') as f:
+        f.write(updated_content)
+    
+    print("✅ Successfully updated!")
+    print()
+    print("=" * 80)
+    print("🎉 ENHANCEMENT COMPLETE!")
+    print("=" * 80)
+    print()
+    print("Your comparison view is now MUCH better with:")
+    print("  ✅ Executive summary banner")
+    print("  ✅ Better color coding")
+    print("  ✅ Clearer metrics")
+    print("  ✅ Enhanced visuals")
+    print()
+    print("🚀 Restart your app to see the changes:")
+    print("   python web_app_COMPLETE_WITH_COMPARISON.py")
+    print()
+    print(f"📦 Backup saved as: {backup_file}")
+    print()
+    print("=" * 80)
+else:
+    print("❌ Could not find function to replace!")
+    print("Manual update may be required.")
+    print()
+    print("Your original file is unchanged.")

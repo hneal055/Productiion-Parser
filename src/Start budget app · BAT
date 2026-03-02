@@ -1,0 +1,71 @@
+@echo off
+title Budget Analysis App - Startup
+color 0A
+
+echo ===============================================================
+echo STARTING BUDGET ANALYSIS APP
+echo ===============================================================
+echo.
+
+REM Change to project directory
+cd /d C:\Users\hneal\OneDrive\Desktop\production-parser
+if errorlevel 1 (
+    echo ERROR: Project folder not found!
+    echo Please check the path in this script.
+    pause
+    exit /b 1
+)
+
+echo Found project folder
+echo.
+
+REM Check if virtual environment exists
+if not exist "venv\Scripts\activate.bat" (
+    echo ERROR: Virtual environment not found!
+    echo Creating virtual environment...
+    python -m venv venv
+    echo Virtual environment created
+    echo.
+    echo Installing packages...
+    venv\Scripts\pip install Flask==3.0.3 pandas openpyxl reportlab
+    echo Packages installed
+    echo.
+)
+
+REM Activate virtual environment
+call venv\Scripts\activate.bat
+echo Virtual environment activated
+echo.
+
+REM Run pre-flight check (optional)
+if exist "preflight_check.py" (
+    echo Running pre-flight check...
+    python preflight_check.py
+    echo.
+)
+
+REM Start Flask app
+echo ===============================================================
+echo STARTING FLASK SERVER
+echo ===============================================================
+echo.
+echo Your app will be available at: http://localhost:8080
+echo.
+echo Opening browser in 3 seconds...
+timeout /t 3 /nobreak >nul
+start http://localhost:8080
+echo.
+echo Press Ctrl+C to stop the server when done
+echo.
+echo ===============================================================
+echo.
+
+python web_app_COMPLETE_WITH_COMPARISON.py
+
+REM If Flask exits with error
+if errorlevel 1 (
+    echo.
+    echo ERROR: Flask app crashed or failed to start
+    echo Check the error messages above
+    pause
+)

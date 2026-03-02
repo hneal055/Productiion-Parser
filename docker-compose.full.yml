@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: aura-postgres
+    environment:
+      POSTGRES_DB: aura_dashboard
+      POSTGRES_USER: aura_admin
+      POSTGRES_PASSWORD: AuraDB2024!
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+      - ./database/init-schema.sql:/docker-entrypoint-initdb.d/init-schema.sql
+    networks:
+      - aura-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aura_admin -d aura_dashboard"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Backend API
+  backend:
+    image: aura-backend:latest
+    container_name: aura-backend
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=aura_dashboard
+      - DB_USER=aura_admin
+      - DB_PASSWORD=AuraDB2024!
+      - JWT_SECRET_KEY=aura-jwt-super-secret-2024
+      - SECRET_KEY=aura-flask-secret-2024
+      - FLASK_CONFIG=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - aura-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # Frontend (Updated to use backend API)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: aura-frontend
+    ports:
+      - "8080:80"
+    environment:
+      - API_BASE_URL=http://backend:5000/api/v1
+    depends_on:
+      - backend
+    networks:
+      - aura-network
+    restart: unless-stopped
+
+networks:
+  aura-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    driver: local

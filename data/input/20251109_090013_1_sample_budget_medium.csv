@@ -1,0 +1,51 @@
+Description,Department,Category,Vendor,Amount
+Design Tools expense - Creative,Creative,Design Tools,ABC Equipment Co,6900
+Design Tools expense - Creative,Creative,Design Tools,Digital Marketing Pro,5000
+Freelancers expense - Creative,Creative,Freelancers,Innovate Tech,4600
+Freelancers expense - Creative,Creative,Freelancers,Innovate Tech,2000
+Studio Rental expense - Creative,Creative,Studio Rental,Global Services LLC,2000
+Studio Rental expense - Creative,Creative,Studio Rental,Prime Logistics,340
+Auditing expense - Finance,Finance,Auditing,Modern Office Supply,9100
+Auditing expense - Finance,Finance,Auditing,Professional Services,8600
+Auditing expense - Finance,Finance,Auditing,Talent Agency Plus,8500
+Auditing expense - Finance,Finance,Auditing,Talent Agency Plus,7500
+Banking Fees expense - Finance,Finance,Banking Fees,ABC Equipment Co,6700
+Legal expense - Finance,Finance,Legal,Quality Catering,5100
+Auditing expense - Finance,Finance,Auditing,Design Hub,3900
+Auditing expense - Finance,Finance,Auditing,Talent Agency Plus,3200
+Legal expense - Finance,Finance,Legal,XYZ Productions,2800
+Legal expense - Finance,Finance,Legal,Cloud Systems,1900
+Auditing expense - Finance,Finance,Auditing,Tech Solutions Inc,1500
+Contractor payment - Human Resources,Human Resources,Salaries,Talent Agency Plus,5900
+Training expense - Human Resources,Human Resources,Training,Cloud Systems,4700
+Training expense - Human Resources,Human Resources,Training,Professional Services,3700
+Training expense - Human Resources,Human Resources,Training,Quality Catering,850
+Billboard rental - Marketing,Marketing,Advertising,Tech Solutions Inc,14300
+Social Media expense - Marketing,Marketing,Social Media,Prime Logistics,10000
+Content Creation expense - Marketing,Marketing,Content Creation,Innovate Tech,6600
+Content Creation expense - Marketing,Marketing,Content Creation,Modern Office Supply,4200
+Social Media expense - Marketing,Marketing,Social Media,Creative Studios,3400
+Facebook ads - Marketing,Marketing,Advertising,XYZ Productions,3400
+Events expense - Marketing,Marketing,Events,Design Hub,2000
+Social Media expense - Marketing,Marketing,Social Media,Quality Catering,840
+Events expense - Marketing,Marketing,Events,Elite Consulting,410
+Maintenance expense - Operations,Operations,Maintenance,Media Experts,8700
+Maintenance expense - Operations,Operations,Maintenance,Innovate Tech,6300
+Maintenance expense - Operations,Operations,Maintenance,XYZ Productions,2400
+Insurance expense - Operations,Operations,Insurance,Professional Services,1300
+Conference room equipment - Operations,Operations,Office Supplies,Design Hub,360
+Catering expense - Production,Production,Catering,Premier Rentals,7800
+Transportation expense - Production,Production,Transportation,Design Hub,6700
+Audio equipment - Production,Production,Equipment,Modern Office Supply,3700
+Transportation expense - Production,Production,Transportation,Cloud Systems,2400
+Transportation expense - Production,Production,Transportation,Premier Rentals,890
+Catering expense - Production,Production,Catering,Design Hub,150
+Commission expense - Sales,Sales,Commission,ABC Equipment Co,9000
+CRM Software expense - Sales,Sales,CRM Software,Tech Solutions Inc,8800
+Hotel accommodation - Sales,Sales,Travel,Talent Agency Plus,2100
+Car rental - Sales,Sales,Travel,Innovate Tech,2100
+Flight tickets - Sales,Sales,Travel,Elite Consulting,1900
+Hardware expense - Technology,Technology,Hardware,Media Experts,9800
+Cloud Services expense - Technology,Technology,Cloud Services,Modern Office Supply,2200
+Cloud Services expense - Technology,Technology,Cloud Services,Metro Supplies,2000
+Salesforce - Technology,Technology,Software Licenses,Digital Marketing Pro,420

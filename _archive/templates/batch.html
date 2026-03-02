@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div x-data="batchProcessor()">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Batch Screenplay Analysis</h1>
+        <p class="text-gray-600">Process multiple screenplays simultaneously with Scene Reader Studio Technologies</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Upload Multiple Screenplays</h2>
+        
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+            <i class="fas fa-layer-group text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-600 mb-4">Upload multiple screenplay files for batch processing</p>
+            <input type="file" multiple @change="handleBatchUpload" accept=".txt,.fountain" 
+                   class="hidden" id="batchFileInput">
+            <button @click="document.getElementById('batchFileInput').click()" 
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition duration-200 font-bold">
+                <i class="fas fa-folder-open mr-2"></i>Choose Files
+            </button>
+            <p class="text-xs text-gray-500 mt-4" x-text="batchStatus"></p>
+        </div>
+
+        <!-- File List -->
+        <div x-show="screenplays.length > 0" class="mt-6">
+            <h3 class="font-semibold text-gray-800 mb-3">Selected Files</h3>
+            <div class="space-y-2">
+                <template x-for="(screenplay, index) in screenplays" :key="index">
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <span x-text="screenplay.filename"></span>
+                        <button @click="removeScreenplay(index)" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </template>
+            </div>
+            
+            <button @click="processBatch" 
+                    :disabled="screenplays.length === 0 || processing"
+                    :class="screenplays.length === 0 || processing ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'"
+                    class="w-full mt-4 text-white py-3 px-4 rounded-lg transition duration-200 font-bold">
+                <i class="fas fa-play mr-2"></i>
+                <span x-text="processing ? 'Processing...' : ('Process ' + screenplays.length + ' Screenplays')"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div x-show="results.length > 0" class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Batch Results</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div class="bg-blue-50 rounded-lg p-4 text-center">
+                <p class="text-2xl font-bold text-blue-600" x-text="results.length"></p>
+                <p class="text-blue-700">Total Processed</p>
+            </div>
+            <div class="bg-green-50 rounded-lg p-4 text-center">
+                <p class="text-2xl font-bold text-green-600" x-text="getAdvanceCount()"></p>
+                <p class="text-green-700">Ready to Advance</p>
+            </div>
+            <div class="bg-orange-50 rounded-lg p-4 text-center">
+                <p class="text-2xl font-bold text-orange-600" x-text="getAverageScore()"></p>
+                <p class="text-orange-700">Average Score</p>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <template x-for="(result, index) in results" :key="index">
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-gray-800" x-text="result.assessment_id"></h4>
+                        <span class="px-3 py-1 rounded-full text-white font-bold text-sm"
+                              :class="getScoreClass(result.quick_verdict.commercial_score)"
+                              x-text="result.quick_verdict.commercial_score + '/100'">
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-600" x-text="result.quick_verdict.recommendation"></p>
+                    <p class="text-xs text-gray-500 mt-1" x-text="'Genre: ' + result.technical_metrics.document_metrics.primary_genre"></p>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+
+<script>
+function batchProcessor() {
+    return {
+        screenplays: [],
+        results: [],
+        processing: false,
+        batchStatus: 'Select multiple .txt or .fountain files',
+        
+        async handleBatchUpload(event) {
+            const files = Array.from(event.target.files);
+            
+            for (const file of files) {
+                if (file.type === 'text/plain' || file.name.toLowerCase().endsWith('.fountain')) {
+                    const content = await this.readFile(file);
+                    this.screenplays.push({
+                        filename: file.name,
+                        content: content,
+                        writer_info: { name: 'Batch Upload', experience: 'unknown' }
+                    });
+                }
+            }
+            
+            this.batchStatus = `Loaded ${files.length} file(s)`;
+        },
+        
+        readFile(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsText(file);
+            });
+        },
+        
+        removeScreenplay(index) {
+            this.screenplays.splice(index, 1);
+        },
+        
+        async processBatch() {
+            if (this.screenplays.length === 0) return;
+            
+            this.processing = true;
+            this.results = [];
+            
+            try {
+                const response = await fetch('/api/batch/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        screenplays: this.screenplays
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.results = data.results;
+                } else {
+                    alert('Batch processing failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Batch processing failed: ' + error.message);
+            } finally {
+                this.processing = false;
+            }
+        },
+        
+        getAdvanceCount() {
+            return this.results.filter(r => r.quick_verdict.commercial_score >= 85).length;
+        },
+        
+        getAverageScore() {
+            if (this.results.length === 0) return '0';
+            const total = this.results.reduce((sum, r) => sum + r.quick_verdict.commercial_score, 0);
+            return (total / this.results.length).toFixed(1);
+        },
+        
+        getScoreClass(score) {
+            if (score >= 85) return 'bg-gradient-to-r from-green-500 to-green-600';
+            if (score >= 70) return 'bg-gradient-to-r from-blue-500 to-blue-600';
+            if (score >= 50) return 'bg-gradient-to-r from-yellow-500 to-yellow-600';
+            return 'bg-gradient-to-r from-red-500 to-red-600';
+        }
+    }
+}
+</script>
+{% endblock %}

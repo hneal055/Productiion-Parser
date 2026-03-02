@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Analysis Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 Contract Analysis Results</h1>
+            <a href="/" class="back-link">← Analyze Another Contract</a>
+        </header>
+
+        <main id="resultsContainer">
+            <!-- Results will be inserted here by JavaScript -->
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Contract Review Tool. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        console.log('Results page loaded');
+        
+        // Get results from sessionStorage
+        const resultsData = sessionStorage.getItem('analysisResults');
+        console.log('Raw sessionStorage data:', resultsData);
+        
+        if (!resultsData) {
+            console.log('No results data found, redirecting to home');
+            window.location.href = '/';
+        } else {
+            try {
+                const results = JSON.parse(resultsData);
+                console.log('Parsed results:', results);
+                displayResults(results);
+            } catch (e) {
+                console.error('Error parsing results:', e);
+                document.getElementById('resultsContainer').innerHTML = `
+                    <div class="error-message">
+                        <p>Error displaying results: ${e.message}</p>
+                        <p>Please try analyzing the contract again.</p>
+                        <a href="/" class="btn-primary">Back to Upload</a>
+                    </div>
+                `;
+            }
+        }
+
+        function cleanText(text) {
+            if (!text) return '';
+            return text
+                .replace(/\*\*/g, '')           // Remove bold markers
+                .replace(/\\"/g, '"')           // Unescape quotes
+                .replace(/\\n/g, '<br>')        // Convert newlines to breaks
+                .trim();
+        }
+
+        function displayResults(data) {
+            console.log('Displaying results for:', data.filename);
+            
+            const container = document.getElementById('resultsContainer');
+            
+            // Determine fairness
+            let fairnessClass = 'neutral';
+            let fairnessText = 'NEUTRAL';
+            
+            if (data.fairness) {
+                if (data.fairness.includes('UNFAVORABLE')) {
+                    fairnessClass = 'unfavorable';
+                    fairnessText = 'UNFAVORABLE';
+                } else if (data.fairness.includes('FAVORABLE') && !data.fairness.includes('UNFAVORABLE')) {
+                    fairnessClass = 'favorable';
+                    fairnessText = 'FAVORABLE';
+                }
+            }
+            
+            let html = `
+                <div class="results-header">
+                    <h2>${data.filename || 'Contract Analysis'}</h2>
+                    <p class="timestamp">Analyzed on ${data.analyzed_at || new Date().toLocaleString()}</p>
+                </div>
+
+                <div class="fairness-badge ${fairnessClass}">
+                    <h3>Overall Assessment: ${fairnessText}</h3>
+                </div>
+            `;
+
+            // Key Terms Section
+            html += '<section class="results-section"><h3>📋 Key Terms</h3><div class="terms-list">';
+            
+            if (data.key_terms && Array.isArray(data.key_terms) && data.key_terms.length > 0) {
+                console.log('Found', data.key_terms.length, 'key terms');
+                data.key_terms.forEach((term, index) => {
+                    const cleaned = cleanText(term);
+                    if (cleaned && cleaned.length > 5) {
+                        html += `<div class="term-item"><p>${cleaned}</p></div>`;
+                    }
+                });
+            } else {
+                html += '<p>No key terms identified.</p>';
+            }
+            
+            html += '</div></section>';
+
+            // Risks Section
+            html += '<section class="results-section"><h3>⚠️ Risk Analysis</h3><div class="risks-list">';
+            
+            if (data.risks && Array.isArray(data.risks) && data.risks.length > 0) {
+                console.log('Found', data.risks.length, 'risks');
+                data.risks.forEach((risk, index) => {
+                    const cleaned = cleanText(risk);
+                    if (cleaned && cleaned.length > 5) {
+                        let riskLevel = 'medium';
+                        let badge = 'RISK';
+                        
+                        const upperRisk = cleaned.toUpperCase();
+                        if (upperRisk.includes('HIGH RISK')) {
+                            riskLevel = 'high';
+                            badge = 'HIGH';
+                        } else if (upperRisk.includes('MEDIUM RISK')) {
+                            riskLevel = 'medium';
+                            badge = 'MEDIUM';
+                        } else if (upperRisk.includes('LOW RISK')) {
+                            riskLevel = 'low';
+                            badge = 'LOW';
+                        }
+                        
+                        html += `
+                            <div class="risk-item ${riskLevel}">
+                                <div class="risk-badge">${badge}</div>
+                                <p>${cleaned}</p>
+                            </div>
+                        `;
+                    }
+                });
+            } else {
+                html += '<p>No significant risks identified.</p>';
+            }
+            
+            html += '</div></section>';
+
+            // Negotiation Points Section
+            html += '<section class="results-section"><h3>💡 Negotiation Points</h3><div class="negotiation-list">';
+            
+            if (data.negotiation_points && Array.isArray(data.negotiation_points) && data.negotiation_points.length > 0) {
+                console.log('Found', data.negotiation_points.length, 'negotiation points');
+                data.negotiation_points.forEach((point, index) => {
+                    const cleaned = cleanText(point);
+                    if (cleaned && cleaned.length > 5) {
+                        html += `<div class="negotiation-item"><p>${cleaned}</p></div>`;
+                    }
+                });
+            } else {
+                html += '<p>No specific negotiation points identified.</p>';
+            }
+            
+            html += '</div></section>';
+
+            // Full Analysis (Collapsible)
+            if (data.raw_response) {
+                const cleanedResponse = cleanText(data.raw_response);
+                html += `
+                    <section class="results-section">
+                        <h3>📄 Full Analysis</h3>
+                        <details>
+                            <summary style="cursor: pointer; padding: 10px; background: #f0f4ff; border-radius: 5px; margin-bottom: 10px;">
+                                Click to view complete analysis
+                            </summary>
+                            <div class="full-analysis">
+                                <pre style="white-space: pre-wrap; line-height: 1.8;">${cleanedResponse}</pre>
+                            </div>
+                        </details>
+                    </section>
+                `;
+            }
+
+            // Action Buttons
+            html += `
+                <div class="action-buttons">
+                    <button onclick="window.print()" class="btn-secondary">
+                        <span class="btn-icon">🖨️</span>
+                        Print Report
+                    </button>
+                    <button onclick="copyToClipboard()" class="btn-secondary">
+                        <span class="btn-icon">📋</span>
+                        Copy to Clipboard
+                    </button>
+                    <a href="/" class="btn-primary">
+                        <span class="btn-icon">📄</span>
+                        Analyze Another Contract
+                    </a>
+                </div>
+            `;
+
+            container.innerHTML = html;
+            console.log('Results displayed successfully');
+        }
+
+        function copyToClipboard() {
+            const resultsData = sessionStorage.getItem('analysisResults');
+            if (resultsData) {
+                const results = JSON.parse(resultsData);
+                const text = results.raw_response || JSON.stringify(results, null, 2);
+                
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Analysis copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                    alert('Failed to copy to clipboard');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

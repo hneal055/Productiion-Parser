@@ -1,0 +1,61 @@
+Description,Department,Category,Vendor,Amount
+Design Tools expense - Creative,Creative,Design Tools,Professional Services,7500
+Studio Rental expense - Creative,Creative,Studio Rental,Creative Studios,6700
+Design Tools expense - Creative,Creative,Design Tools,XYZ Productions,5600
+Stock Media expense - Creative,Creative,Stock Media,Global Services LLC,5200
+Freelancers expense - Creative,Creative,Freelancers,XYZ Productions,5000
+Design Tools expense - Creative,Creative,Design Tools,ABC Equipment Co,4900
+Studio Rental expense - Creative,Creative,Studio Rental,Tech Solutions Inc,4000
+Design Tools expense - Creative,Creative,Design Tools,Modern Office Supply,550
+Accounting expense - Finance,Finance,Accounting,Talent Agency Plus,7800
+Legal expense - Finance,Finance,Legal,Professional Services,5700
+Auditing expense - Finance,Finance,Auditing,ABC Equipment Co,4200
+Banking Fees expense - Finance,Finance,Banking Fees,Digital Marketing Pro,3800
+Banking Fees expense - Finance,Finance,Banking Fees,Talent Agency Plus,3200
+Accounting expense - Finance,Finance,Accounting,Quality Catering,2200
+Monthly payroll - Human Resources,Human Resources,Salaries,Prime Logistics,122900
+Executive compensation - Human Resources,Human Resources,Salaries,Cloud Systems,72200
+Recruitment expense - Human Resources,Human Resources,Recruitment,Cloud Systems,6600
+Training expense - Human Resources,Human Resources,Training,Professional Services,5700
+Recruitment expense - Human Resources,Human Resources,Recruitment,Creative Studios,5200
+Benefits expense - Human Resources,Human Resources,Benefits,Premier Rentals,4300
+Benefits expense - Human Resources,Human Resources,Benefits,Digital Marketing Pro,4000
+Recruitment expense - Human Resources,Human Resources,Recruitment,Creative Studios,3800
+Training expense - Human Resources,Human Resources,Training,Design Hub,3300
+TV commercial - Marketing,Marketing,Advertising,Global Services LLC,12700
+Social Media expense - Marketing,Marketing,Social Media,ABC Equipment Co,9800
+Social Media expense - Marketing,Marketing,Social Media,Digital Marketing Pro,5900
+PR expense - Marketing,Marketing,PR,Metro Supplies,5600
+Content Creation expense - Marketing,Marketing,Content Creation,XYZ Productions,5500
+Events expense - Marketing,Marketing,Events,XYZ Productions,3500
+Billboard rental - Marketing,Marketing,Advertising,ABC Equipment Co,1100
+Insurance expense - Operations,Operations,Insurance,Innovate Tech,7200
+Maintenance expense - Operations,Operations,Maintenance,Design Hub,5300
+Maintenance expense - Operations,Operations,Maintenance,Modern Office Supply,4800
+Rent expense - Operations,Operations,Rent,Digital Marketing Pro,3000
+Printer paper - Operations,Operations,Office Supplies,Elite Consulting,1700
+Desk supplies - Operations,Operations,Office Supplies,Elite Consulting,1600
+Printer paper - Operations,Operations,Office Supplies,Premier Rentals,1600
+Maintenance expense - Operations,Operations,Maintenance,Tech Solutions Inc,1300
+Printer paper - Operations,Operations,Office Supplies,Elite Consulting,130
+Insurance expense - Operations,Operations,Insurance,Media Experts,130
+Consultant fees - Production,Production,Talent,Cloud Systems,46800
+Director services - Production,Production,Talent,Metro Supplies,27800
+Permit fees - Production,Production,Location,Quality Catering,24900
+Consultant fees - Production,Production,Talent,Talent Agency Plus,15200
+Audio equipment - Production,Production,Equipment,Prime Logistics,14300
+Audio equipment - Production,Production,Equipment,Professional Services,8500
+Catering expense - Production,Production,Catering,Prime Logistics,7500
+Props expense - Production,Production,Props,Metro Supplies,4200
+Transportation expense - Production,Production,Transportation,Cloud Systems,480
+CRM Software expense - Sales,Sales,CRM Software,Premier Rentals,6600
+CRM Software expense - Sales,Sales,CRM Software,Innovate Tech,5300
+Client Entertainment expense - Sales,Sales,Client Entertainment,Talent Agency Plus,5000
+Hardware expense - Technology,Technology,Hardware,Prime Logistics,9100
+Hardware expense - Technology,Technology,Hardware,Modern Office Supply,7500
+Cloud Services expense - Technology,Technology,Cloud Services,Premier Rentals,5500
+Slack Premium - Technology,Technology,Software Licenses,Digital Marketing Pro,4300
+Slack Premium - Technology,Technology,Software Licenses,Elite Consulting,4200
+Hardware expense - Technology,Technology,Hardware,Premier Rentals,2500
+Salesforce - Technology,Technology,Software Licenses,XYZ Productions,1200
+Salesforce - Technology,Technology,Software Licenses,Creative Studios,110

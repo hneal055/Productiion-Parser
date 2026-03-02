@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Review Tool - AI-Powered Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 Contract Review Tool</h1>
+            <p class="subtitle">AI-powered contract analysis in 2 minutes</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <h2>Upload Your Contract</h2>
+                <p>Upload any business contract for instant AI analysis</p>
+                
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="file-input-wrapper">
+                        <label for="contractFile" class="file-label">
+                            <span class="file-icon">📁</span>
+                            <span class="file-text">Choose File (PDF, DOCX, or TXT)</span>
+                        </label>
+                        <input type="file" id="contractFile" name="contract" accept=".pdf,.docx,.doc,.txt" required>
+                    </div>
+                    
+                    <div id="fileName" class="file-name"></div>
+                    
+                    <button type="submit" class="btn-primary" id="analyzeBtn">
+                        <span class="btn-icon">🔍</span>
+                        Analyze Contract
+                    </button>
+                </form>
+
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing your contract...</p>
+                    <p class="loading-subtext">This usually takes 60-90 seconds</p>
+                </div>
+
+                <div id="error" class="error-message" style="display: none;"></div>
+            </div>
+
+            <div class="features">
+                <h3>What You'll Get:</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <span class="feature-icon">📋</span>
+                        <h4>Key Terms</h4>
+                        <p>All important terms explained in plain English</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">⚠️</span>
+                        <h4>Risk Analysis</h4>
+                        <p>Identify problematic clauses before you sign</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">💡</span>
+                        <h4>Negotiation Points</h4>
+                        <p>Specific suggestions for what to negotiate</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">✅</span>
+                        <h4>Fairness Rating</h4>
+                        <p>Overall assessment of contract terms</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>How It Works</h3>
+                <ol class="steps">
+                    <li><strong>Upload</strong> your contract (PDF, Word, or text file)</li>
+                    <li><strong>AI Analysis</strong> - Our AI reads and analyzes every clause</li>
+                    <li><strong>Get Results</strong> - Receive detailed insights in 2 minutes</li>
+                </ol>
+            </div>
+
+            <div class="security-note">
+                <p>🔒 <strong>Your privacy matters:</strong> Files are processed and immediately deleted. We never store your contracts.</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Contract Review Tool. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('contractFile');
+        const fileName = document.getElementById('fileName');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+
+        // Show selected file name
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                fileName.textContent = `Selected: ${this.files[0].name}`;
+                fileName.style.display = 'block';
+                error.style.display = 'none';
+            }
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const file = fileInput.files[0];
+            if (!file) {
+                showError('Please select a file');
+                return;
+            }
+
+            // Show loading state
+            loading.style.display = 'block';
+            analyzeBtn.disabled = true;
+            error.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('contract', file);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Analysis failed');
+                }
+
+                // Store results in sessionStorage and redirect
+                sessionStorage.setItem('analysisResults', JSON.stringify(data));
+                window.location.href = '/results';
+
+            } catch (err) {
+                showError(err.message);
+                loading.style.display = 'none';
+                analyzeBtn.disabled = false;
+            }
+        });
+
+        function showError(message) {
+            error.textContent = `Error: ${message}`;
+            error.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

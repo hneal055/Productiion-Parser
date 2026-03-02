@@ -1,0 +1,8 @@
+flask
+pandas
+openpyxl
+numpy
+matplotlib
+reportlab
+flask-sqlalchemy
+SQLAlchemy

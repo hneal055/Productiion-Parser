@@ -1,0 +1,73 @@
+# Budget Analysis App - Startup Script
+# PowerShell Version
+
+Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "🚀 STARTING BUDGET ANALYSIS APP" -ForegroundColor Green
+Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host ""
+
+# Change to project directory
+$ProjectPath = "C:\Users\hneal\OneDrive\Desktop\production-parser"
+Set-Location $ProjectPath
+
+if (-not (Test-Path $ProjectPath)) {
+    Write-Host "❌ ERROR: Project folder not found!" -ForegroundColor Red
+    Write-Host "Please check the path in this script." -ForegroundColor Yellow
+    Read-Host "Press Enter to exit"
+    exit 1
+}
+
+Write-Host "✅ Found project folder" -ForegroundColor Green
+Write-Host ""
+
+# Check if virtual environment exists
+if (-not (Test-Path "venv\Scripts\Activate.ps1")) {
+    Write-Host "❌ Virtual environment not found!" -ForegroundColor Yellow
+    Write-Host "Creating virtual environment..." -ForegroundColor Yellow
+    python -m venv venv
+    Write-Host "✅ Virtual environment created" -ForegroundColor Green
+    Write-Host ""
+    
+    Write-Host "Installing packages..." -ForegroundColor Yellow
+    & venv\Scripts\pip install Flask==3.0.3 pandas openpyxl reportlab
+    Write-Host "✅ Packages installed" -ForegroundColor Green
+    Write-Host ""
+}
+
+# Activate virtual environment
+& venv\Scripts\Activate.ps1
+Write-Host "✅ Virtual environment activated" -ForegroundColor Green
+Write-Host ""
+
+# Run pre-flight check (optional)
+if (Test-Path "preflight_check.py") {
+    Write-Host "Running pre-flight check..." -ForegroundColor Yellow
+    python preflight_check.py
+    Write-Host ""
+}
+
+# Start Flask app
+Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "🎯 STARTING FLASK SERVER" -ForegroundColor Green
+Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "📊 Your app will be available at: http://localhost:8080" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "💡 Opening browser in 3 seconds..." -ForegroundColor Yellow
+Start-Sleep -Seconds 3
+Start-Process "http://localhost:8080"
+Write-Host ""
+Write-Host "⚠️  Press Ctrl+C to stop the server when done" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host ""
+
+python web_app_COMPLETE_WITH_COMPARISON.py
+
+# If Flask exits with error
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ""
+    Write-Host "❌ ERROR: Flask app crashed or failed to start" -ForegroundColor Red
+    Write-Host "Check the error messages above" -ForegroundColor Yellow
+    Read-Host "Press Enter to exit"
+}
