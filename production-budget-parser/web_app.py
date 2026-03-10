@@ -978,4 +978,4 @@ if __name__ == '__main__':
     
     # Use port 8080 to avoid common Windows socket permission errors
     # Port 5000 is often blocked by Windows services or Hyper-V
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    app.run(debug=True, host='0.0.0.0', port=8082)

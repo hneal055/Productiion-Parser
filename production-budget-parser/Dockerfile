@@ -25,9 +25,9 @@ RUN mkdir -p uploads outputs instance
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-EXPOSE 8080
+EXPOSE 8082
 
 # ANTHROPIC_API_KEY, SECRET_KEY, and BUDGET_API_KEY must be passed at runtime
 ENV FLASK_ENV=production
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--timeout", "120", "web_app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8082", "--workers", "2", "--timeout", "120", "web_app:app"]

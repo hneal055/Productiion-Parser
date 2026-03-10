@@ -50,11 +50,11 @@ echo.
 echo [92mStarting Flask server...[0m
 echo.
 echo Server will be available at:
-echo   * Local:   http://localhost:8080
-echo   * Network: http://%COMPUTERNAME%:8080
+echo   * Local:   http://localhost:8082
+echo   * Network: http://%COMPUTERNAME%:8082
 echo.
 echo AI Insights API ^(requires X-API-Key header^):
-echo   POST http://localhost:8080/api/ai-insights/^<file_id^>
+echo   POST http://localhost:8082/api/ai-insights/^<file_id^>
 echo   Header: X-API-Key: ^<BUDGET_API_KEY from .env^>
 echo.
 echo Press CTRL+C to stop the server
