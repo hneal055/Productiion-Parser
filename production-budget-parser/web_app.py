@@ -971,8 +971,7 @@ if __name__ == '__main__':
     print("  * PDF report generation")
     print("  * Risk assessment & recommendations")
     print("  * Budget comparison tool")
-    print("\n>> Starting server at: http://localhost:8080")
-    print("** Port 8080 is used to avoid Windows socket permission issues")
+    print("\n>> Starting server at: http://localhost:8082")
     print("=" * 80)
     print()
     
