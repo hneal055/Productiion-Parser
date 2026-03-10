@@ -13,6 +13,9 @@ import json
 import uuid
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Import database
 from database_models import db, BudgetAnalysis, BudgetLineItem, BudgetComparison, get_recent_analyses
@@ -30,7 +33,10 @@ from comparison_charts import generate_comparison_chart_html
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-in-production'
+_secret_key = os.environ.get('SECRET_KEY')
+if not _secret_key:
+    raise RuntimeError('SECRET_KEY is not set. Add it to your .env file.')
+app.secret_key = _secret_key
 
 # Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///budget_analysis.db'

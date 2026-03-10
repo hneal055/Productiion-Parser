@@ -1,0 +1,494 @@
+═══════════════════════════════════════════════════════════════════════
+🚀 DEPLOYMENT GUIDE: PYTHONANYWHERE
+═══════════════════════════════════════════════════════════════════════
+Get your Contract Review Tool live on the internet in 30 minutes!
+
+═══════════════════════════════════════════════════════════════════════
+📋 WHAT YOU'LL NEED
+═══════════════════════════════════════════════════════════════════════
+
+✓ Your app files (already created!)
+✓ Anthropic API key
+✓ PythonAnywhere account (free or paid)
+✓ 30-60 minutes of focused time
+
+═══════════════════════════════════════════════════════════════════════
+🎯 OPTION 1: FREE TIER (For testing & demos)
+═══════════════════════════════════════════════════════════════════════
+
+Pros:
+   ✓ Completely free
+   ✓ Gets you online TODAY
+   ✓ Perfect for demos and initial customers
+   ✓ HTTPS included
+   ✓ Easy setup
+
+Cons:
+   ✗ Limited outbound connections (API calls might be slow)
+   ✗ App sleeps after 3 months of inactivity
+   ✗ Domain: yourusername.pythonanywhere.com (not custom)
+   ✗ Limited CPU/memory (good for 50-100 users/day)
+
+Recommendation: Start here, upgrade when you get 10 paying customers.
+
+═══════════════════════════════════════════════════════════════════════
+💰 OPTION 2: HACKER PLAN ($5/month) (For real business)
+═══════════════════════════════════════════════════════════════════════
+
+Pros:
+   ✓ Full outbound connections (faster API calls)
+   ✓ Custom domain support (yourproduct.com)
+   ✓ More CPU/memory (handles 500+ users/day)
+   ✓ Better uptime
+   ✓ No sleep mode
+
+Cons:
+   ✗ Costs $5/month
+
+Recommendation: Upgrade to this once you have 5+ paying customers.
+
+═══════════════════════════════════════════════════════════════════════
+📝 STEP-BY-STEP DEPLOYMENT (FREE TIER)
+═══════════════════════════════════════════════════════════════════════
+
+STEP 1: CREATE PYTHONANYWHERE ACCOUNT (5 minutes)
+──────────────────────────────────────────────────
+
+1. Go to: https://www.pythonanywhere.com
+2. Click "Start running Python online in less than a minute!"
+3. Click "Create a Beginner account" (FREE)
+4. Fill in:
+   • Username: [choose something professional, like firstnamelastname]
+   • Email: [your email]
+   • Password: [strong password]
+5. Verify email
+6. Log in
+
+Your URL will be: [username].pythonanywhere.com
+
+Example: johnsmith.pythonanywhere.com
+
+
+STEP 2: UPLOAD YOUR FILES (10 minutes)
+──────────────────────────────────────
+
+Option A: Upload via Web Interface (Easiest)
+─────────────────────────────────────────────
+
+1. Click "Files" tab in dashboard
+2. Navigate to: /home/[username]/
+3. Create new directory: "contract-review-app"
+4. Click into that directory
+5. Upload files one by one:
+   • app.py
+   • templates/index.html
+   • templates/results.html
+   • templates/history.html
+   • static/style.css
+   • requirements.txt
+   • utils.py (if you have it)
+
+OR
+
+Option B: Upload via Git (More professional)
+─────────────────────────────────────────────
+
+1. Click "Consoles" tab
+2. Start a new "Bash" console
+3. Run these commands:
+
+$ cd ~
+$ git clone https://github.com/yourusername/contract-review-app.git
+
+(Replace with your actual GitHub repo URL)
+
+4. Your files are now in: /home/[username]/contract-review-app/
+
+
+STEP 3: INSTALL DEPENDENCIES (5 minutes)
+────────────────────────────────────────
+
+1. In the Bash console, navigate to your app:
+   $ cd ~/contract-review-app
+
+2. Create a virtual environment:
+   $ mkvirtualenv contract-env --python=python3.10
+
+3. Install requirements:
+   $ pip install -r requirements.txt
+
+4. Verify installation:
+   $ pip list
+
+You should see:
+   • Flask
+   • anthropic
+   • pypdf
+   • python-docx
+   • Werkzeug
+
+
+STEP 4: SET UP WEB APP (10 minutes)
+───────────────────────────────────
+
+1. Go back to dashboard, click "Web" tab
+2. Click "Add a new web app"
+3. Click "Next" (accept the domain name)
+4. Choose "Flask"
+5. Choose Python 3.10
+6. Click "Next"
+7. For path, enter: /home/[username]/contract-review-app/app.py
+8. Click "Next"
+
+Your web app is created!
+
+
+STEP 5: CONFIGURE WSGI FILE (5 minutes)
+───────────────────────────────────────
+
+1. In the "Web" tab, find "Code" section
+2. Click on the WSGI configuration file link (should be blue)
+   Example: /var/www/username_pythonanywhere_com_wsgi.py
+
+3. Delete ALL existing code in that file
+
+4. Replace with this code:
+
+─────────────────────────────────────────────────────────
+import sys
+
+# Add your project directory to the sys.path
+project_home = '/home/[USERNAME]/contract-review-app'
+if project_home not in sys.path:
+    sys.path = [project_home] + sys.path
+
+# Import your Flask app
+from app import app as application
+─────────────────────────────────────────────────────────
+
+IMPORTANT: Replace [USERNAME] with your actual PythonAnywhere username!
+
+5. Click "Save" (top right)
+
+
+STEP 6: SET ENVIRONMENT VARIABLES (3 minutes)
+─────────────────────────────────────────────
+
+1. Still in "Web" tab, scroll down to "Environment variables"
+2. Click "Start new env variable"
+3. Add your API key:
+   Name: ANTHROPIC_API_KEY
+   Value: [your actual API key from Anthropic]
+4. Click "✓" to save
+
+IMPORTANT: Never share your API key or commit it to GitHub!
+
+
+STEP 7: SET VIRTUALENV (2 minutes)
+──────────────────────────────────
+
+1. In "Web" tab, find "Virtualenv" section
+2. Enter path to your virtual environment:
+   /home/[username]/.virtualenvs/contract-env
+3. It should turn green if path is correct
+
+
+STEP 8: RELOAD & TEST (2 minutes)
+─────────────────────────────────
+
+1. At the top of "Web" tab, click the big green "Reload" button
+2. Wait 10 seconds
+3. Click on your app URL: [username].pythonanywhere.com
+4. Your app should load! 🎉
+
+If you see errors, go to "Log files" section and check:
+   • Error log
+   • Server log
+
+
+═══════════════════════════════════════════════════════════════════════
+🔧 TROUBLESHOOTING COMMON ISSUES
+═══════════════════════════════════════════════════════════════════════
+
+ISSUE: "502 Bad Gateway" error
+SOLUTION:
+   1. Check WSGI file for typos (username must match exactly)
+   2. Verify virtualenv path is correct
+   3. Check error log for Python errors
+   4. Make sure app.py has: if __name__ == "__main__": removed
+      (WSGI doesn't need it)
+
+ISSUE: "ModuleNotFoundError: No module named 'flask'"
+SOLUTION:
+   1. Virtualenv not configured correctly
+   2. Go to Web tab → Virtualenv section
+   3. Verify path: /home/[username]/.virtualenvs/contract-env
+   4. Reload the app
+
+ISSUE: "No such file or directory: 'app.py'"
+SOLUTION:
+   1. Check file path in WSGI file
+   2. Should be: /home/[username]/contract-review-app/app.py
+   3. Verify files are actually uploaded (check Files tab)
+
+ISSUE: API calls not working / "Connection refused"
+SOLUTION:
+   1. Free tier has limited outbound connections
+   2. Add www.api.anthropic.com to allowed domains:
+      • Go to Web tab
+      • Scroll to "Whitelist" section (free accounts only)
+      • This is a limitation of free tier
+   3. Upgrade to Hacker plan ($5/month) for unlimited connections
+
+ISSUE: Uploads not working / "File too large"
+SOLUTION:
+   1. Free tier has file size limits
+   2. Add this to app.py (if not already there):
+      app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
+   3. Reload app
+
+ISSUE: App is slow
+SOLUTION:
+   1. Free tier has CPU limits
+   2. Optimize by caching results (add later)
+   3. Upgrade to paid plan for better performance
+
+
+═══════════════════════════════════════════════════════════════════════
+🎨 CUSTOMIZING YOUR DEPLOYMENT
+═══════════════════════════════════════════════════════════════════════
+
+ADD CUSTOM DOMAIN (Requires Hacker plan - $5/month)
+────────────────────────────────────────────────────
+
+1. Register domain at Namecheap, Google Domains, etc.
+2. In PythonAnywhere Web tab, click "Add a new web app"
+3. Enter your custom domain: yourdomain.com
+4. Configure DNS settings at your domain registrar:
+   Type: CNAME
+   Name: www
+   Value: webapp-[numbers].pythonanywhere.com
+   (Get exact value from PythonAnywhere instructions)
+5. Wait 24-48 hours for DNS propagation
+6. Reload app
+
+ADD HTTPS/SSL (Hacker plan - $5/month)
+──────────────────────────────────────
+
+1. In Web tab, find "Security" section
+2. Click "Force HTTPS"
+3. Free SSL certificate is auto-configured!
+4. All traffic now encrypted 🔒
+
+
+═══════════════════════════════════════════════════════════════════════
+📊 MONITORING YOUR APP
+═══════════════════════════════════════════════════════════════════════
+
+CHECK LOGS DAILY:
+─────────────────
+
+1. Web tab → Log files section
+2. Check error log for issues
+3. Check access log for traffic
+
+Key things to monitor:
+   • Number of requests (in access log)
+   • Error frequency (in error log)
+   • API response times
+   • User feedback
+
+SET UP UPTIME MONITORING (Free):
+────────────────────────────────
+
+Use a free service to ping your app and alert you if it goes down:
+   • UptimeRobot.com (free, monitors every 5 minutes)
+   • Pingdom (free trial)
+   • StatusCake (free tier)
+
+Setup:
+   1. Create account
+   2. Add your URL: [username].pythonanywhere.com
+   3. Set alert email
+   4. Get notified if app goes down
+
+
+═══════════════════════════════════════════════════════════════════════
+🚀 ALTERNATIVE HOSTING OPTIONS (If PythonAnywhere doesn't work)
+═══════════════════════════════════════════════════════════════════════
+
+HEROKU ($7/month):
+──────────────────
+Pros: Easy deploy from GitHub, auto-scaling
+Cons: Costs more, more complex than PythonAnywhere
+Instructions: https://devcenter.heroku.com/articles/getting-started-with-python
+
+DIGITALOCEAN ($6/month):
+───────────────────────
+Pros: Full control, better performance
+Cons: Requires more technical knowledge (SSH, nginx, etc.)
+Instructions: Use their "App Platform" for easiest setup
+
+RENDER ($7/month):
+──────────────────
+Pros: Modern, fast, easy deploys from GitHub
+Cons: Slightly more expensive
+Instructions: https://render.com/docs/deploy-flask
+
+REPLIT (Free tier available):
+─────────────────────────────
+Pros: Easiest to use, code in browser
+Cons: Not as professional, limited free tier
+Instructions: Import from GitHub, click "Run"
+
+
+═══════════════════════════════════════════════════════════════════════
+✅ POST-DEPLOYMENT CHECKLIST
+═══════════════════════════════════════════════════════════════════════
+
+Before you start marketing:
+   □ Test file upload (try PDF, DOCX, and TXT)
+   □ Test contract analysis (use sample contract)
+   □ Verify all results pages load correctly
+   □ Test on mobile device
+   □ Verify API key is working (check logs for errors)
+   □ Test error handling (upload non-contract file)
+   □ Check page load speed (should be under 3 seconds)
+   □ Set up uptime monitoring
+   □ Bookmark your app URL
+   □ Take screenshots for marketing
+   □ Test from different browsers (Chrome, Firefox, Safari)
+   □ Get feedback from 2-3 friends
+   □ Fix any issues they find
+   □ Add Google Analytics (optional but recommended)
+
+Ready to share:
+   □ Update LinkedIn profile with app link
+   □ Add to email signature
+   □ Share in demo video
+   □ Use in all outreach emails
+
+
+═══════════════════════════════════════════════════════════════════════
+📈 SCALING UP (When you outgrow free tier)
+═══════════════════════════════════════════════════════════════════════
+
+SIGNS YOU NEED TO UPGRADE:
+──────────────────────────
+
+• Getting 100+ visitors per day
+• API calls are slow (>5 seconds)
+• Getting timeout errors
+• You have 10+ paying customers
+• Free tier CPU limit warnings
+
+WHEN TO UPGRADE TO WHAT:
+────────────────────────
+
+5-10 customers:
+   → Upgrade to PythonAnywhere Hacker ($5/month)
+
+25+ customers:
+   → Add custom domain
+   → Consider moving to Heroku or DigitalOcean
+
+100+ customers:
+   → Time for dedicated hosting
+   → Look into AWS, Google Cloud, or similar
+   → Hire a DevOps consultant ($500-1000 one-time)
+
+
+═══════════════════════════════════════════════════════════════════════
+🎓 USEFUL PYTHONANYWHERE COMMANDS
+═══════════════════════════════════════════════════════════════════════
+
+From Bash console:
+
+# Navigate to your app
+$ cd ~/contract-review-app
+
+# Activate virtual environment
+$ workon contract-env
+
+# Update your code from GitHub
+$ git pull
+
+# Install new dependencies
+$ pip install [package-name]
+
+# View recent logs
+$ tail -n 50 /var/log/[username].pythonanywhere.com.error.log
+
+# Check disk usage
+$ du -sh *
+
+# Restart web app (after making changes)
+# Go to Web tab in dashboard and click "Reload"
+
+
+═══════════════════════════════════════════════════════════════════════
+💡 PRO TIPS
+═══════════════════════════════════════════════════════════════════════
+
+1. ALWAYS TEST LOCALLY FIRST
+   Run your app locally before deploying:
+   $ python app.py
+   Then fix any errors before uploading
+
+2. USE VERSION CONTROL
+   Commit changes to GitHub before deploying
+   Makes rollbacks easy if something breaks
+
+3. KEEP LOGS CLEAN
+   Fix errors immediately when you see them in logs
+   Clean logs = healthy app
+
+4. BACKUP REGULARLY
+   Download your code weekly (just in case)
+   Keep local backups of everything
+
+5. MONITOR API COSTS
+   Check Anthropic dashboard weekly
+   Set up billing alerts to avoid surprises
+
+6. SET UP STAGING ENVIRONMENT
+   Once making money, create a "test" app
+   Test changes there before updating live app
+
+7. WRITE GOOD COMMIT MESSAGES
+   "Fixed bug" ❌
+   "Fixed file upload issue with DOCX files" ✅
+
+
+═══════════════════════════════════════════════════════════════════════
+🎉 YOU'RE LIVE!
+═══════════════════════════════════════════════════════════════════════
+
+Congratulations! Your app is now live on the internet! 🚀
+
+Your URL: [username].pythonanywhere.com
+
+Share it everywhere:
+   • LinkedIn
+   • Twitter
+   • Facebook
+   • Reddit (r/entrepreneur, r/SideProject)
+   • IndieHackers.com
+   • ProductHunt (when ready)
+
+Next steps:
+   1. Test thoroughly
+   2. Get feedback from 5-10 people
+   3. Fix any issues
+   4. Start your marketing plan (see LAUNCH_PLAN_30_DAYS.txt)
+   5. Get your first customer! 💰
+
+Need help? Common resources:
+   • PythonAnywhere Forums: https://www.pythonanywhere.com/forums/
+   • PythonAnywhere Help: help@pythonanywhere.com
+   • Flask Documentation: https://flask.palletsprojects.com/
+   • Your documentation files (you've got this!)
+
+═══════════════════════════════════════════════════════════════════════
+
+Go make it happen! 💪 The world needs your tool! 🌍

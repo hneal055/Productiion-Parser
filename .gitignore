@@ -30,6 +30,9 @@ data/output/*
 *.log
 
 # Sensitive
+.env
+.env.*
+!.env.example
 config.ini
 secrets.json
 *.key

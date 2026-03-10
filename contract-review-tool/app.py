@@ -9,7 +9,10 @@ import json
 from datetime import datetime
 import anthropic
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 import io
+
+load_dotenv(override=True)
 
 # Import document processing libraries
 try:
@@ -26,7 +29,7 @@ except ImportError:
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
-app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Allowed file extensions
@@ -127,7 +130,7 @@ Provide 3-5 specific suggestions for negotiation:
 Be specific, quote relevant clauses, and provide actionable insights."""
 
         message = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=4000,
             messages=[
                 {"role": "user", "content": prompt}
@@ -322,7 +325,7 @@ Return this exact JSON structure:
 }}"""
 
         message = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=1500,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -341,6 +344,8 @@ Return this exact JSON structure:
         return jsonify({'success': True, 'result': result})
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
@@ -365,4 +370,4 @@ if __name__ == '__main__':
         print("WARNING: ANTHROPIC_API_KEY environment variable not set!")
         print("Set it with: export ANTHROPIC_API_KEY='your-api-key'")
     
-    app.run(debug=True, host='0.0.0.0', port=8002)
+    app.run(debug=True, host='0.0.0.0', port=5001)

@@ -6,3 +6,4 @@ matplotlib
 reportlab
 flask-sqlalchemy
 SQLAlchemy
+python-dotenv
