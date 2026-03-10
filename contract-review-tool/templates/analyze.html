@@ -79,7 +79,8 @@ This is where your screenplay content goes."
                 <p>Analysis results will appear here</p>
             </div>
 
-            <div x-show="result" class="space-y-6">
+            <template x-if="result">
+            <div class="space-y-6">
                 <!-- Quick Verdict -->
                 <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white">
                     <div class="flex justify-between items-center">
@@ -140,6 +141,7 @@ This is where your screenplay content goes."
                     <p class="text-sm text-yellow-600" x-text="'Target: ' + result.detailed_analysis.market_potential.target_audience"></p>
                 </div>
             </div>
+            </template>
         </div>
     </div>
 </div>

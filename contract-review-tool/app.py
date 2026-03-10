@@ -5,6 +5,7 @@ Copyright (c) 2024. All rights reserved.
 
 from flask import Flask, render_template, request, jsonify, send_file
 import os
+import json
 from datetime import datetime
 import anthropic
 from werkzeug.utils import secure_filename
@@ -260,6 +261,89 @@ def upload_file():
     except Exception as e:
         return jsonify({'error': f'Error processing file: {str(e)}'}), 500
 
+@app.route('/api/analyze', methods=['POST'])
+def api_analyze():
+    """JSON endpoint for screenplay analysis"""
+    import time
+    data = request.get_json()
+    if not data or not data.get('screenplay'):
+        return jsonify({'success': False, 'error': 'No screenplay content provided'}), 400
+
+    screenplay_text = data['screenplay']
+    writer_info = data.get('writer_info', {})
+
+    api_key = os.environ.get('ANTHROPIC_API_KEY')
+    if not api_key:
+        return jsonify({'success': False, 'error': 'ANTHROPIC_API_KEY not configured'}), 500
+
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        start_time = time.time()
+
+        writer_context = ''
+        if writer_info.get('name'):
+            writer_context = f"\nWriter: {writer_info['name']} ({writer_info.get('experience', 'unknown experience')})"
+
+        prompt = f"""You are a professional Hollywood screenplay analyst. Analyze the following screenplay content and return ONLY a valid JSON object — no markdown, no explanation, just the JSON.{writer_context}
+
+SCREENPLAY:
+{screenplay_text}
+
+Return this exact JSON structure:
+{{
+  "quick_verdict": {{
+    "commercial_score": <integer 0-100>,
+    "recommendation": "<one-sentence recommendation>",
+    "priority_level": "<HIGH PRIORITY | MEDIUM PRIORITY | LOW PRIORITY>",
+    "estimated_roi": "<e.g. 2.5x-4x>"
+  }},
+  "detailed_analysis": {{
+    "structural_breakdown": {{
+      "pacing_score": <integer 0-100>,
+      "act_breakdown": {{"act1": "<assessment>", "act2": "<assessment>", "act3": "<assessment>"}}
+    }},
+    "character_analysis": {{
+      "main_characters": "<comma-separated list>",
+      "character_depth_score": <integer 0-100>
+    }},
+    "market_potential": {{
+      "market_potential": "<HIGH | MEDIUM | LOW> — <brief reason>",
+      "target_audience": "<description>"
+    }}
+  }},
+  "technical_metrics": {{
+    "document_metrics": {{
+      "primary_genre": "<genre>",
+      "estimated_pages": <integer>,
+      "character_count": <integer>
+    }},
+    "processing_time": "<X.Xs>"
+  }}
+}}"""
+
+        message = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1500,
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        elapsed = round(time.time() - start_time, 1)
+        response_text = message.content[0].text.strip()
+
+        # Strip markdown code fences if present
+        if response_text.startswith('```'):
+            response_text = response_text.split('\n', 1)[1]
+            response_text = response_text.rsplit('```', 1)[0]
+
+        result = json.loads(response_text)
+        result['technical_metrics']['processing_time'] = f"{elapsed}s"
+
+        return jsonify({'success': True, 'result': result})
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/results')
 def results():
     """Results page"""
@@ -281,4 +365,4 @@ if __name__ == '__main__':
         print("WARNING: ANTHROPIC_API_KEY environment variable not set!")
         print("Set it with: export ANTHROPIC_API_KEY='your-api-key'")
     
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    app.run(debug=True, host='0.0.0.0', port=8002)
