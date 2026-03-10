@@ -29,6 +29,17 @@ data/output/*
 !data/output/.gitkeep
 *.log
 
+# Runtime databases
+instance/
+*.db
+
+# Generated outputs (exports, reports)
+production-budget-parser/outputs/
+production-budget-parser/uploads/
+
+# Claude AI session files
+.claude/
+
 # Sensitive
 .env
 .env.*
