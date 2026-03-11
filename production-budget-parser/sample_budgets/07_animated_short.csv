@@ -1,0 +1,32 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Director Fee,22000
+Producer,Pre-Production,Producer Fee,14000
+Creative,Pre-Production,Script Development,4500
+Creative,Pre-Production,Concept Art,8500
+Creative,Pre-Production,Storyboard,6500
+Creative,Pre-Production,Animatic,5500
+Animation,Production,Lead Animator x2,48000
+Animation,Production,Character Animators x4,72000
+Animation,Production,Background Artist x2,28000
+Animation,Production,Clean-Up Artists x3,36000
+Animation,Production,Compositing Artists x2,30000
+Animation,Production,Rigging Artist,18000
+Animation,Production,FX Animator,16000
+Design,Pre-Production,Character Design,12000
+Design,Pre-Production,Background Design,9500
+Design,Pre-Production,Color Design,6500
+Design,Pre-Production,Title Design,3500
+Technology,Production,Animation Software Licenses,8500
+Technology,Production,Render Farm,12000
+Technology,Production,Storage and Backup,3500
+Talent,Production,Voice Cast x6,18000
+Talent,Production,Voice Direction,4500
+Post-Production,Post-Production,Sound Designer,8500
+Post-Production,Post-Production,Foley Artist,4500
+Post-Production,Post-Production,Music Score,10000
+Post-Production,Post-Production,Music Licensing,4500
+Post-Production,Post-Production,Final Mix,5500
+Post-Production,Post-Production,Deliverables,2200
+Insurance,Production,Production Insurance,3500
+Legal,Pre-Production,Legal Fees,2800
+Contingency,Production,10% Contingency,35000

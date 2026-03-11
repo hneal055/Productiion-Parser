@@ -1,0 +1,41 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Executive Producer,85000
+Director,Pre-Production,Showrunner,65000
+Director,Pre-Production,Field Director,28000
+Producer,Pre-Production,Supervising Producer,45000
+Producer,Pre-Production,Story Producer x3,72000
+Producer,Pre-Production,Field Producer x4,64000
+Producer,Pre-Production,Segment Producer x2,38000
+Creative,Pre-Production,Format Development,18000
+Creative,Pre-Production,Bible and Treatment,6500
+Talent,Production,Host Fee,95000
+Talent,Production,Contestant Stipends x12,24000
+Talent,Production,Contestant Travel and Housing,48000
+Talent,Production,Expert Judges x3,45000
+Crew,Production,DP - Multi-Camera,35000
+Crew,Production,Camera Operators x4,56000
+Crew,Production,Handheld Operators x2,24000
+Crew,Production,Confessional Cam Operators x2,18000
+Crew,Production,Gaffer,18000
+Crew,Production,Sound Department,28000
+Crew,Production,Production Designer,32000
+Crew,Production,Set Decorator,18000
+Equipment,Production,Camera Package x8,55000
+Equipment,Production,Lighting Package,25000
+Equipment,Production,Sound Package,18000
+Equipment,Production,Jib and Specialty,12000
+Location,Production,Competition Venue Rental - 6 weeks,185000
+Location,Production,House or Set Build,95000
+Location,Production,Permits and Security,14000
+Location,Production,Catering - 6 weeks,35000
+Post-Production,Post-Production,Post Supervisor,32000
+Post-Production,Post-Production,Editors x2,65000
+Post-Production,Post-Production,Story Producers - Post,28000
+Post-Production,Post-Production,Graphics Package,18000
+Post-Production,Post-Production,Color Grading,12000
+Post-Production,Post-Production,Sound Mix,14000
+Post-Production,Post-Production,Music Licensing,22000
+Post-Production,Post-Production,Deliverables,6500
+Insurance,Production,Production Insurance,28000
+Legal,Pre-Production,Format Rights and Legal,18000
+Contingency,Production,10% Contingency,95000

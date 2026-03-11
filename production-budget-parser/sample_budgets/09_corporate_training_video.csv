@@ -1,0 +1,29 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Director Fee,6500
+Producer,Pre-Production,Producer Fee,4500
+Creative,Pre-Production,Script Writing,3500
+Creative,Pre-Production,Teleprompter Operator,800
+Talent,Production,On-Camera Presenter,4500
+Talent,Production,Supporting Actors x3,3600
+Talent,Production,Voice-Over Artist,2200
+Crew,Production,Videographer,3500
+Crew,Production,Camera Operator B,2200
+Crew,Production,Gaffer,1800
+Crew,Production,Sound Recordist,1800
+Crew,Production,Production Assistant,950
+Equipment,Production,Camera Package,2200
+Equipment,Production,Lighting Package,1500
+Equipment,Production,Sound Package,1200
+Equipment,Production,Teleprompter,450
+Location,Production,Office Studio Rental - 2 days,2800
+Location,Production,Location Permission Fees,500
+Location,Production,Catering - 2 days,1200
+Post-Production,Post-Production,Video Editor,3500
+Post-Production,Post-Production,Motion Graphics,2500
+Post-Production,Post-Production,Color Grading,1200
+Post-Production,Post-Production,Sound Mix,950
+Post-Production,Post-Production,Music License - Royalty Free,450
+Post-Production,Post-Production,Captioning and Subtitles,850
+Post-Production,Post-Production,Encoding and Delivery,550
+Insurance,Production,Production Insurance,850
+Contingency,Production,10% Contingency,4600

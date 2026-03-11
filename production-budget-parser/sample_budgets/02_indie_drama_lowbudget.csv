@@ -1,0 +1,40 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Director Fee,15000
+Producer,Pre-Production,Producer Fee,12000
+Producer,Pre-Production,Line Producer,8000
+Creative,Pre-Production,Script Development,3500
+Creative,Pre-Production,Script Consultation,1200
+Talent,Production,Lead Actor,18000
+Talent,Production,Lead Actress,18000
+Talent,Production,Supporting Cast x4,14000
+Talent,Production,Day Players x8,9600
+Talent,Production,Background x20,6000
+Crew,Production,Director of Photography,12000
+Crew,Production,Camera Operator,7500
+Crew,Production,Gaffer,6500
+Crew,Production,Key Grip,6000
+Crew,Production,Production Designer,8000
+Crew,Production,Art Director,5500
+Crew,Production,Costume Designer,5000
+Crew,Production,Hair and Makeup,4500
+Crew,Production,Sound Mixer,6500
+Crew,Production,Boom Operator,4200
+Crew,Production,Script Supervisor,4500
+Crew,Production,Production Coordinator,4000
+Equipment,Production,Camera Package - 4 weeks,18000
+Equipment,Production,Lighting Package - 4 weeks,9500
+Equipment,Production,Grip Package - 4 weeks,5500
+Equipment,Production,Sound Package - 4 weeks,4200
+Location,Production,Location Fees,8500
+Location,Production,Studio Rental - 2 weeks,14000
+Location,Production,Permits,2200
+Location,Production,Catering,9500
+Post-Production,Post-Production,Editor,14000
+Post-Production,Post-Production,Color Grading,6500
+Post-Production,Post-Production,Sound Design and Mix,8500
+Post-Production,Post-Production,Music Score,5000
+Post-Production,Post-Production,Music Licensing,3500
+Post-Production,Post-Production,DCP Mastering,2800
+Insurance,Production,Production Insurance,8500
+Legal,Pre-Production,Legal Fees,4500
+Contingency,Production,10% Contingency,22000

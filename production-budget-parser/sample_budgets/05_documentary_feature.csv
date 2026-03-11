@@ -1,0 +1,40 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Director / Producer,45000
+Producer,Pre-Production,Co-Producer,22000
+Producer,Pre-Production,Researcher,14000
+Creative,Pre-Production,Story Development,8500
+Creative,Pre-Production,Archive Research,6500
+Talent,Production,On-Camera Host,18000
+Talent,Production,Interview Subjects - Travel and Honoraria,12000
+Talent,Production,Narrator (Post),8500
+Crew,Production,Cinematographer,28000
+Crew,Production,Camera Operator B,16000
+Crew,Production,Sound Recordist,14000
+Crew,Production,Production Coordinator,9500
+Crew,Production,Field Producer,18000
+Equipment,Production,Camera Package - 10 weeks,22000
+Equipment,Production,Sound Package - 10 weeks,8500
+Equipment,Production,Lighting Package,6500
+Equipment,Production,Drone Package,4500
+Equipment,Production,Gimbal and Accessories,2200
+Location,Production,International Travel - Crew x4,35000
+Location,Production,Domestic Travel,12000
+Location,Production,Accommodation - 10 weeks,28000
+Location,Production,Location Fees,8500
+Location,Production,Permits,3200
+Archive,Pre-Production,Archival Footage Licensing,32000
+Archive,Pre-Production,Photo Licensing,8500
+Archive,Pre-Production,Music Archive Licensing,12000
+Post-Production,Post-Production,Editor,35000
+Post-Production,Post-Production,Assistant Editor,16000
+Post-Production,Post-Production,Color Grading,12000
+Post-Production,Post-Production,Sound Design and Mix,18000
+Post-Production,Post-Production,Original Score,14000
+Post-Production,Post-Production,Graphics and Titles,8500
+Post-Production,Post-Production,Closed Captions and Subtitles,3500
+Post-Production,Post-Production,DCP and Deliverables,4500
+Insurance,Production,Production Insurance,9500
+Legal,Pre-Production,Legal and E&O,8500
+Outreach,Post-Production,Festival Submissions,4500
+Outreach,Post-Production,EPK Production,3500
+Contingency,Production,10% Contingency,38000

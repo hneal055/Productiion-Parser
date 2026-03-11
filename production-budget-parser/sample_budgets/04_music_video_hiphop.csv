@@ -1,0 +1,35 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Director Fee,18000
+Producer,Pre-Production,Producer Fee,8500
+Creative,Pre-Production,Treatment and Concept,2000
+Creative,Pre-Production,Storyboard,1500
+Talent,Production,Artist Fee,25000
+Talent,Production,Featured Artist,8000
+Talent,Production,Dancers x8,9600
+Talent,Production,Background Models x15,7500
+Talent,Production,Choreographer,4500
+Crew,Production,Director of Photography,7500
+Crew,Production,Camera Operator,4200
+Crew,Production,Gaffer,3800
+Crew,Production,Key Grip,3200
+Crew,Production,Production Designer,5500
+Crew,Production,Stylist,4800
+Crew,Production,Wardrobe Assistant,2200
+Crew,Production,Hair Stylist,2800
+Crew,Production,Makeup Artist,2800
+Crew,Production,Sound Playback,1800
+Equipment,Production,Camera Package - Red,4500
+Equipment,Production,Lighting Package,3800
+Equipment,Production,Grip Package,2200
+Equipment,Production,Drone,2500
+Equipment,Production,Steadicam,1800
+Location,Production,Warehouse Venue Rental,6500
+Location,Production,Exterior Locations x2,3200
+Location,Production,Permits,850
+Location,Production,Catering,2800
+Post-Production,Post-Production,Editor,6500
+Post-Production,Post-Production,Colorist,4500
+Post-Production,Post-Production,VFX and Motion Graphics,8500
+Post-Production,Post-Production,Deliverables,1200
+Insurance,Production,Production Insurance,2200
+Contingency,Production,10% Contingency,14000

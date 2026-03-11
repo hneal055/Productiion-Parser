@@ -6,14 +6,16 @@ Enhanced with PATH A Features: Interactive Charts, Modern UI, Excel Export
 ================================================================================
 """
 
-from flask import Flask, request, render_template_string, redirect, url_for, send_file, flash, jsonify, get_flashed_messages
+from flask import Flask, request, render_template_string, redirect, url_for, send_file, flash, jsonify, get_flashed_messages, session
 import pandas as pd
 import io
 import os
 import json
 import uuid
 import html as html_lib
+import hmac
 import logging
+from functools import wraps
 
 logging.basicConfig(
     level=logging.INFO,
@@ -105,6 +107,26 @@ with app.app_context():
 def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# ---------------------------------------------------------------------------
+# Authentication
+# ---------------------------------------------------------------------------
+
+def check_password(candidate: str) -> bool:
+    app_password = os.environ.get('APP_PASSWORD', '')
+    if not app_password:
+        return False
+    return hmac.compare_digest(candidate.encode(), app_password.encode())
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get('logged_in'):
+            return redirect(url_for('login', next=request.path))
+        return f(*args, **kwargs)
+    return decorated
 
 
 def find_optimizations(df):
@@ -218,7 +240,65 @@ def generate_recent_analyses():
     return html
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if check_password(request.form.get('password', '')):
+            session['logged_in'] = True
+            return redirect(request.args.get('next') or url_for('index'))
+        error = 'Incorrect password.'
+        logger.warning('Failed login attempt from %s', request.remote_addr)
+
+    return render_template_string("""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sign In — Budget Parser</title>
+        <link rel="stylesheet" href="/static/css/modern-styles.css">
+        <style>
+            body { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+            .login-box { background:white; border-radius:16px; padding:48px 40px; width:100%; max-width:400px;
+                         box-shadow:0 8px 32px rgba(0,0,0,0.18); text-align:center; }
+            .login-box h1 { font-size:1.6rem; color:#2c3e50; margin-bottom:8px; }
+            .login-box p { color:#7f8c8d; margin-bottom:28px; }
+            .login-box input[type=password] { width:100%; padding:12px 16px; border:2px solid #e0e0e0;
+                border-radius:8px; font-size:1rem; margin-bottom:16px; box-sizing:border-box; }
+            .login-box input[type=password]:focus { outline:none; border-color:#3498db; }
+            .login-box button { width:100%; padding:13px; background:#3498db; color:white;
+                border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; }
+            .login-box button:hover { background:#2980b9; }
+            .error { background:#fadbd8; color:#c0392b; padding:10px 14px; border-radius:8px;
+                     margin-bottom:16px; font-size:0.92rem; }
+        </style>
+    </head>
+    <body>
+        <div class="login-box">
+            <div style="font-size:2.5rem;margin-bottom:12px;">💰</div>
+            <h1>Budget Parser</h1>
+            <p>Scene Reader Studio Technologies</p>
+            {% if error %}<div class="error">{{ error }}</div>{% endif %}
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="password" name="password" placeholder="Enter access password" autofocus required>
+                <button type="submit">Sign In →</button>
+            </form>
+        </div>
+    </body>
+    </html>
+    """, error=error)
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+
 @app.route('/')
+@login_required
 def index():
     """Homepage with upload form and recent analyses"""
     recent_analyses_html = generate_recent_analyses()
@@ -243,7 +323,8 @@ def index():
     <body>
         <div class="container">
             <!-- Header -->
-            <div class="header fade-in">
+            <div class="header fade-in" style="position:relative;">
+                <a href="/logout" style="position:absolute;top:1rem;right:1rem;color:#94a3b8;font-size:0.85rem;text-decoration:none;">Logout</a>
                 <h1>💰 Budget Analysis & Risk Management</h1>
                 <p>Upload your budget CSV file for comprehensive analysis</p>
                 <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
@@ -312,6 +393,7 @@ def index():
 
 
 @app.route('/upload', methods=['POST'])
+@login_required
 @limiter.limit('20 per hour')
 def upload_file():
     """Handle file upload and analysis - SAVE TO DATABASE"""
@@ -421,6 +503,7 @@ def upload_file():
 
 
 @app.route('/analysis/<file_id>')
+@login_required
 def view_analysis(file_id):
     """View detailed analysis results FROM DATABASE"""
     # Get analysis from database
@@ -1155,6 +1238,7 @@ def view_analysis(file_id):
                     <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
                     <a href="/export-excel/{file_id}" class="btn btn-success">📊 Export to Excel</a>
                     <a href="/generate-pdf/{file_id}" class="btn btn-primary">📄 Generate PDF Report</a>
+                    <a href="/logout" class="btn btn-secondary" style="margin-left:auto;">Logout</a>
                     <a href="/compare/{file_id}" class="btn btn-warning">🔄 Compare Budgets</a>
                 </div>
             </div>
@@ -1171,6 +1255,7 @@ def view_analysis(file_id):
 
 
 @app.route('/export-excel/<file_id>')
+@login_required
 def export_excel_route(file_id):
     """Export analysis to formatted Excel file FROM DATABASE"""
     analysis = BudgetAnalysis.query.get(file_id)
@@ -1220,6 +1305,7 @@ def export_excel_route(file_id):
 
 
 @app.route('/generate-pdf/<file_id>')
+@login_required
 def generate_pdf_report(file_id):
     """Generate PDF report for analysis FROM DATABASE"""
     analysis = BudgetAnalysis.query.get(file_id)
@@ -1286,6 +1372,7 @@ def generate_pdf_report(file_id):
 
 
 @app.route('/compare/<file_id>')
+@login_required
 def compare_page(file_id):
     """Show budget comparison page"""
     analysis = BudgetAnalysis.query.get(file_id)
@@ -1351,6 +1438,7 @@ def compare_page(file_id):
 
 
 @app.route('/compare/<file_id>', methods=['POST'])
+@login_required
 def compare_budgets_route(file_id):
     """Handle budget comparison FROM DATABASE"""
     compare_id = request.form.get('compare_id')
@@ -1387,7 +1475,73 @@ def compare_budgets_route(file_id):
         
         # Generate comparison charts
         comparison_charts = generate_comparison_chart_html(comparison_result)
-        
+
+        # ── Modal precomputation ──────────────────────────────────────────────
+        diff_amount  = analysis2.total_budget - analysis1.total_budget
+        diff_pct     = (diff_amount / analysis1.total_budget * 100) if analysis1.total_budget > 0 else 0
+        abs_diff     = abs(diff_amount)
+        higher_label = 'Budget A' if analysis1.total_budget >= analysis2.total_budget else 'Budget B'
+        diff_dir_color = '#e74c3c' if diff_amount > 0 else '#27ae60'
+        variance_warning_html = '<span class="cmp-warn-badge">⚠ HIGH VARIANCE</span>' if abs(diff_pct) >= 50 else ''
+
+        cat_diff_rows = ''
+        cat_pct_rows  = ''
+        if 'category_changes' in comparison_result:
+            cats    = comparison_result['category_changes']
+            by_diff = sorted(cats.items(), key=lambda x: abs(x[1]['difference']), reverse=True)
+            by_pct  = sorted(cats.items(), key=lambda x: abs(x[1]['percent_change']), reverse=True)
+            for cat, d in by_diff[:10]:
+                dv    = d['difference']
+                arrow = '↑' if dv > 0 else '↓' if dv < 0 else '='
+                c     = '#e74c3c' if dv > 0 else '#27ae60' if dv < 0 else '#666'
+                cat_diff_rows += (
+                    f'<tr><td><strong>{html_lib.escape(str(cat))}</strong></td>'
+                    f'<td>${d["budget1_amount"]:,.2f}</td><td>${d["budget2_amount"]:,.2f}</td>'
+                    f'<td style="color:{c};">{arrow} ${abs(dv):,.2f}</td></tr>'
+                )
+            for cat, d in by_pct[:10]:
+                pct = d['percent_change']
+                c   = '#e74c3c' if pct > 0 else '#27ae60' if pct < 0 else '#666'
+                hw  = ' <span class="cmp-warn-badge" style="font-size:.7rem;">⚠ HIGH</span>' if abs(pct) >= 50 else ''
+                cat_pct_rows += (
+                    f'<tr><td><strong>{html_lib.escape(str(cat))}</strong></td>'
+                    f'<td style="color:{c};">{pct:+.1f}%{hw}</td>'
+                    f'<td>${d["budget1_amount"]:,.2f}</td><td>${d["budget2_amount"]:,.2f}</td></tr>'
+                )
+
+        modal_css = """<style>
+.cmp-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+.cmp-modal-overlay.open{display:flex;}
+.cmp-modal{background:#fff;border-radius:14px;width:100%;max-width:700px;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;animation:cmpSlide .22s ease;}
+.cmp-modal.wide{max-width:860px;}
+@keyframes cmpSlide{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.cmp-mhdr{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;background:#3498db;color:#fff;}
+.cmp-mhdr h2{margin:0;font-size:1.1rem;}
+.cmp-mclose{background:none;border:none;color:#fff;font-size:1.6rem;cursor:pointer;line-height:1;padding:0 4px;}
+.cmp-mbody{padding:20px 24px;max-height:65vh;overflow-y:auto;}
+.cmp-mfooter{padding:12px 20px;background:#f9f9f9;border-top:1px solid #eee;font-size:.85rem;color:#888;}
+.cmp-stat-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;}
+.cmp-stat-row:last-child{border-bottom:none;}
+.cmp-stat-row .label{color:#666;font-size:.9rem;}
+.cmp-stat-row .val{font-weight:700;color:#2c3e50;}
+.cmp-modal table{width:100%;border-collapse:collapse;font-size:.9rem;box-shadow:none;border-radius:0;}
+.cmp-modal table thead th{background:#f4f6f9;padding:9px 12px;text-align:left;font-weight:700;color:#2c3e50;border-bottom:2px solid #ddd;text-transform:uppercase;font-size:.75rem;letter-spacing:.5px;position:sticky;top:0;}
+.cmp-modal table tbody tr{border-bottom:1px solid #f0f0f0;}
+.cmp-modal table tbody tr:hover{background:#f0f7ff;}
+.cmp-modal table tbody td{padding:9px 12px;color:#444;}
+.cmp-warn-badge{background:#fff3cd;color:#856404;padding:3px 8px;border-radius:12px;font-size:.8rem;font-weight:600;margin-left:6px;}
+.cmp-dir-label{font-size:.82rem;color:#7f8c8d;margin-top:6px;}
+.stat-card.clickable{cursor:pointer;}
+</style>"""
+
+        modal_js = """<script>
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.cmp-modal-overlay.open').forEach(function(m) { m.classList.remove('open'); });
+    }
+});
+</script>"""
+
         # Build comparison results page
         html = f"""
         <!DOCTYPE html>
@@ -1398,6 +1552,7 @@ def compare_budgets_route(file_id):
             <title>Budget Comparison Results</title>
             <link rel="stylesheet" href="/static/css/modern-styles.css">
             <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+            {modal_css}
         </head>
         <body>
             <div class="container">
@@ -1409,31 +1564,41 @@ def compare_budgets_route(file_id):
                     </p>
                 </div>
                 
-                <!-- Summary Stats -->
+                <!-- Summary Stats — Clickable Cards -->
                 <div class="stats-grid fade-in">
-                    <div class="stat-card">
+
+                    <!-- Card A -->
+                    <div class="stat-card clickable" onclick="document.getElementById('cmp-modal-a').classList.add('open')" title="Click for Budget A details">
                         <div class="stat-icon">📁</div>
-                        <div class="stat-value" style="font-size:1.3rem;word-break:break-word;line-height:1.3;" title="{analysis1.filename}">{analysis1.filename[:28] + '…' if len(analysis1.filename) > 28 else analysis1.filename}</div>
+                        <div class="stat-value" style="font-size:1.3rem;word-break:break-word;line-height:1.3;">{analysis1.filename[:28] + '…' if len(analysis1.filename) > 28 else analysis1.filename}</div>
                         <div class="stat-label">Budget A &nbsp;·&nbsp; ${analysis1.total_budget:,.2f}</div>
+                        <div class="cmp-dir-label">Click to view details</div>
                     </div>
 
-                    <div class="stat-card">
+                    <!-- Card B -->
+                    <div class="stat-card clickable" onclick="document.getElementById('cmp-modal-b').classList.add('open')" title="Click for Budget B details">
                         <div class="stat-icon">📁</div>
-                        <div class="stat-value" style="font-size:1.3rem;word-break:break-word;line-height:1.3;" title="{analysis2.filename}">{analysis2.filename[:28] + '…' if len(analysis2.filename) > 28 else analysis2.filename}</div>
+                        <div class="stat-value" style="font-size:1.3rem;word-break:break-word;line-height:1.3;">{analysis2.filename[:28] + '…' if len(analysis2.filename) > 28 else analysis2.filename}</div>
                         <div class="stat-label">Budget B &nbsp;·&nbsp; ${analysis2.total_budget:,.2f}</div>
+                        <div class="cmp-dir-label">Click to view details</div>
                     </div>
 
-                    <div class="stat-card">
-                        <div class="stat-icon">{'📈' if analysis2.total_budget > analysis1.total_budget else '📉'}</div>
-                        <div class="stat-value">${abs(analysis2.total_budget - analysis1.total_budget):,.2f}</div>
+                    <!-- Card C — Difference -->
+                    <div class="stat-card clickable" onclick="document.getElementById('cmp-modal-diff').classList.add('open')" title="Click for category breakdown">
+                        <div class="stat-icon">{'📈' if diff_amount > 0 else '📉'}</div>
+                        <div class="stat-value">${abs_diff:,.2f}</div>
                         <div class="stat-label">Difference</div>
+                        <div class="cmp-dir-label">{higher_label} is higher {variance_warning_html}</div>
                     </div>
 
-                    <div class="stat-card">
-                        <div class="stat-icon">{'🔺' if analysis2.total_budget > analysis1.total_budget else '🔻'}</div>
-                        <div class="stat-value" style="color:{'#e74c3c' if analysis2.total_budget > analysis1.total_budget else '#27ae60'};">{((analysis2.total_budget - analysis1.total_budget) / analysis1.total_budget * 100):+.1f}%</div>
+                    <!-- Card D — Change -->
+                    <div class="stat-card clickable" onclick="document.getElementById('cmp-modal-pct').classList.add('open')" title="Click for % change by category">
+                        <div class="stat-icon">{'🔺' if diff_amount > 0 else '🔻'}</div>
+                        <div class="stat-value" style="color:{diff_dir_color};">{diff_pct:+.1f}%</div>
                         <div class="stat-label">Change</div>
+                        <div class="cmp-dir-label">Budget B vs Budget A {variance_warning_html}</div>
                     </div>
+
                 </div>
                 
                 <!-- Comparison Charts -->
@@ -1495,6 +1660,84 @@ def compare_budgets_route(file_id):
                     <a href="/" class="btn btn-primary">🏠 Dashboard</a>
                 </div>
             </div>
+
+            <!-- Modal A — Budget A details -->
+            <div class="cmp-modal-overlay" id="cmp-modal-a" onclick="if(event.target===this)this.classList.remove('open')">
+                <div class="cmp-modal">
+                    <div class="cmp-mhdr">
+                        <h2>📁 Budget A — {html_lib.escape(analysis1.filename)}</h2>
+                        <button class="cmp-mclose" onclick="document.getElementById('cmp-modal-a').classList.remove('open')">×</button>
+                    </div>
+                    <div class="cmp-mbody">
+                        <div class="cmp-stat-row"><span class="label">Total Budget</span><span class="val">${analysis1.total_budget:,.2f}</span></div>
+                        <div class="cmp-stat-row"><span class="label">Line Items</span><span class="val">{analysis1.line_items}</span></div>
+                        <div class="cmp-stat-row"><span class="label">Departments</span><span class="val">{analysis1.num_departments}</span></div>
+                        <div class="cmp-stat-row"><span class="label">Risk Level</span><span class="val">{html_lib.escape(analysis1.risk_level or '—')}</span></div>
+                        <div class="cmp-stat-row"><span class="label">Uploaded</span><span class="val">{analysis1.upload_date.strftime('%b %d, %Y')}</span></div>
+                    </div>
+                    <div class="cmp-mfooter"><a href="/analysis/{file_id}" style="color:#3498db;font-weight:600;">View full analysis →</a></div>
+                </div>
+            </div>
+
+            <!-- Modal B — Budget B details -->
+            <div class="cmp-modal-overlay" id="cmp-modal-b" onclick="if(event.target===this)this.classList.remove('open')">
+                <div class="cmp-modal">
+                    <div class="cmp-mhdr">
+                        <h2>📁 Budget B — {html_lib.escape(analysis2.filename)}</h2>
+                        <button class="cmp-mclose" onclick="document.getElementById('cmp-modal-b').classList.remove('open')">×</button>
+                    </div>
+                    <div class="cmp-mbody">
+                        <div class="cmp-stat-row"><span class="label">Total Budget</span><span class="val">${analysis2.total_budget:,.2f}</span></div>
+                        <div class="cmp-stat-row"><span class="label">Line Items</span><span class="val">{analysis2.line_items}</span></div>
+                        <div class="cmp-stat-row"><span class="label">Departments</span><span class="val">{analysis2.num_departments}</span></div>
+                        <div class="cmp-stat-row"><span class="label">Risk Level</span><span class="val">{html_lib.escape(analysis2.risk_level or '—')}</span></div>
+                        <div class="cmp-stat-row"><span class="label">Uploaded</span><span class="val">{analysis2.upload_date.strftime('%b %d, %Y')}</span></div>
+                    </div>
+                    <div class="cmp-mfooter"><a href="/analysis/{compare_id}" style="color:#3498db;font-weight:600;">View full analysis →</a></div>
+                </div>
+            </div>
+
+            <!-- Modal C — Dollar difference by category -->
+            <div class="cmp-modal-overlay" id="cmp-modal-diff" onclick="if(event.target===this)this.classList.remove('open')">
+                <div class="cmp-modal wide">
+                    <div class="cmp-mhdr">
+                        <h2>📊 Dollar Difference — Category Breakdown</h2>
+                        <button class="cmp-mclose" onclick="document.getElementById('cmp-modal-diff').classList.remove('open')">×</button>
+                    </div>
+                    <div class="cmp-mbody">
+                        <p style="margin-bottom:14px;color:#555;font-size:.9rem;">
+                            <strong>{higher_label}</strong> is ${abs_diff:,.2f} higher overall. {variance_warning_html}
+                        </p>
+                        <table>
+                            <thead><tr><th>Category</th><th>Budget A</th><th>Budget B</th><th>Difference</th></tr></thead>
+                            <tbody>{cat_diff_rows}</tbody>
+                        </table>
+                    </div>
+                    <div class="cmp-mfooter">Sorted by largest absolute difference · Top 10 shown</div>
+                </div>
+            </div>
+
+            <!-- Modal D — Percentage change by category -->
+            <div class="cmp-modal-overlay" id="cmp-modal-pct" onclick="if(event.target===this)this.classList.remove('open')">
+                <div class="cmp-modal wide">
+                    <div class="cmp-mhdr">
+                        <h2>📉 % Change — Category Breakdown</h2>
+                        <button class="cmp-mclose" onclick="document.getElementById('cmp-modal-pct').classList.remove('open')">×</button>
+                    </div>
+                    <div class="cmp-mbody">
+                        <p style="margin-bottom:14px;color:#555;font-size:.9rem;">
+                            Budget B is <strong style="color:{diff_dir_color};">{diff_pct:+.1f}%</strong> vs Budget A overall. {variance_warning_html}
+                        </p>
+                        <table>
+                            <thead><tr><th>Category</th><th>% Change</th><th>Budget A</th><th>Budget B</th></tr></thead>
+                            <tbody>{cat_pct_rows}</tbody>
+                        </table>
+                    </div>
+                    <div class="cmp-mfooter">Sorted by largest % swing · ⚠ HIGH = ±50% or more variance</div>
+                </div>
+            </div>
+
+            {modal_js}
         </body>
         </html>
         """

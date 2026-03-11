@@ -1,0 +1,43 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Director Fee - 3 spots,42000
+Producer,Pre-Production,Executive Producer,22000
+Producer,Pre-Production,Line Producer,14000
+Creative,Pre-Production,Creative Director,18000
+Creative,Pre-Production,Concept Development,6500
+Creative,Pre-Production,Storyboard Artist,4500
+Creative,Pre-Production,Pre-Visualization,5500
+Talent,Production,Principal Talent - Spot 1,28000
+Talent,Production,Principal Talent - Spot 2,24000
+Talent,Production,Principal Talent - Spot 3,24000
+Talent,Production,Supporting Talent x6,18000
+Talent,Production,Background x20,8000
+Talent,Production,Talent Agency Fees,7500
+Talent,Production,Usage Rights - 2 years,45000
+Crew,Production,Director of Photography,18000
+Crew,Production,1st AC,9500
+Crew,Production,Gaffer,8500
+Crew,Production,Key Grip,7500
+Crew,Production,Production Designer,12000
+Crew,Production,Art Director,8500
+Crew,Production,Prop Stylist,6500
+Crew,Production,Wardrobe Stylist,7500
+Crew,Production,Hair and Makeup x2,9000
+Crew,Production,Sound Mixer,6500
+Equipment,Production,Camera Package - RED Monstro,8500
+Equipment,Production,Anamorphic Lens Package,5500
+Equipment,Production,Lighting Package,7500
+Equipment,Production,Grip Package,4500
+Equipment,Production,Drone,3200
+Location,Production,Studio Rental - 3 days,18000
+Location,Production,Location Fees - 2 days,9500
+Location,Production,Permits and Security,2800
+Location,Production,Catering - 5 days,7500
+Post-Production,Post-Production,Editor - 3 cuts,12000
+Post-Production,Post-Production,Colorist,7500
+Post-Production,Post-Production,VFX and Compositing,14000
+Post-Production,Post-Production,Sound Design and Mix,6500
+Post-Production,Post-Production,Music License,8500
+Post-Production,Post-Production,Deliverables - TV/Digital/Social,4500
+Insurance,Production,Production Insurance,5500
+Legal,Pre-Production,Legal Fees,4500
+Contingency,Production,10% Contingency,45000

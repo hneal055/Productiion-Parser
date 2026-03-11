@@ -1,0 +1,45 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Showrunner,650000
+Director,Pre-Production,Episode Directors x4,320000
+Producer,Pre-Production,Executive Producer x2,480000
+Producer,Pre-Production,Line Producer,95000
+Producer,Pre-Production,UPM,75000
+Creative,Pre-Production,Writers Room - 8 Episodes,420000
+Creative,Pre-Production,Script Editing,35000
+Talent,Production,Series Lead Actor,1200000
+Talent,Production,Series Lead Actress,1200000
+Talent,Production,Series Regular x4,960000
+Talent,Production,Recurring Guest Stars x6,240000
+Talent,Production,Day Players per Episode,112000
+Talent,Production,Background per Episode,96000
+Crew,Production,Director of Photography,220000
+Crew,Production,Camera Department,185000
+Crew,Production,Gaffer,85000
+Crew,Production,Grip Department,75000
+Crew,Production,Production Designer,140000
+Crew,Production,Art Department,120000
+Crew,Production,Costume Department,145000
+Crew,Production,Hair and Makeup Department,110000
+Crew,Production,Sound Department,95000
+Crew,Production,Script Supervisor,58000
+Crew,Production,AD Department,135000
+Equipment,Production,Camera Package - 16 weeks,380000
+Equipment,Production,Lighting Package - 16 weeks,220000
+Equipment,Production,Grip Package - 16 weeks,130000
+Equipment,Production,Sound Package - 16 weeks,80000
+Location,Production,Stage Rental - 16 weeks,880000
+Location,Production,Location Fees,195000
+Location,Production,Permits and Security,45000
+Location,Production,Catering - 16 weeks,175000
+VFX,Post-Production,VFX - 120 shots per episode,960000
+Post-Production,Post-Production,Post Supervisor,95000
+Post-Production,Post-Production,Editors x2,240000
+Post-Production,Post-Production,Color Grading,145000
+Post-Production,Post-Production,Sound Design and Mix,195000
+Post-Production,Post-Production,Music Score,220000
+Post-Production,Post-Production,Music Licensing,120000
+Post-Production,Post-Production,Deliverables - 8 episodes,55000
+Insurance,Production,Production Insurance,245000
+Legal,Pre-Production,Legal and Business Affairs,135000
+Marketing,Post-Production,Key Art and Promo Assets,85000
+Contingency,Production,10% Contingency,950000

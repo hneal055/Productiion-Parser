@@ -1,0 +1,60 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Director Fee,450000
+Director,Pre-Production,Director Development Days,25000
+Producer,Pre-Production,Executive Producer,200000
+Producer,Pre-Production,Line Producer,85000
+Producer,Pre-Production,Associate Producer,45000
+Creative,Pre-Production,Screenplay Rights,150000
+Creative,Pre-Production,Script Revisions,35000
+Creative,Pre-Production,Story Consultant,20000
+Talent,Production,Lead Actor - A-List,2500000
+Talent,Production,Lead Actress - A-List,2000000
+Talent,Production,Supporting Cast x6,480000
+Talent,Production,Background Artists x80,120000
+Talent,Production,Stunt Coordinator,75000
+Talent,Production,Stunt Performers x12,96000
+Crew,Production,Director of Photography,180000
+Crew,Production,1st AC,55000
+Crew,Production,2nd AC,38000
+Crew,Production,Gaffer,65000
+Crew,Production,Key Grip,55000
+Crew,Production,Best Boy Electric,42000
+Crew,Production,Dolly Grip,38000
+Crew,Production,Production Designer,120000
+Crew,Production,Art Director,75000
+Crew,Production,Set Decorator,65000
+Crew,Production,Props Master,55000
+Crew,Production,Costume Designer,90000
+Crew,Production,Wardrobe Supervisor,55000
+Crew,Production,Hair Department Head,48000
+Crew,Production,Makeup Department Head,48000
+Crew,Production,Special FX Makeup,85000
+Equipment,Production,Camera Package - 6 weeks,280000
+Equipment,Production,Lighting Package - 6 weeks,180000
+Equipment,Production,Grip Package - 6 weeks,95000
+Equipment,Production,Sound Package - 6 weeks,65000
+Equipment,Production,Specialty Camera (Crane/Drone),45000
+Location,Production,Studio Stage Rental - 8 weeks,640000
+Location,Production,Location Fees - Exteriors,185000
+Location,Production,Location Manager,55000
+Location,Production,Permits and Security,38000
+Location,Production,Base Camp,28000
+VFX,Post-Production,VFX Supervisor,120000
+VFX,Post-Production,VFX Production - 400 shots,3200000
+VFX,Post-Production,Previsualization,85000
+VFX,Post-Production,Motion Capture,250000
+Post-Production,Post-Production,Editor,145000
+Post-Production,Post-Production,Assistant Editor,55000
+Post-Production,Post-Production,Color Grading,95000
+Post-Production,Post-Production,Sound Design,120000
+Post-Production,Post-Production,Music Score,350000
+Post-Production,Post-Production,Music Licensing,180000
+Post-Production,Post-Production,ADR and Foley,75000
+Post-Production,Post-Production,DCP Mastering,18000
+Insurance,Production,Production Insurance,185000
+Insurance,Production,E&O Insurance,28000
+Legal,Pre-Production,Legal Fees,95000
+Legal,Pre-Production,Chain of Title,25000
+Marketing,Post-Production,Trailer Production,120000
+Marketing,Post-Production,Poster and Key Art,65000
+Contingency,Production,10% Contingency,1200000

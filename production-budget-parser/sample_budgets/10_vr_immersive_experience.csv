@@ -1,0 +1,43 @@
+Category,Department,Description,Amount
+Director,Pre-Production,Creative Director,55000
+Director,Pre-Production,VR Director,38000
+Producer,Pre-Production,Executive Producer,35000
+Producer,Pre-Production,Technical Producer,28000
+Creative,Pre-Production,Concept and World Design,18000
+Creative,Pre-Production,Narrative Design,12000
+Creative,Pre-Production,User Experience Design,14000
+Creative,Pre-Production,Storyboard and Previs,8500
+Technology,Pre-Production,VR Platform License,22000
+Technology,Pre-Production,Game Engine License - Unreal,8500
+Technology,Pre-Production,360 Camera Package,18000
+Technology,Production,Spatial Audio Equipment,9500
+Technology,Production,Motion Capture System,35000
+Technology,Production,Haptic Feedback Hardware,12000
+Talent,Production,Lead Performer,22000
+Talent,Production,Supporting Performers x4,28000
+Talent,Production,Voice Cast x8,16000
+Talent,Production,Motion Capture Actors x6,18000
+Crew,Production,Cinematographer - 360,14000
+Crew,Production,Technical Director,22000
+Crew,Production,Real-Time Compositor,18000
+Crew,Production,Sound Recordist - Spatial,12000
+Development,Production,3D Modelers x4,120000
+Development,Production,Environment Artists x3,90000
+Development,Production,Character Artists x2,65000
+Development,Production,Animators x4,110000
+Development,Production,VR Developers x3,135000
+Development,Production,UI/UX Developer,45000
+Development,Production,Audio Programmer,38000
+Development,Production,QA Testers x2,28000
+Location,Production,Volume Stage Rental - 4 weeks,55000
+Location,Production,Capture Stage Setup,12000
+Post-Production,Post-Production,360 Video Edit and Stitch,18000
+Post-Production,Post-Production,Spatial Audio Mix,14000
+Post-Production,Post-Production,Color Grade - 360,10000
+Post-Production,Post-Production,Platform Optimization,22000
+Post-Production,Post-Production,Beta Testing and Iteration,18000
+Post-Production,Post-Production,Distribution and Publish,8500
+Insurance,Production,Production Insurance,14000
+Legal,Pre-Production,IP and Software Licensing,18000
+Legal,Pre-Production,Platform Distribution Agreements,9500
+Contingency,Production,15% Contingency,145000

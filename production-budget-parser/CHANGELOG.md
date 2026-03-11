@@ -4,6 +4,65 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.4.0] — 2026-03-11
+
+### Comparison Card Modals & Sample Budgets
+
+#### Comparison Page — Interactive Cards
+
+- All 4 comparison summary cards are now clickable with modal overlays
+- **Budget A / Budget B cards**: show total budget, line items, departments, risk level, upload date + direct link to full analysis
+- **Difference card**: category breakdown table sorted by largest absolute $ gap (top 10), HIGH VARIANCE badge when overall change ≥ 50%
+- **% Change card**: category breakdown sorted by largest % swing (top 10), per-row ⚠ HIGH badge on any category ≥ ±50% variance
+- Direction context label on Difference and % Change cards ("Budget B is higher", "Budget B vs Budget A")
+- Esc key and click-outside both close modals
+- `category_changes` key correctly mapped from `budget_comparison.py` result (`budget1_amount`, `budget2_amount`, `difference`, `percent_change`)
+
+#### Sample Budgets
+
+- 10 production budget CSV files added to `sample_budgets/` for testing and demo use
+  - `01_feature_film_blockbuster.csv` — Studio blockbuster (~$13M, 59 line items)
+  - `02_indie_drama_lowbudget.csv` — Indie drama (~$242K, 38 items)
+  - `03_streaming_series_season1.csv` — 8-episode streaming series (~$10.5M, 44 items)
+  - `04_music_video_hiphop.csv` — Music video (~$154K, 34 items)
+  - `05_documentary_feature.csv` — Feature documentary (~$418K, 38 items)
+  - `06_branded_content_campaign.csv` — Brand campaign 3 spots (~$496K, 42 items)
+  - `07_animated_short.csv` — 2D animated short (~$385K, 30 items)
+  - `08_reality_tv_pilot.csv` — Reality TV pilot (~$1.05M, 40 items)
+  - `09_corporate_training_video.csv` — Corporate training video (~$50K, 28 items)
+  - `10_vr_immersive_experience.csv` — VR/immersive experience (~$1.6M, 42 items)
+
+#### Auth Config
+
+- `APP_PASSWORD` added to `.env` (required for login — server must restart after change)
+- `APP_PASSWORD` documented in `.env.example`
+
+---
+
+## [2.3.0] — 2026-03-10
+
+### Authentication & HTTPS
+
+#### Authentication
+
+- Session-based login added to all web routes via `@login_required` decorator
+- Password set via `APP_PASSWORD` environment variable (`.env`)
+- Timing-safe password comparison via `hmac.compare_digest()`
+- `/login` and `/logout` routes added; unauthenticated requests redirect to `/login`
+- Logout link added to dashboard and analysis pages
+
+#### HTTPS
+
+- `Caddyfile` added for Caddy reverse proxy setup
+- Supports localhost (self-signed), public domain (Let's Encrypt auto-cert), and LAN IP modes
+- App remains bound to `127.0.0.1:8082`; Caddy handles TLS termination
+
+#### Env
+
+- `.env.example` updated with `APP_PASSWORD`, `ANTHROPIC_API_KEY`, `BUDGET_API_KEY`
+
+---
+
 ## [2.2.0] — 2026-03-10
 
 ### Production Hardening
