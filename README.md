@@ -2,127 +2,154 @@
 
 Three standalone tools for film/TV production workflows — Scene Reader Studio Technologies LLC.
 
+| Project | Version | Port | Description |
+| --- | --- | --- | --- |
+| contract-review-tool | v1.3.0 | 5001 | AI contract analysis (PDF/DOCX/TXT) |
+| production-budget-parser | v2.5.0 | 8082 | Film/TV budget parsing and risk scoring |
+| screenflow-aura | v3.1.0 | 8083 | Screenplay intelligence API |
+
+---
+
+## Quick Start (Docker — recommended)
+
+```bash
+# 1. Copy and fill .env for each project
+cp contract-review-tool/.env.example      contract-review-tool/.env
+cp production-budget-parser/.env.example  production-budget-parser/.env
+cp screenflow-aura/.env.example           screenflow-aura/.env
+
+# 2. Edit each .env — set SECRET_KEY, ADMIN_PASSWORD/AURA_API_KEY, ANTHROPIC_API_KEY
+
+# 3. Start all three services
+docker compose up -d --build
+```
+
+Services start on ports 5001, 8082, 8083. Database migrations run automatically on first boot.
+
+---
+
+## Quick Start (Local / Windows)
+
+```powershell
+# Start all three servers (each in its own terminal)
+& "c:\Projects\production-parser\contract-review-tool\Start server.BAT"
+& "c:\Projects\production-parser\production-budget-parser\Start server.BAT"
+& "c:\Projects\production-parser\screenflow-aura\Start server.BAT"
+
+# Stop all servers
+taskkill /F /IM python.exe
+```
+
+Each `.BAT` script auto-activates the local `venv/`, installs dependencies, and prints the server URL.
+
 ---
 
 ## Projects
 
-### contract-review-tool
+### contract-review-tool — v1.3.0
 
-AI-powered contract analysis using the Anthropic Claude API. Upload PDF, DOCX, or TXT files for instant structured review with password-protected access.
+AI-powered contract analysis. Upload PDF, DOCX, or TXT for a structured review with risk flags, fairness assessment, and negotiation points — streamed in real-time via SSE.
 
-**Start:** Double-click `Start server.BAT` or run:
-
-```bat
-cd contract-review-tool
-& "Start server.BAT"
-```
-
-**URL:** <http://localhost:5001>
-
-**Login:** Password set via `APP_PASSWORD` in `.env`
+**URL:** <http://localhost:5001> · **Login:** username + password (set via `ADMIN_USERNAME` / `ADMIN_PASSWORD`)
 
 **Setup:**
-
-1. Copy `.env.example` → `.env`
-2. Add your `ANTHROPIC_API_KEY`
-3. Set `APP_PASSWORD` to your chosen login password
-4. `pip install -r requirements.txt`
+```bash
+cd contract-review-tool
+cp .env.example .env          # fill in SECRET_KEY, ADMIN_PASSWORD, ANTHROPIC_API_KEY
+pip install -r requirements.txt
+flask db upgrade              # run migrations (or just start — app auto-migrates)
+python app.py
+```
 
 ---
 
-### production-budget-parser
+### production-budget-parser — v2.5.0
 
-Film/TV budget analysis with risk scoring, multi-budget comparison, Excel export, and PDF reports. SQLite-backed. **v2.1.0**
+Film/TV budget parser with risk scoring, multi-budget comparison, Excel/PDF export, and AI-powered line-item analysis. SQLite-backed with Alembic migrations.
 
-**Start:** Double-click `Start server.BAT` or from PowerShell:
-
-```powershell
-cd production-budget-parser
-& "Start server.BAT"
-```
-
-**URL:** <http://localhost:8082>
+**URL:** <http://localhost:8082> · **Login:** username + password (set via `ADMIN_USERNAME` / `ADMIN_PASSWORD`)
 
 **Setup:**
+```bash
+cd production-budget-parser
+cp .env.example .env          # fill in SECRET_KEY, ADMIN_PASSWORD, ANTHROPIC_API_KEY, BUDGET_API_KEY
+pip install -r requirements.txt
+python web_app.py
+```
 
-1. Copy `.env.example` → `.env`
-2. Set `SECRET_KEY` to a random string (generate with `python -c "import secrets; print(secrets.token_hex(32))"`)
-3. Set `BUDGET_API_KEY` to any string (used for the AI insights API endpoint)
-4. `pip install -r requirements.txt`
-
-**Key features (v2.1.0):**
-
-- Interactive stat cards with modal detail views (Line Items, Departments, Budget Breakdown, Risk Assessment)
-- Chart.js visualizations: department allocation, top budget items, category breakdown, risk distribution
+**Key features:**
+- Interactive dashboard — stat cards, Chart.js visualizations, modal detail views
+- 8-category risk scoring system (patent pending)
 - Multi-budget comparison with variance analysis
 - Excel + PDF export
-- 8-category risk scoring system (patent pending)
 
 See [CHANGELOG.md](production-budget-parser/CHANGELOG.md) for full version history.
 
 ---
 
-### screenflow-aura
+### screenflow-aura — v3.1.0
 
-Screenplay intelligence platform — AI-powered screenplay parsing and analysis.
-
-**Start:** Double-click `Start server.BAT` or from PowerShell:
-
-```powershell
-cd screenflow-aura
-& "Start server.BAT"
-```
+Screenplay intelligence REST API. All endpoints protected by API key auth. Keys managed via admin endpoints — no manual DB edits required.
 
 **URL:** <http://localhost:8083>
 
 **Setup:**
+```bash
+cd screenflow-aura
+cp .env.example .env          # fill in SECRET_KEY, ANTHROPIC_API_KEY, AURA_API_KEY, AURA_ADMIN_TOKEN
+pip install -r requirements.txt
+python app.py
+```
 
-1. Copy `.env.example` → `.env`
-2. Add your `ANTHROPIC_API_KEY`
-3. Set `SECRET_KEY` and `AURA_API_KEY`
-4. `pip install -r requirements.txt`
+**Analysis endpoints** (require `X-API-Key` header):
 
-**API endpoints** (all require `X-API-Key` header except health):
+| Endpoint | Method | Description |
+| --- | --- | --- |
+| `/api/health` | GET | Status check — no auth required |
+| `/api/parse` | POST | Full screenplay parse (20/hr) |
+| `/api/analyze` | POST | Deep narrative analysis (20/hr) |
+| `/api/validate` | POST | Format compliance check (20/hr) |
+| `/api/batch/parse` | POST | Batch parse multiple scripts (5/hr) |
+| `/api/history` | GET | Paginated analysis history |
+| `/api/metrics` | GET | Usage metrics by type |
 
-| Endpoint           | Method | Description            |
-| ------------------ | ------ | ---------------------- |
-| `/api/health`      | GET    | Status check (no auth) |
-| `/api/parse`       | POST   | Parse screenplay       |
-| `/api/analyze`     | POST   | AI analysis            |
-| `/api/batch/parse` | POST   | Batch parsing          |
-| `/api/history`     | GET    | Analysis history       |
+**Key management endpoints** (require `X-Admin-Token` header):
+
+| Endpoint | Method | Description |
+| --- | --- | --- |
+| `/api/admin/keys` | GET | List all API keys |
+| `/api/admin/keys` | POST | Create new key — raw key returned once |
+| `/api/admin/keys/<id>` | DELETE | Revoke key (soft disable) |
+| `/api/admin/keys/<id>?permanent=1` | DELETE | Hard-delete key |
 
 ---
 
-## Daily Startup
+## Environment Variables
 
-**Stop all servers** (PowerShell):
+Each project has a `.env.example`. Copy to `.env` and fill in before running. Never commit `.env` files.
 
-```powershell
-taskkill /F /IM python.exe
+**Generate secure values:**
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-**Start each project** (PowerShell — quotes required due to space in filename):
+| Project | Required | Optional |
+| --- | --- | --- |
+| contract-review-tool | `SECRET_KEY`, `ADMIN_PASSWORD`, `ANTHROPIC_API_KEY` | `ADMIN_USERNAME` (default: `admin`), `HTTPS` |
+| production-budget-parser | `SECRET_KEY`, `ADMIN_PASSWORD`, `ANTHROPIC_API_KEY` | `BUDGET_API_KEY`, `HTTPS` |
+| screenflow-aura | `SECRET_KEY`, `ANTHROPIC_API_KEY`, `AURA_API_KEY` | `AURA_ADMIN_TOKEN`, `HTTPS`, `PORT` |
 
-```powershell
-& "c:\Projects\production-parser\contract-review-tool\Start server.BAT"
-& "c:\Projects\production-parser\production-budget-parser\Start server.BAT"
-& "c:\Projects\production-parser\screenflow-aura\Start server.BAT"
-```
-
-Each script auto-checks for a local `venv/`, verifies dependencies, and prints the server URL before starting.
+Set `HTTPS=true` in each `.env` when running behind a TLS reverse proxy (Caddy) to enable `SESSION_COOKIE_SECURE`.
 
 ---
 
-## Environment Files
+## Tests
 
-Each project has a `.env.example` — copy it to `.env` and fill in values before running. `.env` files are gitignored and never committed.
-
-| Project                  | Required Keys                                      |
-| ------------------------ | -------------------------------------------------- |
-| contract-review-tool     | `ANTHROPIC_API_KEY`, `APP_PASSWORD`, `SECRET_KEY`  |
-| production-budget-parser | `SECRET_KEY`, `BUDGET_API_KEY`                     |
-| screenflow-aura          | `ANTHROPIC_API_KEY`, `SECRET_KEY`, `AURA_API_KEY`  |
+```bash
+cd contract-review-tool     && python -m pytest tests/ -v   # 19 tests
+cd production-budget-parser && python -m pytest tests/ -v   # 20 tests
+cd screenflow-aura          && python -m pytest tests/ -v   # 23 tests
+```
 
 ---
 
@@ -130,11 +157,22 @@ Each project has a `.env.example` — copy it to `.env` and fill in values befor
 
 ```text
 production-parser/
-├── contract-review-tool/       # Port 5001 — Contract AI analysis
-├── production-budget-parser/   # Port 8082 — Budget parser v2.1.0
-│   └── CHANGELOG.md            # Version history
-├── screenflow-aura/            # Port 8083 — Screenplay intelligence
-└── _archive/                   # Legacy scripts (reference only)
+├── contract-review-tool/       # Port 5001 — v1.3.0
+│   ├── migrations/             # Alembic schema migrations
+│   ├── templates/
+│   ├── tests/
+│   └── Dockerfile
+├── production-budget-parser/   # Port 8082 — v2.5.0
+│   ├── migrations/
+│   ├── _archive/               # Retired modules (reference only)
+│   ├── templates/
+│   ├── tests/
+│   └── Dockerfile
+├── screenflow-aura/            # Port 8083 — v3.1.0
+│   ├── migrations/
+│   ├── tests/
+│   └── Dockerfile
+└── docker-compose.yml          # Orchestrates all three services
 ```
 
 ---
