@@ -5,12 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contract Analysis Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* ── Save-to dropdown ─────────────────────────────────────────── */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(102,126,234,0.18);
+            min-width: 180px;
+            z-index: 100;
+            overflow: hidden;
+        }
+        .dropdown.open .dropdown-menu { display: block; }
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #4a5568;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .dropdown-menu a:hover { background: #f0f4ff; color: #667eea; }
+        .dropdown-menu a + a { border-top: 1px solid #e8ecf8; }
+        .dropdown-arrow {
+            font-size: 0.7rem;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        /* ── Print styles ─────────────────────────────────────────────── */
+        @media print {
+            body { background: white !important; }
+            header .back-link,
+            .action-buttons,
+            footer,
+            details summary { display: none !important; }
+            details { display: block !important; }
+            details > div { display: block !important; }
+            .fairness-badge { border: 2px solid #333 !important;
+                              background: white !important;
+                              color: black !important; }
+            .fairness-badge h3 { color: black !important; }
+            .risk-item { box-shadow: none !important;
+                         border: 1px solid #ccc !important; }
+            .results-section { box-shadow: none !important;
+                                border: 1px solid #ddd !important; }
+            header { background: white !important;
+                     color: black !important;
+                     border-bottom: 2px solid #333 !important; }
+            header h1 { color: black !important; }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>📄 Contract Analysis Results</h1>
-            <a href="/contract" class="back-link">← Analyze Another Contract</a>
+            <a href="/" class="back-link">← Back to Dashboard</a>
         </header>
 
         <main id="resultsContainer">
@@ -180,7 +244,22 @@
             // Action Buttons
             html += `
                 <div class="action-buttons">
-                    <button onclick="window.print()" class="btn-secondary">
+                    <a href="/" class="btn-secondary">
+                        <span class="btn-icon">🏠</span>
+                        Back to Dashboard
+                    </a>
+                    <div class="dropdown" id="saveDropdown">
+                        <button onclick="toggleSaveMenu()" class="btn-secondary">
+                            <span class="btn-icon">💾</span>
+                            Save to <span class="dropdown-arrow">▲</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a onclick="savePDF()">📄 Save as PDF</a>
+                            <a onclick="saveTXT()">📝 Save as TXT</a>
+                            <a onclick="saveJSON()">🗂️ Save as JSON</a>
+                        </div>
+                    </div>
+                    <button onclick="printReport()" class="btn-secondary">
                         <span class="btn-icon">🖨️</span>
                         Print Report
                     </button>
@@ -204,7 +283,6 @@
             if (resultsData) {
                 const results = JSON.parse(resultsData);
                 const text = results.raw_response || JSON.stringify(results, null, 2);
-                
                 navigator.clipboard.writeText(text).then(() => {
                     alert('Analysis copied to clipboard!');
                 }).catch(err => {
@@ -212,6 +290,103 @@
                     alert('Failed to copy to clipboard');
                 });
             }
+        }
+
+        // ── Save to ────────────────────────────────────────────────────
+
+        function toggleSaveMenu() {
+            const dd = document.getElementById('saveDropdown');
+            dd.classList.toggle('open');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dd = document.getElementById('saveDropdown');
+            if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+        });
+
+        function buildPlainText(data) {
+            const lines = [];
+            lines.push('CONTRACT ANALYSIS REPORT');
+            lines.push('========================');
+            lines.push('File: ' + (data.filename || 'Unknown'));
+            lines.push('Analyzed: ' + (data.analyzed_at || new Date().toLocaleString()));
+            lines.push('Overall Assessment: ' + (data.fairness || 'N/A'));
+            lines.push('');
+
+            lines.push('KEY TERMS');
+            lines.push('---------');
+            (data.key_terms || []).forEach(t => lines.push('• ' + t.replace(/\*\*/g, '')));
+            lines.push('');
+
+            lines.push('RISK ANALYSIS');
+            lines.push('-------------');
+            (data.risks || []).forEach(r => lines.push('• ' + r.replace(/\*\*/g, '')));
+            lines.push('');
+
+            lines.push('NEGOTIATION POINTS');
+            lines.push('------------------');
+            (data.negotiation_points || []).forEach(p => lines.push('• ' + p.replace(/\*\*/g, '')));
+            lines.push('');
+
+            if (data.raw_response) {
+                lines.push('FULL ANALYSIS');
+                lines.push('-------------');
+                lines.push(data.raw_response.replace(/\*\*/g, ''));
+            }
+
+            return lines.join('\n');
+        }
+
+        function slugFilename(data, ext) {
+            const base = (data.filename || 'contract-analysis')
+                .replace(/\.[^.]+$/, '')          // strip original extension
+                .replace(/[^a-zA-Z0-9_-]/g, '_')  // safe chars only
+                .substring(0, 60);
+            return base + '_analysis.' + ext;
+        }
+
+        function downloadBlob(content, filename, mime) {
+            const blob = new Blob([content], { type: mime });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function savePDF() {
+            document.getElementById('saveDropdown').classList.remove('open');
+            // Open all <details> so full analysis prints
+            document.querySelectorAll('details').forEach(d => d.open = true);
+            window.print();
+        }
+
+        function saveTXT() {
+            document.getElementById('saveDropdown').classList.remove('open');
+            const raw = sessionStorage.getItem('analysisResults');
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            downloadBlob(buildPlainText(data), slugFilename(data, 'txt'), 'text/plain;charset=utf-8');
+        }
+
+        function saveJSON() {
+            document.getElementById('saveDropdown').classList.remove('open');
+            const raw = sessionStorage.getItem('analysisResults');
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            downloadBlob(JSON.stringify(data, null, 2), slugFilename(data, 'json'), 'application/json');
+        }
+
+        // ── Print ──────────────────────────────────────────────────────
+
+        function printReport() {
+            // Open all <details> so full analysis is visible in print
+            document.querySelectorAll('details').forEach(d => d.open = true);
+            window.print();
         }
     </script>
 </body>

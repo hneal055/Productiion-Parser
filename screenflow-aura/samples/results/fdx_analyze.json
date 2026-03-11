@@ -1,0 +1,49 @@
+{
+  "analysis": {
+    "ai_model": "claude-sonnet-4-6",
+    "analysis_id": 47,
+    "analysis_type": "comprehensive",
+    "character_analysis": {
+      "character_arcs": 1,
+      "character_depth": "complex",
+      "main_characters": 3,
+      "protagonist_strength": "compelling"
+    },
+    "commercial_viability": {
+      "comparable_titles": [
+        "The Assassination of Jesse James by the Coward Robert Ford",
+        "Paterson"
+      ],
+      "distribution_outlook": "festival",
+      "market_potential": "LOW",
+      "target_audience": "premium"
+    },
+    "insights": {
+      "climax_strength": "weak",
+      "narrative_structure": {
+        "act1": "Efficient and economical setup established through the desert location and the tension between Miriam's artistic precision and external production pressures; character dynamics and stakes are clear within the first page",
+        "act2": "The middle section functions as a quiet denouement rather than a traditional second act \u2014 the wrap conversation with Sophie and the van ride serve as reflective falling action, revealing character depth through restrained dialogue rather than conflict escalation",
+        "act3": "The motel scene and dawn walk provide an intimate, introspective resolution; the phone call with her father introduces the only genuinely personal emotional beat, grounding the piece in human connection beyond the professional world"
+      },
+      "plot_points": 4
+    },
+    "processing_time_ms": 12258,
+    "recommendations": [
+      "Introduce a meaningful dramatic obstacle or decision point for Miriam that tests her stated philosophy \u2014 the current script is tonally consistent but dramatically inert, limiting emotional investment for wider audiences",
+      "Expand the father relationship thread earlier in the narrative to give the motel phone call greater payoff; as written it arrives too late to fully resonate as the emotional anchor it appears intended to be",
+      "Consider developing Sophie's perspective with a brief conflicting motivation or personal stake to elevate the Miriam-Sophie dynamic from functional support to genuine dramatic counterweight"
+    ],
+    "risk_assessment": {
+      "commercial_risk": "high",
+      "market_fit": "weak",
+      "overall_risk": "medium",
+      "technical_risk": "low"
+    },
+    "technical_assessment": {
+      "formatting_compliance": "compliant",
+      "industry_standards": "meets",
+      "readability_score": 91
+    }
+  },
+  "success": true
+}

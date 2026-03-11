@@ -4,9 +4,9 @@ Three standalone tools for film/TV production workflows — Scene Reader Studio 
 
 | Project | Version | Port | Description |
 | --- | --- | --- | --- |
-| contract-review-tool | v1.3.0 | 5001 | AI contract analysis (PDF/DOCX/TXT) |
+| contract-review-tool | v1.3.1 | 5001 | AI contract analysis (PDF/DOCX/TXT) |
 | production-budget-parser | v2.5.0 | 8082 | Film/TV budget parsing and risk scoring |
-| screenflow-aura | v3.1.0 | 8083 | Screenplay intelligence API |
+| screenflow-aura | v3.1.1 | 8083 | Screenplay intelligence API |
 
 ---
 
@@ -28,6 +28,16 @@ Services start on ports 5001, 8082, 8083. Database migrations run automatically 
 
 ---
 
+## Landing Page
+
+Open [`index.html`](index.html) in a browser after all three servers are running. It provides:
+
+- Live status indicators (green/red) for each service — checked every 30 seconds
+- Direct links to Screenplay Analysis, Contract Review, Budget Analysis, and the ScreenFlow API reference
+- No server required — static HTML with `fetch()` health checks
+
+---
+
 ## Quick Start (Local / Windows)
 
 ```powershell
@@ -42,13 +52,17 @@ taskkill /F /IM python.exe
 
 Each `.BAT` script auto-activates the local `venv/`, installs dependencies, and prints the server URL.
 
+Then open `index.html` to access all three tools from one place.
+
 ---
 
 ## Projects
 
-### contract-review-tool — v1.3.0
+### contract-review-tool — v1.3.1
 
 AI-powered contract analysis. Upload PDF, DOCX, or TXT for a structured review with risk flags, fairness assessment, and negotiation points — streamed in real-time via SSE.
+
+Results page now includes Back to Dashboard, Save to (PDF/TXT/JSON), and Print with full-analysis expansion.
 
 **URL:** <http://localhost:5001> · **Login:** username + password (set via `ADMIN_USERNAME` / `ADMIN_PASSWORD`)
 
@@ -87,9 +101,11 @@ See [CHANGELOG.md](production-budget-parser/CHANGELOG.md) for full version histo
 
 ---
 
-### screenflow-aura — v3.1.0
+### screenflow-aura — v3.1.1
 
 Screenplay intelligence REST API. All endpoints protected by API key auth. Keys managed via admin endpoints — no manual DB edits required.
+
+Root route (`/`) serves an interactive API reference page. `/api/validate` retries once on transient Claude API errors with a 3-second backoff.
 
 **URL:** <http://localhost:8083>
 
@@ -157,19 +173,20 @@ cd screenflow-aura          && python -m pytest tests/ -v   # 23 tests
 
 ```text
 production-parser/
-├── contract-review-tool/       # Port 5001 — v1.3.0
+├── index.html                  # Static landing page — links all three tools
+├── contract-review-tool/       # Port 5001 — v1.3.1
 │   ├── migrations/             # Alembic schema migrations
 │   ├── templates/
 │   ├── tests/
 │   └── Dockerfile
 ├── production-budget-parser/   # Port 8082 — v2.5.0
 │   ├── migrations/
-│   ├── _archive/               # Retired modules (reference only)
 │   ├── templates/
 │   ├── tests/
 │   └── Dockerfile
-├── screenflow-aura/            # Port 8083 — v3.1.0
+├── screenflow-aura/            # Port 8083 — v3.1.1
 │   ├── migrations/
+│   ├── samples/                # Sample .fountain/.fdx/.txt/.pdf + test_api.py
 │   ├── tests/
 │   └── Dockerfile
 └── docker-compose.yml          # Orchestrates all three services

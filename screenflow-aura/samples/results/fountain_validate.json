@@ -1,0 +1,60 @@
+{
+  "success": true,
+  "validation": {
+    "analysis_id": 45,
+    "certification_status": "conditionally-compliant",
+    "compliance_report": {
+      "industry_standards": {
+        "final_draft_compatibility": "92%",
+        "fountain_compatibility": "97%",
+        "hollywood_format": "94%"
+      },
+      "quality_metrics": {
+        "character_consistency": "98%",
+        "dialogue_realism": "96%",
+        "pacing_consistency": "94%",
+        "structure_integrity": "91%"
+      }
+    },
+    "issues": [
+      {
+        "description": "Scene heading 'EXT. MOJAVE DESERT - MAGIC HOUR' uses a non-standard time-of-day descriptor. Industry standard accepts DAY, NIGHT, DAWN, DUSK, CONTINUOUS, or LATER. 'MAGIC HOUR' is colloquially understood but may cause issues in scheduling and breakdown software.",
+        "location": "Page 1 - First scene heading",
+        "severity": "warning"
+      },
+      {
+        "description": "Character introduction for DEREK lacks a proper full name. Industry standard for character introductions typically includes full name or at minimum a clarifying note. 'DEREK (25, PA, overwhelmed)' omits a surname, which may cause continuity issues in production documents.",
+        "location": "Page 1 - Derek's character introduction",
+        "severity": "warning"
+      },
+      {
+        "description": "The parenthetical '(beat)' is used as a standalone line break within Miriam's dialogue block rather than as an inline parenthetical attached to a subsequent dialogue line. While creatively intentional, Final Draft and standard formatting prefer parentheticals to precede the line of dialogue they modify.",
+        "location": "Page 4 - Miriam's monologue beginning 'You spend ninety minutes...'",
+        "severity": "suggestion"
+      },
+      {
+        "description": "TITLE CARD placement after FADE TO BLACK is unconventional. Standard practice places the title card either at the very beginning of the screenplay (after FADE IN) or as a simultaneous element with FADE TO BLACK rather than as a separate slug following it.",
+        "location": "Final page - TITLE CARD: 'THE GOLDEN HOUR'",
+        "severity": "suggestion"
+      },
+      {
+        "description": "Scene heading 'INT. PRODUCTION VAN - MOVING - NIGHT' correctly uses a location modifier but some breakdown software does not parse triple-segment scene headings reliably. Consider 'INT. MOVING PRODUCTION VAN - NIGHT' for broader compatibility.",
+        "location": "Page 5 - Van interior scene heading",
+        "severity": "suggestion"
+      },
+      {
+        "description": "No scene numbers are present. While omission is acceptable and standard for spec scripts, if this is intended as a shooting script the absence of scene numbers is a compliance gap for production scheduling and continuity purposes.",
+        "location": "Throughout entire screenplay",
+        "severity": "suggestion"
+      },
+      {
+        "description": "The screenplay does not include a 'SMASH CUT TO' or transitional element between the final desert walk sequence and the FADE TO BLACK, which is a minor stylistic gap given the otherwise deliberate use of transitions in the script.",
+        "location": "Final scene - EXT. HIGHWAY 395 - DAWN",
+        "severity": "suggestion"
+      }
+    ],
+    "overall_score": 91,
+    "processing_time_ms": 17253,
+    "summary": "THE GOLDEN HOUR is a well-crafted screenplay that demonstrates strong adherence to industry formatting standards, with high marks across character consistency, dialogue realism, and pacing. Minor issues with non-standard scene heading descriptors, title card placement, and the absence of scene numbers prevent full compliance, but no critical errors were identified and the script is readily correctable to full compliance with minimal revision."
+  }
+}

@@ -55,7 +55,7 @@ echo Server will be available at:
 echo   * Local:   http://localhost:5001
 echo   * Network: http://%COMPUTERNAME%:5001
 echo.
-echo Login required — default password set in .env ^(APP_PASSWORD^)
+echo Login required — username and password set in .env ^(ADMIN_USERNAME / ADMIN_PASSWORD^)
 echo Analysis history available at: http://localhost:5001/history
 echo.
 echo Press CTRL+C to stop the server

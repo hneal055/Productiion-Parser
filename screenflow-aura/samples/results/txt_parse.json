@@ -1,0 +1,46 @@
+{
+  "analysis": {
+    "ai_insights": {
+      "sentiment_analysis": {
+        "emotional_arc": "falling",
+        "overall_sentiment": "complex",
+        "tone_consistency": "consistent"
+      },
+      "style_assessment": {
+        "originality_score": 76,
+        "pacing": "deliberate",
+        "writing_style": "balanced"
+      },
+      "theme_detection": [
+        "artistic mastery and the cost of perfectionism",
+        "mentorship and the passage of craft across generations",
+        "letting go and the acceptance of endings"
+      ]
+    },
+    "analysis_id": 49,
+    "document_metrics": {
+      "complexity_score": 62,
+      "estimated_pages": 4.2,
+      "primary_genre": "Drama",
+      "word_count": 1045
+    },
+    "processing_metadata": {
+      "ai_model_used": "claude-sonnet-4-6",
+      "processing_time_ms": 8168,
+      "word_count_processed": 1045
+    },
+    "quality_assessment": {
+      "commercial_potential": "MEDIUM",
+      "dialogue_effectiveness": 90,
+      "overall_score": 84,
+      "pacing_analysis": "balanced",
+      "structure_quality": 81
+    },
+    "recommendations": [
+      "The closing phone call from 'DAD' is a compelling hook suggesting unresolved personal narrative \u2014 develop this thread earlier in the script to deepen Miriam's emotional stakes and add a counterweight to her professional stoicism.",
+      "Derek functions effectively as an audience surrogate but risks remaining purely instrumental; giving him a small moment of independent perspective or quiet competence would strengthen the generational mentorship dynamic.",
+      "The excerpt excels in atmospheric restraint, but commercial viability would benefit from a clearer sense of the broader film's central conflict \u2014 consider weaving in a brief reference to what Miriam's protagonist is 'fighting to hold onto' to ground the thematic payoff she describes."
+    ]
+  },
+  "success": true
+}

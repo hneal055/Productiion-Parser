@@ -1,0 +1,49 @@
+{
+  "analysis": {
+    "ai_model": "claude-sonnet-4-6",
+    "analysis_id": 44,
+    "analysis_type": "comprehensive",
+    "character_analysis": {
+      "character_arcs": 2,
+      "character_depth": "complex",
+      "main_characters": 3,
+      "protagonist_strength": "compelling"
+    },
+    "commercial_viability": {
+      "comparable_titles": [
+        "The Fabelmans",
+        "Paterson"
+      ],
+      "distribution_outlook": "festival",
+      "market_potential": "MEDIUM",
+      "target_audience": "niche"
+    },
+    "insights": {
+      "climax_strength": "moderate",
+      "narrative_structure": {
+        "act1": "Efficiently established on the Mojave lakebed with clear stakes (expiring permit, fading light) and immediate character definition through Miriam's calm defiance versus Derek's anxiety. Setup is lean and economical.",
+        "act2": "The middle section functions as a character study rather than a traditional conflict escalation. The wrapped-shoot conversation between Miriam and Sophie reveals history, professional respect, and subtle emotional undercurrents. Tension is internal rather than plot-driven.",
+        "act3": "The motel phone call and dawn walk provide a quiet but resonant emotional resolution. The 'Dad Calling' moment humanizes Miriam beyond her professional identity. The final image elegantly mirrors the film-within-the-film's themes of letting go and moving forward."
+      },
+      "plot_points": 4
+    },
+    "processing_time_ms": 12994,
+    "recommendations": [
+      "Introduce a more substantive dramatic obstacle or interpersonal conflict earlier to elevate stakes beyond the permit deadline and give the narrative greater propulsive momentum for broader audience appeal.",
+      "Expand the Miriam-Sophie relationship with at least one scene of genuine friction or a revealed backstory beat to deepen the emotional payoff of Miriam's 'that was personal' line, which currently carries more weight than the script has earned.",
+      "Consider developing Derek's arc more intentionally \u2014 his learning curve offers an accessible entry point for younger audiences and could serve as a stronger audience surrogate if given a clearer moment of personal revelation beyond the 'Oh' beat."
+    ],
+    "risk_assessment": {
+      "commercial_risk": "high",
+      "market_fit": "moderate",
+      "overall_risk": "medium",
+      "technical_risk": "low"
+    },
+    "technical_assessment": {
+      "formatting_compliance": "compliant",
+      "industry_standards": "meets",
+      "readability_score": 94
+    }
+  },
+  "success": true
+}

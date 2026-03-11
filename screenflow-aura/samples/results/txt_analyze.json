@@ -1,0 +1,51 @@
+{
+  "analysis": {
+    "ai_model": "claude-sonnet-4-6",
+    "analysis_id": 50,
+    "analysis_type": "comprehensive",
+    "insights": {
+      "character_analysis": {
+        "character_arcs": 1,
+        "character_depth": "complex",
+        "main_characters": 3,
+        "protagonist_strength": "compelling"
+      },
+      "commercial_viability": {
+        "comparable_titles": [
+          "The Assassin (2015)",
+          "Paterson (2016)"
+        ],
+        "distribution_outlook": "festival",
+        "market_potential": "MEDIUM",
+        "target_audience": "niche"
+      },
+      "narrative_structure": {
+        "act_breakdown": {
+          "act1": "Effectively established within the desert location \u2014 introduces Miriam's character, the permit tension, and the thematic stakes of the final shot; compressed but efficient",
+          "act2": "Represented through the wrap sequence and van ride \u2014 emotional resolution between characters, philosophical exchange with Derek, and Miriam's quiet reflection serve as the emotional middle ground",
+          "act3": "Incomplete \u2014 the screenplay excerpt ends on an unresolved beat (the father's phone call), suggesting a larger personal arc that remains entirely undeveloped in this draft segment"
+        },
+        "climax_strength": "weak",
+        "plot_points": 4
+      },
+      "technical_assessment": {
+        "formatting_compliance": "compliant",
+        "industry_standards": "meets",
+        "readability_score": 91
+      }
+    },
+    "processing_time_ms": 12713,
+    "recommendations": [
+      "Expand the father phone call thread \u2014 it is the most dramatically promising unresolved element and needs full development to give Miriam a meaningful personal arc beyond professional competence",
+      "Deepen the Act 2 conflict; the permit tension is resolved too quickly and with too little consequence \u2014 raising the professional or interpersonal stakes would strengthen the middle section significantly",
+      "Consider broadening commercial appeal by grounding the philosophical dialogue in more visceral or emotionally accessible stakes, as the current tone risks alienating wider audiences despite strong character writing"
+    ],
+    "risk_assessment": {
+      "commercial_risk": "high",
+      "market_fit": "moderate",
+      "overall_risk": "medium",
+      "technical_risk": "low"
+    }
+  },
+  "success": true
+}

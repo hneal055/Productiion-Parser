@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<FinalDraft DocumentType="Script" Template="No" Version="3">
+  <Content>
+
+    <Paragraph Type="Transition">
+      <Text>FADE IN:</Text>
+    </Paragraph>
+
+    <Paragraph Type="Scene Heading">
+      <Text>EXT. MOJAVE DESERT - MAGIC HOUR</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>A vast, cracked lakebed stretches to the horizon. The sky burns orange and violet — the last minutes of usable light.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>A battered production van sits alone on the flats. Equipment cases are stacked nearby, some open, some still latched.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>MIRIAM COLE (58, weathered, precise) crouches over a film camera mounted on a low-angle plate. She adjusts the lens with two fingers. Not rushed. Practiced.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>DEREK (25, PA, overwhelmed) checks his phone, checks the sky, checks his phone again.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Miriam, the producer is calling again.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Let her call.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>She says we lose the permit at sundown. Like, legally lose it.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>Miriam stands. Studies the horizon.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Derek, how long have you been in this business?</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Fourteen months.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>In fourteen months, has anyone ever actually been arrested for going four minutes over a sunset permit?</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(beat)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>I don't think so?</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>No. They have not.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She drops back to the viewfinder.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Roll camera.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Scene Heading">
+      <Text>INT. PRODUCTION VAN - CONTINUOUS</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>SOPHIE CHEN (34, line producer, efficient) paces the narrow aisle between equipment cases. Phone pressed to her ear.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Yes, I know what the permit says. I am aware of what the permit says.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She looks out the windshield at Miriam, still working.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(into phone)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>She'll wrap in five. I promise.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She hangs up. Watches Miriam frame the shot. Despite herself — a small smile.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Scene Heading">
+      <Text>EXT. MOJAVE DESERT - CONTINUOUS</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>The camera rolls. Miriam watches the light die on the lakebed.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>The shot is simple: an empty horizon, the shadow line advancing across cracked earth. Nothing more.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(quietly)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>What's this for, exactly? The shot?</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Closing image. The whole film builds to this.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>It's just... empty.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>That's the point.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She straightens up. Looks at the horizon. The light is nearly gone.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>You spend ninety minutes watching someone fight to hold onto something. And then you show them letting go.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(beat)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>That's the whole movie in four seconds of empty desert.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Oh.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Cut.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She moves to the camera. Begins breaking it down with the same quiet efficiency.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Tell Sophie we're wrapped.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Scene Heading">
+      <Text>EXT. MOJAVE DESERT - MOMENTS LATER</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>The van is being loaded. Miriam stands apart, facing the last sliver of light on the horizon. Sophie approaches.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>That's a wrap on principal photography.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Forty-one days.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>You going to miss it?</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Ask me in the edit bay.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Last film for a while, you said.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>I said maybe.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Your exact words were "I need eighteen months off and a dog."</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(beat)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>I don't have a dog yet.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>A long silence. The last light fades.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>The dailies from last week — the canyon sequence — they were extraordinary, Miriam. I mean that.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>I know.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>That's not arrogance?</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>It's just accurate. I was there. I know what I got.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She picks up her camera bag.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Arrogance is when you say it and you're wrong.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She walks toward the van. Pauses.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>It was a good shoot, Sophie. Thank you for keeping the wolves off me.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>That's my job.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>No. That was personal.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She continues to the van. Sophie watches her go. Looks back at the darkened desert.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Scene Heading">
+      <Text>INT. PRODUCTION VAN - MOVING - NIGHT</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>Miriam sits in the back, camera bag in her lap. Derek drives. Sophie rides passenger.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>The desert passes in the windows — darkness broken only by headlights.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Can I ask you something?</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Mm.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>How do you know when a shot is right? Like, how do you actually know?</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>Miriam thinks about this. Really thinks.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>When I stop seeing the frame and start seeing the thing itself.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>That's... kind of abstract.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>It gets less abstract after your first thousand days.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>DEREK</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Thousand days. That's almost three years.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>No one said it was fast.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She leans her head back. Closes her eyes.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>You'll know the first time it happens. You'll feel it before you understand it.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>The van hums through the dark desert.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>SOPHIE</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(quietly, to Derek)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Don't ask her anything else. She's done for the day.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>Derek nods. Drives.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>In the back, the faintest smile crosses Miriam's face.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Scene Heading">
+      <Text>EXT. MOTEL - HIGHWAY 395 - NIGHT</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>The van pulls into a tired desert motel. Neon sign buzzes. Half the rooms are dark.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Scene Heading">
+      <Text>INT. MIRIAM'S MOTEL ROOM - NIGHT</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>Sparse. Clean. A single bag on the luggage rack. Miriam sits at the desk, a yellow legal pad in front of her.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She writes: locations, lens choices, notes for the colorist. The muscle memory of forty years.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>Her phone buzzes. She glances at it. The screen reads: DAD CALLING.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>A beat. She picks it up.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(into phone)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Hey. I'm wrapped.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(listens)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>Yeah. Home in two days.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(listens, softer)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>I know it's been a while. I know.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She sets her pen down. Looks at the legal pad.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(into phone)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>I'll tell you about it when I get there. It was a good one, Pop.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She stands. Moves to the window. The motel parking lot. The empty highway beyond.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(into phone)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>No, don't wait up. I'll be quiet.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Character">
+      <Text>MIRIAM (CONT'D)</Text>
+    </Paragraph>
+    <Paragraph Type="Parenthetical">
+      <Text>(beat)</Text>
+    </Paragraph>
+    <Paragraph Type="Dialogue">
+      <Text>I love you too.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>She ends the call. Stands at the window a moment longer.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>Then she goes back to the desk. Picks up the pen. Keeps writing.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Scene Heading">
+      <Text>EXT. HIGHWAY 395 - DAWN</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>The first grey light touches the mountains. The road is empty.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>A figure walks the shoulder — Miriam, camera bag over one shoulder. No destination. Just walking in the early light, looking at the world the way she always does.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>Like she might need to shoot it.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Transition">
+      <Text>FADE TO BLACK.</Text>
+    </Paragraph>
+
+    <Paragraph Type="Action">
+      <Text>TITLE CARD: "THE GOLDEN HOUR"</Text>
+    </Paragraph>
+
+    <Paragraph Type="Transition">
+      <Text>FADE OUT.</Text>
+    </Paragraph>
+
+  </Content>
+
+  <TitlePage>
+    <Content>
+      <Paragraph Type="Title Page">
+        <Text>THE GOLDEN HOUR</Text>
+      </Paragraph>
+      <Paragraph Type="Title Page">
+        <Text>Written by Scene Reader Studio Technologies</Text>
+      </Paragraph>
+      <Paragraph Type="Title Page">
+        <Text>Draft: March 2026</Text>
+      </Paragraph>
+      <Paragraph Type="Title Page">
+        <Text>© 2026 Scene Reader Studio Technologies LLC</Text>
+      </Paragraph>
+    </Content>
+  </TitlePage>
+
+  <ElementSettings Type="Scene Heading">
+    <FontSpec Style="Bold" />
+  </ElementSettings>
+  <ElementSettings Type="Character">
+    <FontSpec Style="Bold" />
+  </ElementSettings>
+
+</FinalDraft>

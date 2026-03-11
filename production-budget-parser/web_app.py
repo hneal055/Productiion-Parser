@@ -1784,10 +1784,14 @@ def health_check():
     """Health check endpoint — no auth required."""
     try:
         count = BudgetAnalysis.query.count()
-        return jsonify({'status': 'ok', 'analyses': count}), 200
+        resp = jsonify({'status': 'ok', 'service': 'Budget Parser', 'analyses': count})
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp, 200
     except Exception as e:
         logger.error('Health check failed: %s', e)
-        return jsonify({'status': 'error'}), 500
+        resp = jsonify({'status': 'error'})
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp, 500
 
 
 @app.route('/api/ai-insights/<file_id>', methods=['POST'])

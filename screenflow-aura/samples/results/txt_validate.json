@@ -1,0 +1,60 @@
+{
+  "success": true,
+  "validation": {
+    "analysis_id": 51,
+    "certification_status": "conditionally-compliant",
+    "compliance_report": {
+      "industry_standards": {
+        "final_draft_compatibility": "88%",
+        "fountain_compatibility": "93%",
+        "hollywood_format": "91%"
+      },
+      "quality_metrics": {
+        "character_consistency": "97%",
+        "dialogue_realism": "96%",
+        "pacing_consistency": "94%",
+        "structure_integrity": "82%"
+      }
+    },
+    "issues": [
+      {
+        "description": "Screenplay ends mid-sentence ('Miriam sits in the ba') indicating the document is incomplete or was truncated. A properly formatted screenplay requires a FADE OUT or equivalent closing slug.",
+        "location": "Scene 5, INT. PRODUCTION VAN - MOVING - NIGHT, final line",
+        "severity": "critical"
+      },
+      {
+        "description": "Scene numbers appear right-aligned in Scene 1 and 2 but shift to flush-right with inconsistent spacing in Scenes 3 and 4. Industry standard requires uniform dual-margin scene numbering throughout.",
+        "location": "Scene sluglines, Scenes 3 and 4",
+        "severity": "warning"
+      },
+      {
+        "description": "Title page uses a separator line of equal signs (================) which is non-standard for production drafts. Title pages should conform to clean typographic formatting without decorative ASCII elements.",
+        "location": "Title page, separator lines",
+        "severity": "warning"
+      },
+      {
+        "description": "The (MORE) / (CONT'D) page-break continuation appears to be manually inserted mid-dialogue rather than auto-generated, and its placement suggests potential pagination inconsistency for standard 8.5x11 formatted output.",
+        "location": "Scene 3, MIRIAM dialogue block, (MORE) continuation",
+        "severity": "warning"
+      },
+      {
+        "description": "Derek's character introduction uses 'PA' as a descriptor in parentheses but lacks a full character introduction line on first appearance. Best practice is to bold or fully capitalize role descriptors on first introduction.",
+        "location": "Scene 1, DEREK character introduction",
+        "severity": "suggestion"
+      },
+      {
+        "description": "'CONTINUOUS' is used across Scenes 2, 3, and 4 but Scene 4 transitions from an exterior desert location back to the same exterior with a time-lapse implied ('MOMENTS LATER'). This is acceptable but 'MOMENTS LATER' should be verified as consistent with the production's time-coding conventions.",
+        "location": "Scene 4 slugline, EXT. MOJAVE DESERT - MOMENTS LATER",
+        "severity": "suggestion"
+      },
+      {
+        "description": "No formal FADE IN equivalent or scene transition is provided between Scenes 3 and 4, and no transitions are used between any scenes after the opening FADE IN. While minimalist transitions are acceptable in modern formatting, production drafts benefit from explicit transition notation for editorial clarity.",
+        "location": "Transitions between Scenes 1\u20135",
+        "severity": "suggestion"
+      }
+    ],
+    "overall_score": 74,
+    "processing_time_ms": 17670,
+    "summary": "The screenplay demonstrates strong dialogue craft, consistent characterization, and largely sound Hollywood formatting conventions, but is critically incomplete due to truncation in Scene 5 with no closing slug or FADE OUT. Resolution of the incomplete final scene and correction of minor formatting inconsistencies in scene numbering, title page design, and the (MORE) continuation placement are required before this draft can be considered fully production-ready."
+  }
+}

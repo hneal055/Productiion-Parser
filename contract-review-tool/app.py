@@ -650,14 +650,17 @@ def api_history_detail(record_id):
     return jsonify(data)
 
 
-@app.route('/health')
+@app.route('/api/health')
 def health():
-    return jsonify({
+    resp = jsonify({
         'status': 'healthy',
+        'service': 'Contract Review Tool',
         'timestamp': datetime.now().isoformat(),
         'pypdf_available': PYPDF_AVAILABLE,
-        'docx_available': DOCX_AVAILABLE
+        'docx_available': DOCX_AVAILABLE,
     })
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 if __name__ == '__main__':

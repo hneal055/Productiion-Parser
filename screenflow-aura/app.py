@@ -163,32 +163,142 @@ def _get_claude_client():
 
 
 def _call_claude(prompt: str, max_tokens: int = 1500) -> dict:
-    """Call Claude and parse JSON response. Raises on error."""
+    """Call Claude and parse JSON response. Retries once on transient errors."""
     client = _get_claude_client()
-    message = client.messages.create(
-        model='claude-sonnet-4-6',
-        max_tokens=max_tokens,
-        messages=[{'role': 'user', 'content': prompt}]
-    )
-    text = message.content[0].text.strip()
-    if text.startswith('```'):
-        text = text.split('\n', 1)[1]
-        text = text.rsplit('```', 1)[0]
-    return json.loads(text)
+    last_err = None
+    for attempt in range(2):
+        if attempt:
+            time.sleep(3)
+        try:
+            message = client.messages.create(
+                model='claude-sonnet-4-6',
+                max_tokens=max_tokens,
+                messages=[{'role': 'user', 'content': prompt}]
+            )
+            text = message.content[0].text.strip()
+            if text.startswith('```'):
+                text = text.split('\n', 1)[1]
+                text = text.rsplit('```', 1)[0]
+            return json.loads(text)
+        except (json.JSONDecodeError, Exception) as e:
+            last_err = e
+            logger.warning('Claude call attempt %d failed: %s', attempt + 1, e)
+    raise last_err
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
+@app.route('/')
+def index():
+    total = AuraAnalysis.query.count()
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScreenFlow AURA — API</title>
+  <style>
+    *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f0f1a; color: #e8eaf6; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 40px 20px; }}
+    .card {{ background: linear-gradient(145deg, #1c1c38, #141428);
+             border: 1px solid rgba(102,126,234,0.25); border-radius: 20px;
+             padding: 40px 48px; max-width: 600px; width: 100%; }}
+    .logo {{ display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }}
+    .logo-mark {{ width: 44px; height: 44px; background: linear-gradient(135deg, #667eea, #764ba2);
+                  border-radius: 12px; display: flex; align-items: center;
+                  justify-content: center; font-size: 20px; flex-shrink: 0; }}
+    h1 {{ font-size: 1.3rem; font-weight: 700;
+          background: linear-gradient(135deg, #a78bfa, #60a5fa);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          background-clip: text; }}
+    .subtitle {{ font-size: 0.78rem; color: rgba(168,185,234,0.5);
+                 text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }}
+    .status {{ display: inline-flex; align-items: center; gap: 8px;
+               background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
+               color: #34d399; padding: 6px 14px; border-radius: 20px;
+               font-size: 0.8rem; font-weight: 600; margin-bottom: 28px; }}
+    .dot {{ width: 7px; height: 7px; border-radius: 50%; background: #10b981; }}
+    table {{ width: 100%; border-collapse: collapse; margin-bottom: 28px; }}
+    th {{ text-align: left; font-size: 0.72rem; text-transform: uppercase;
+          letter-spacing: 0.8px; color: rgba(168,185,234,0.4);
+          padding: 0 0 10px; border-bottom: 1px solid rgba(255,255,255,0.07); }}
+    td {{ padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+          font-size: 0.85rem; vertical-align: top; }}
+    td:first-child {{ font-family: 'Courier New', monospace; color: #818cf8;
+                      padding-right: 20px; white-space: nowrap; }}
+    td:nth-child(2) {{ color: rgba(168,185,234,0.5); padding-right: 16px;
+                       white-space: nowrap; }}
+    .stats {{ display: flex; gap: 20px; flex-wrap: wrap; }}
+    .stat {{ background: rgba(102,126,234,0.08); border: 1px solid rgba(102,126,234,0.15);
+             border-radius: 10px; padding: 14px 20px; flex: 1; min-width: 120px; }}
+    .stat-val {{ font-size: 1.6rem; font-weight: 700; color: #a78bfa; }}
+    .stat-label {{ font-size: 0.75rem; color: rgba(168,185,234,0.4);
+                   text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }}
+    footer {{ margin-top: 28px; font-size: 0.75rem; color: rgba(168,185,234,0.25);
+              text-align: center; }}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-mark">🎬</div>
+      <div>
+        <h1>ScreenFlow AURA</h1>
+        <div class="subtitle">Screenplay Intelligence API &nbsp;·&nbsp; v3.1.0</div>
+      </div>
+    </div>
+    <div class="status"><span class="dot"></span> Operational &nbsp;·&nbsp; {total} analyses served</div>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>/api/health</td><td>GET</td><td>Status check — no auth</td></tr>
+        <tr><td>/api/parse</td><td>POST</td><td>Full screenplay parse (20/hr)</td></tr>
+        <tr><td>/api/analyze</td><td>POST</td><td>Deep narrative analysis (20/hr)</td></tr>
+        <tr><td>/api/validate</td><td>POST</td><td>Format compliance check (20/hr)</td></tr>
+        <tr><td>/api/batch/parse</td><td>POST</td><td>Batch parse up to 10 scripts (5/hr)</td></tr>
+        <tr><td>/api/history</td><td>GET</td><td>Paginated analysis history</td></tr>
+        <tr><td>/api/metrics</td><td>GET</td><td>Usage metrics by type</td></tr>
+        <tr><td>/api/admin/keys</td><td>GET&nbsp;/&nbsp;POST</td><td>List / create API keys (admin token)</td></tr>
+        <tr><td>/api/admin/keys/&lt;id&gt;</td><td>DELETE</td><td>Revoke or delete a key (admin token)</td></tr>
+      </tbody>
+    </table>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val">{total}</div>
+        <div class="stat-label">Total Analyses</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">3</div>
+        <div class="stat-label">Analysis Types</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">20/hr</div>
+        <div class="stat-label">Rate Limit</div>
+      </div>
+    </div>
+  </div>
+  <footer>Authentication: X-API-Key header or ?api_key= query param &nbsp;·&nbsp;
+    Admin: X-Admin-Token header &nbsp;·&nbsp;
+    &copy; 2026 Scene Reader Studio Technologies LLC</footer>
+</body>
+</html>"""
+
+
 @app.route('/api/health')
 def health():
     total = AuraAnalysis.query.count()
-    return jsonify({
+    resp = jsonify({
         'status': 'operational',
         'service': 'ScreenFlow AURA',
         'version': '3.0.0',
         'total_analyses': total,
         'timestamp': datetime.utcnow().isoformat(),
     })
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/api/parse', methods=['POST'])
@@ -386,7 +496,7 @@ Return this exact JSON structure:
 }}"""
 
     try:
-        result = _call_claude(prompt, max_tokens=1000)
+        result = _call_claude(prompt, max_tokens=1500)
         elapsed_ms = round((time.time() - start) * 1000)
         result['processing_time_ms'] = elapsed_ms
 

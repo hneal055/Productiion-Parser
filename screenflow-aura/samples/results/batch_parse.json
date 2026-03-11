@@ -1,0 +1,80 @@
+{
+  "batch": {
+    "batch_id": 55,
+    "failed_items": 0,
+    "processed_items": 3,
+    "total_items": 3,
+    "total_processing_time_ms": 12460
+  },
+  "results": [
+    {
+      "ai_analysis": {
+        "genre": "Drama",
+        "key_themes": [
+          "artistic integrity",
+          "letting go",
+          "mentorship and experience"
+        ],
+        "sentiment": "complex"
+      },
+      "document_metrics": {
+        "estimated_pages": 4.0,
+        "primary_genre": "Drama",
+        "word_count": 1005
+      },
+      "item_id": "the_golden_hour.fountain",
+      "processing_time_ms": 3928,
+      "quick_verdict": {
+        "commercial_potential": "MEDIUM",
+        "overall_score": 82,
+        "recommendation": "A quietly assured character study with strong dialogue and thematic clarity that would benefit from expansion into a full feature showcasing Miriam's complete arc."
+      }
+    },
+    {
+      "ai_analysis": {
+        "genre": "Drama",
+        "key_themes": [
+          "artistic integrity",
+          "letting go",
+          "the passage of time"
+        ],
+        "sentiment": "complex"
+      },
+      "document_metrics": {
+        "estimated_pages": 4.0,
+        "primary_genre": "Drama",
+        "word_count": 993
+      },
+      "item_id": "the_golden_hour.fdx",
+      "processing_time_ms": 3970,
+      "quick_verdict": {
+        "commercial_potential": "MEDIUM",
+        "overall_score": 78,
+        "recommendation": "A quietly assured character study with strong voice and thematic economy that would benefit from a fuller feature context to assess its broader commercial viability."
+      }
+    },
+    {
+      "ai_analysis": {
+        "genre": "Drama",
+        "key_themes": [
+          "letting go",
+          "artistic dedication vs. institutional pressure"
+        ],
+        "sentiment": "complex"
+      },
+      "document_metrics": {
+        "estimated_pages": 4.2,
+        "primary_genre": "Drama",
+        "word_count": 1045
+      },
+      "item_id": "the_golden_hour_production_draft.txt",
+      "processing_time_ms": 4554,
+      "quick_verdict": {
+        "commercial_potential": "MEDIUM",
+        "overall_score": 74,
+        "recommendation": "A quietly confident excerpt with strong character voice and thematic clarity, though its minimalist, introspective tone may limit broad commercial appeal without a fuller story context."
+      }
+    }
+  ],
+  "success": true
+}

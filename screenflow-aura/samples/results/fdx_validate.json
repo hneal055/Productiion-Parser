@@ -1,0 +1,65 @@
+{
+  "success": true,
+  "validation": {
+    "analysis_id": 48,
+    "certification_status": "conditionally-compliant",
+    "compliance_report": {
+      "industry_standards": {
+        "final_draft_compatibility": "89%",
+        "fountain_compatibility": "94%",
+        "hollywood_format": "91%"
+      },
+      "quality_metrics": {
+        "character_consistency": "97%",
+        "dialogue_realism": "96%",
+        "pacing_consistency": "93%",
+        "structure_integrity": "78%"
+      }
+    },
+    "issues": [
+      {
+        "description": "Screenplay ends mid-sentence with an incomplete scene description ('A single bag on') \u2014 the script is abruptly truncated and lacks a proper ending, FADE OUT, or END designation.",
+        "location": "Final line, INT. MIRIAM'S MOTEL ROOM - NIGHT",
+        "severity": "critical"
+      },
+      {
+        "description": "Missing FADE OUT or THE END designation. Industry standard requires a formal closing transition at the end of the screenplay.",
+        "location": "End of script",
+        "severity": "critical"
+      },
+      {
+        "description": "FADE IN is excessively indented beyond the standard left-margin placement (typically ~1.5 inches from left edge). The indentation appears centered or over-indented.",
+        "location": "Page 1, opening FADE IN",
+        "severity": "warning"
+      },
+      {
+        "description": "Character cue 'MIRIAM (CONT'D)' is used three consecutive times in the same scene without intervening dialogue from another character. While technically valid, industry practice recommends limiting back-to-back CONT'D usage and considering action breaks instead.",
+        "location": "EXT. MOJAVE DESERT - CONTINUOUS, Miriam's closing monologue sequence",
+        "severity": "warning"
+      },
+      {
+        "description": "Scene heading 'INT. PRODUCTION VAN - MOVING - NIGHT' is acceptable but the modifier 'MOVING' is non-standard. Preferred format is 'INT. MOVING VAN - NIGHT' or 'INT. VAN - MOVING - NIGHT' with a note in action line.",
+        "location": "INT. PRODUCTION VAN - MOVING - NIGHT",
+        "severity": "warning"
+      },
+      {
+        "description": "Derek is introduced with a partial character description '(25, PA, overwhelmed)' but no last name is provided. While acceptable for minor characters, a surname or role clarification would improve casting breakdown compatibility.",
+        "location": "EXT. MOJAVE DESERT - MAGIC HOUR, Derek introduction",
+        "severity": "suggestion"
+      },
+      {
+        "description": "'MAGIC HOUR' as a time-of-day slug is non-standard. Industry convention uses DAY, NIGHT, DAWN, or DUSK. Consider replacing with DUSK or adding a parenthetical action note to clarify lighting conditions.",
+        "location": "EXT. MOJAVE DESERT - MAGIC HOUR",
+        "severity": "suggestion"
+      },
+      {
+        "description": "The parenthetical '(beat)' is used four times across the script. While not overused, two instances occur in close proximity within the same scene and could be replaced with action lines for stronger visual storytelling.",
+        "location": "Multiple dialogue blocks throughout",
+        "severity": "suggestion"
+      }
+    ],
+    "overall_score": 74,
+    "processing_time_ms": 16646,
+    "summary": "The screenplay demonstrates strong formatting fundamentals, naturalistic dialogue, and consistent character voice, meeting most Hollywood industry standards at a high level. However, it cannot be certified fully compliant due to two critical issues: an abrupt mid-sentence truncation indicating an incomplete script submission and the absence of a required closing transition (FADE OUT or THE END)."
+  }
+}

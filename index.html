@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scene Reader Studio Technologies</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f0f1a;
+            color: #e8eaf6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ───────────────────────────────────────────────────── */
+        header {
+            background: linear-gradient(135deg, #1a1a3e 0%, #2d1b69 50%, #1a2a4a 100%);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+            padding: 28px 40px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .logo-mark {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(102,126,234,0.4);
+        }
+
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-text p {
+            font-size: 0.78rem;
+            color: rgba(168, 185, 234, 0.6);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .header-badge {
+            margin-left: auto;
+            background: rgba(102, 126, 234, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            color: #a78bfa;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── Hero ─────────────────────────────────────────────────────── */
+        .hero {
+            text-align: center;
+            padding: 64px 40px 48px;
+        }
+
+        .hero h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #e8eaf6 30%, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 14px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            color: rgba(168, 185, 234, 0.65);
+            font-size: 1.05rem;
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ── Tool Cards ───────────────────────────────────────────────── */
+        .tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 40px 64px;
+            width: 100%;
+        }
+
+        .tool-card {
+            background: linear-gradient(145deg, #1c1c38, #141428);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 20px;
+            padding: 32px 28px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 20px 20px 0 0;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(102,126,234,0.15);
+        }
+
+        .tool-card:hover::before { opacity: 1; }
+
+        /* Per-card accent colours */
+        .card-screenplay::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .card-budget::before     { background: linear-gradient(90deg, #10b981, #059669); }
+        .card-contract::before   { background: linear-gradient(90deg, #f59e0b, #d97706); }
+
+        .card-screenplay:hover { box-shadow: 0 16px 48px rgba(102,126,234,0.2), 0 0 0 1px rgba(102,126,234,0.2); }
+        .card-budget:hover     { box-shadow: 0 16px 48px rgba(16,185,129,0.15), 0 0 0 1px rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.4); }
+        .card-contract:hover   { box-shadow: 0 16px 48px rgba(245,158,11,0.15), 0 0 0 1px rgba(245,158,11,0.2); border-color: rgba(245,158,11,0.4); }
+
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .card-screenplay .card-icon { background: rgba(102, 126, 234, 0.15); }
+        .card-budget     .card-icon { background: rgba(16, 185, 129, 0.15); }
+        .card-contract   .card-icon { background: rgba(245, 158, 11, 0.15); }
+
+        .card-body h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #e8eaf6;
+            margin-bottom: 6px;
+        }
+
+        .card-body p {
+            font-size: 0.88rem;
+            color: rgba(168, 185, 234, 0.55);
+            line-height: 1.55;
+        }
+
+        .card-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .card-features li {
+            font-size: 0.82rem;
+            color: rgba(168, 185, 234, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-features li::before {
+            content: '›';
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .card-screenplay .card-features li::before { color: #667eea; }
+        .card-budget     .card-features li::before { color: #10b981; }
+        .card-contract   .card-features li::before { color: #f59e0b; }
+
+        .card-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-port {
+            font-size: 0.75rem;
+            color: rgba(168, 185, 234, 0.35);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.3px;
+        }
+
+        .card-launch {
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: gap 0.15s;
+        }
+
+        .card-screenplay .card-launch { color: #818cf8; }
+        .card-budget     .card-launch { color: #34d399; }
+        .card-contract   .card-launch { color: #fbbf24; }
+
+        .tool-card:hover .card-launch { gap: 10px; }
+
+        /* ── Status bar ───────────────────────────────────────────────── */
+        .status-bar {
+            max-width: 1080px;
+            margin: 0 auto 40px;
+            padding: 0 40px;
+            width: 100%;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            color: rgba(168, 185, 234, 0.5);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #6b7280;
+        }
+
+        .status-pill.checking .status-dot {
+            background: #f59e0b;
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+
+        .status-pill.online .status-dot  { background: #10b981; }
+        .status-pill.offline .status-dot { background: #ef4444; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+
+        /* ── Footer ───────────────────────────────────────────────────── */
+        footer {
+            margin-top: auto;
+            padding: 20px 40px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        footer p {
+            font-size: 0.78rem;
+            color: rgba(168, 185, 234, 0.3);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            font-size: 0.78rem;
+            color: rgba(168, 185, 234, 0.3);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .footer-links a:hover { color: rgba(168, 185, 234, 0.7); }
+
+        /* ── Sub-nav links inside AURA Enterprise card ───────────────── */
+        .card-subnav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .card-subnav a {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #818cf8;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.25);
+            border-radius: 6px;
+            padding: 3px 10px;
+            text-decoration: none;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .card-subnav a:hover {
+            background: rgba(102, 126, 234, 0.22);
+            border-color: rgba(102, 126, 234, 0.5);
+            color: #a78bfa;
+        }
+
+        /* ── API card accent (cyan) ───────────────────────────────────── */
+        .card-api::before    { background: linear-gradient(90deg, #06b6d4, #0284c7); }
+        .card-api:hover      { box-shadow: 0 16px 48px rgba(6,182,212,0.15), 0 0 0 1px rgba(6,182,212,0.2); border-color: rgba(6,182,212,0.4); }
+        .card-api .card-icon { background: rgba(6, 182, 212, 0.15); }
+        .card-api .card-features li::before { color: #22d3ee; }
+        .card-api .card-launch { color: #22d3ee; }
+
+        /* ── Responsive ───────────────────────────────────────────────── */
+        @media (max-width: 600px) {
+            header { padding: 20px 20px; }
+            .hero  { padding: 40px 20px 32px; }
+            .hero h2 { font-size: 1.6rem; }
+            .tools { padding: 0 20px 48px; }
+            .status-bar { padding: 0 20px; }
+            footer { padding: 16px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-mark">🎬</div>
+        <div class="logo-text">
+            <h1>Scene Reader Studio Technologies</h1>
+            <p>Production Intelligence Platform</p>
+        </div>
+        <span class="header-badge">v2026</span>
+    </header>
+
+    <section class="hero">
+        <h2>Production Tools Suite</h2>
+        <p>AI-powered analysis for film &amp; TV production — screenplays, budgets, and contracts in one place.</p>
+    </section>
+
+    <!-- Live status indicators -->
+    <div class="status-bar" id="statusBar">
+        <div class="status-pill checking" id="pill-5001">
+            <span class="status-dot"></span> Screenplay &amp; Contracts · :5001
+        </div>
+        <div class="status-pill checking" id="pill-8082">
+            <span class="status-dot"></span> Budget Parser · :8082
+        </div>
+        <div class="status-pill checking" id="pill-8083">
+            <span class="status-dot"></span> ScreenFlow API · :8083
+        </div>
+    </div>
+
+    <main class="tools">
+
+        <!-- Screenplay Analysis → :5001 dashboard -->
+        <a href="http://localhost:5001" class="tool-card card-screenplay" target="_blank" rel="noopener">
+            <div class="card-icon">🎬</div>
+            <div class="card-body">
+                <h3>Screenplay Analysis</h3>
+                <p>AI-powered screenplay intelligence — analyze, batch process, and review scripts with full history.</p>
+            </div>
+            <ul class="card-features">
+                <li>Single &amp; batch screenplay analysis</li>
+                <li>Commercial potential · narrative scoring</li>
+                <li>Real-time streaming AI (SSE)</li>
+                <li>Full analysis history &amp; export</li>
+            </ul>
+            <div class="card-footer">
+                <span class="card-port">localhost:5001</span>
+                <span class="card-launch">Open Dashboard →</span>
+            </div>
+        </a>
+
+        <!-- Contract Review → :5001/contract -->
+        <a href="http://localhost:5001/contract" class="tool-card card-contract" target="_blank" rel="noopener">
+            <div class="card-icon">📋</div>
+            <div class="card-body">
+                <h3>Contract Review</h3>
+                <p>Upload PDF, DOCX, or TXT contracts for structured AI review with risk flags and negotiation points.</p>
+            </div>
+            <ul class="card-features">
+                <li>Risk flags · fairness assessment</li>
+                <li>Negotiation point extraction</li>
+                <li>Real-time streaming analysis (SSE)</li>
+                <li>Save as PDF · TXT · JSON</li>
+            </ul>
+            <div class="card-footer">
+                <span class="card-port">localhost:5001/contract</span>
+                <span class="card-launch">Open Tool →</span>
+            </div>
+        </a>
+
+        <!-- Budget Analysis -->
+        <a href="http://localhost:8082" class="tool-card card-budget" target="_blank" rel="noopener">
+            <div class="card-icon">💰</div>
+            <div class="card-body">
+                <h3>Budget Analysis &amp; Risk</h3>
+                <p>Film/TV budget parser with 8-category risk scoring, multi-budget comparison, and export.</p>
+            </div>
+            <ul class="card-features">
+                <li>Risk scoring system (patent pending)</li>
+                <li>Multi-budget variance comparison</li>
+                <li>Excel &amp; PDF report export</li>
+                <li>AI-powered line-item insights</li>
+            </ul>
+            <div class="card-footer">
+                <span class="card-port">localhost:8082</span>
+                <span class="card-launch">Open Tool →</span>
+            </div>
+        </a>
+
+        <!-- ScreenFlow AURA REST API -->
+        <a href="http://localhost:8083" class="tool-card card-api" target="_blank" rel="noopener">
+            <div class="card-icon">⚡</div>
+            <div class="card-body">
+                <h3>ScreenFlow AURA API</h3>
+                <p>REST API for programmatic screenplay intelligence — integrate parse, analyze, and validate into your pipeline.</p>
+            </div>
+            <ul class="card-features">
+                <li>JSON API · API key auth · rate limited</li>
+                <li>Parse · analyze · validate · batch endpoints</li>
+                <li>Admin key management endpoints</li>
+                <li>Usage metrics &amp; history</li>
+            </ul>
+            <div class="card-footer">
+                <span class="card-port">localhost:8083</span>
+                <span class="card-launch">View API →</span>
+            </div>
+        </a>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Scene Reader Studio Technologies LLC. All rights reserved. Proprietary.</p>
+        <div class="footer-links">
+            <a href="http://localhost:8083/api/health" target="_blank">AURA Health</a>
+            <a href="http://localhost:8082/api/health" target="_blank">Budget Health</a>
+            <a href="http://localhost:5001/api/health" target="_blank">Contract Health</a>
+            <a href="README.md" target="_blank">Docs</a>
+        </div>
+    </footer>
+
+    <script>
+        // Probe each service health endpoint and update status pills
+        const services = [
+            { id: 'pill-5001', url: 'http://localhost:5001/api/health' },
+            { id: 'pill-8082', url: 'http://localhost:8082/api/health' },
+            { id: 'pill-8083', url: 'http://localhost:8083/api/health' },
+        ];
+
+        async function checkService(svc) {
+            const pill = document.getElementById(svc.id);
+            try {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 3000);
+                const r = await fetch(svc.url, { signal: ctrl.signal });
+                clearTimeout(timer);
+                pill.classList.remove('checking');
+                pill.classList.add(r.ok ? 'online' : 'offline');
+            } catch {
+                pill.classList.remove('checking');
+                pill.classList.add('offline');
+            }
+        }
+
+        // Run checks on load, then every 30 seconds
+        services.forEach(checkService);
+        setInterval(() => services.forEach(checkService), 30000);
+    </script>
+
+</body>
+</html>

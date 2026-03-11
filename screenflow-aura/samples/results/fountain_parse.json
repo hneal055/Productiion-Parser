@@ -1,0 +1,46 @@
+{
+  "analysis": {
+    "ai_insights": {
+      "sentiment_analysis": {
+        "emotional_arc": "rising",
+        "overall_sentiment": "complex",
+        "tone_consistency": "consistent"
+      },
+      "style_assessment": {
+        "originality_score": 78,
+        "pacing": "deliberate",
+        "writing_style": "balanced"
+      },
+      "theme_detection": [
+        "artistic dedication and creative vision",
+        "the tension between work and personal connection",
+        "letting go and the passage of time"
+      ]
+    },
+    "analysis_id": 43,
+    "document_metrics": {
+      "complexity_score": 62,
+      "estimated_pages": 4.0,
+      "primary_genre": "Drama",
+      "word_count": 1005
+    },
+    "processing_metadata": {
+      "ai_model_used": "claude-sonnet-4-6",
+      "processing_time_ms": 7324,
+      "word_count_processed": 1005
+    },
+    "quality_assessment": {
+      "commercial_potential": "MEDIUM",
+      "dialogue_effectiveness": 88,
+      "overall_score": 84,
+      "pacing_analysis": "excellent",
+      "structure_quality": 82
+    },
+    "recommendations": [
+      "Expand Miriam's backstory and her relationship with her father to deepen emotional stakes and provide greater resonance for the closing phone call scene.",
+      "Consider developing Sophie's character arc more fully \u2014 her admiration for Miriam hints at a richer dynamic that could be mined for conflict or mentorship tension across a feature-length structure.",
+      "The short film format suits the material well, but if expanding to a feature, introduce a concrete antagonist force beyond the permit deadline to sustain dramatic tension across three acts."
+    ]
+  },
+  "success": true
+}
