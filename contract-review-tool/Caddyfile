@@ -1,0 +1,23 @@
+# ----------------------------------------------------------------
+# Caddyfile — Contract Review Tool HTTPS reverse proxy
+# ----------------------------------------------------------------
+# Option 1: Local dev with self-signed cert (trusts local CA)
+# localhost {
+#     reverse_proxy 127.0.0.1:5001
+# }
+
+# Option 2: Public domain with automatic Let's Encrypt cert
+# yourdomain.com {
+#     reverse_proxy 127.0.0.1:5001
+# }
+
+# Option 3: LAN IP with self-signed cert
+# 192.168.1.100 {
+#     tls internal
+#     reverse_proxy 127.0.0.1:5001
+# }
+
+localhost {
+    tls internal
+    reverse_proxy 127.0.0.1:5001
+}

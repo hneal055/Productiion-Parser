@@ -33,6 +33,7 @@
             {% endif %}
 
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mb-5">
                     <label class="block text-sm font-medium text-gray-600 mb-2" for="password">
                         <i class="fas fa-lock mr-1"></i> Password

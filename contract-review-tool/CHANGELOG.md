@@ -4,6 +4,32 @@ All notable changes to this project are documented here.
 
 ---
 
+## [1.2.0] — 2026-03-11
+
+### Security Hardening
+
+#### Application
+
+- `app.run(debug=False, host='127.0.0.1')` — debug mode off, no external binding
+- CSRF protection via Flask-WTF `CSRFProtect`; CSRF token added to login form
+- `/upload`, `/api/analyze`, `/api/extract-text`, `/api/batch/analyze` exempt from CSRF (JSON/SSE endpoints, session-authenticated)
+- Rate limiting via Flask-Limiter: global 200/day · 60/hr; `/upload` capped at 10/hr per IP
+- Session cookies hardened: `SESSION_COOKIE_HTTPONLY=True`, `SESSION_COOKIE_SAMESITE='Lax'`
+- `check_password()` returns `False` immediately when `APP_PASSWORD` env var is empty (prevents `hmac.compare_digest(b'', b'')` timing bypass)
+- Structured logging (`logging.basicConfig` + `logger = logging.getLogger(__name__)`)
+- All `traceback.print_exc()` and `str(e)` in error responses replaced with `logger.error(..., exc_info=True)` + generic client message
+
+#### Dependencies
+
+- `requirements.txt` updated with pinned versions: Flask 3.1.3, Flask-WTF 1.2.2, Flask-Limiter 4.1.1, waitress 3.0.2, and all transitive packages
+
+#### Deployment
+
+- `Start server.BAT` updated to launch via `waitress-serve` (production WSGI) instead of `python app.py`
+- `Caddyfile` added — Caddy HTTPS reverse proxy config (localhost self-signed, public domain, LAN IP options)
+
+---
+
 ## [1.1.0] — 2026-03-11
 
 ### Performance — Streaming Analysis

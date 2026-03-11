@@ -3,19 +3,30 @@ Contract Review Tool - AI-Powered Contract Analysis
 Copyright (c) 2024. All rights reserved.
 """
 
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, Response, stream_with_context
-from flask_sqlalchemy import SQLAlchemy
+import logging
 import os
 import json
 import hmac
 from datetime import datetime
 from functools import wraps
+
 import anthropic
-from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
-import io
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, Response, stream_with_context
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import CSRFProtect
+from flask_wtf.csrf import generate_csrf
+from werkzeug.utils import secure_filename
 
 load_dotenv(override=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(name)s: %(message)s',
+)
+logger = logging.getLogger(__name__)
 
 # Import document processing libraries
 try:
@@ -41,10 +52,24 @@ if not _secret_key:
     raise RuntimeError('SECRET_KEY is not set. Add it to your .env file.')
 app.secret_key = _secret_key
 
+# Session cookie hardening
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False  # Set True when serving over HTTPS
+
 # SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///history.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+csrf = CSRFProtect(app)
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=['200 per day', '60 per hour'],
+    storage_uri='memory://',
+)
 
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'pdf', 'txt', 'docx', 'doc'}
@@ -89,6 +114,8 @@ def login_required(f):
 
 def check_password(candidate: str) -> bool:
     app_password = os.environ.get('APP_PASSWORD', '')
+    if not app_password:
+        return False
     return hmac.compare_digest(candidate.encode(), app_password.encode())
 
 
@@ -240,8 +267,9 @@ def stream_contract_analysis(contract_text, filename):
         yield f"data: {json.dumps({'type': 'done', 'analysis': analysis})}\n\n"
 
     except Exception as e:
+        logger.error('Stream analysis error', exc_info=True)
         db.session.rollback()
-        yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+        yield f"data: {json.dumps({'type': 'error', 'message': 'Analysis failed. Please try again.'})}\n\n"
 
 
 def parse_ai_response(response_text):
@@ -348,6 +376,8 @@ def history():
 
 @app.route('/upload', methods=['POST'])
 @login_required
+@csrf.exempt
+@limiter.limit('10 per hour')
 def upload_file():
     if 'contract' not in request.files:
         return jsonify({'error': 'No file uploaded'}), 400
@@ -372,7 +402,8 @@ def upload_file():
             return jsonify({'error': 'Could not extract enough text from the file.'}), 400
 
     except Exception as e:
-        return jsonify({'error': f'Error processing file: {str(e)}'}), 500
+        logger.error('File processing error', exc_info=True)
+        return jsonify({'error': 'Error processing file. Please try again.'}), 500
 
     return Response(
         stream_with_context(stream_contract_analysis(contract_text, filename)),
@@ -383,6 +414,7 @@ def upload_file():
 
 @app.route('/api/analyze', methods=['POST'])
 @login_required
+@csrf.exempt
 def api_analyze():
     import time
     data = request.get_json()
@@ -460,13 +492,13 @@ Return this exact JSON structure:
         return jsonify({'success': True, 'result': result})
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return jsonify({'success': False, 'error': str(e)}), 500
+        logger.error('API analyze error', exc_info=True)
+        return jsonify({'success': False, 'error': 'Analysis failed. Please try again.'}), 500
 
 
 @app.route('/api/extract-text', methods=['POST'])
 @login_required
+@csrf.exempt
 def extract_text():
     if 'file' not in request.files:
         return jsonify({'error': 'No file uploaded'}), 400
@@ -486,11 +518,13 @@ def extract_text():
         os.remove(file_path)
         return jsonify({'text': text})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logger.error('Text extraction error', exc_info=True)
+        return jsonify({'error': 'Text extraction failed. Please try again.'}), 500
 
 
 @app.route('/api/batch/analyze', methods=['POST'])
 @login_required
+@csrf.exempt
 def api_batch_analyze():
     import time
     data = request.get_json()
@@ -560,9 +594,10 @@ Return this exact JSON structure:
             results.append(result)
 
         except Exception as e:
+            logger.error('Batch analyze error for %s', filename, exc_info=True)
             results.append({
                 'assessment_id': filename,
-                'error': str(e),
+                'error': 'Processing failed',
                 'quick_verdict': {'commercial_score': 0, 'recommendation': 'Error during processing', 'priority_level': 'LOW PRIORITY', 'estimated_roi': 'N/A'},
                 'technical_metrics': {'document_metrics': {'primary_genre': 'Unknown', 'estimated_pages': 0, 'character_count': 0}, 'processing_time': '0s'}
             })
@@ -590,7 +625,5 @@ def health():
 
 if __name__ == '__main__':
     if not os.environ.get('ANTHROPIC_API_KEY'):
-        print("WARNING: ANTHROPIC_API_KEY environment variable not set!")
-        print("Set it with: export ANTHROPIC_API_KEY='your-api-key'")
-
-    app.run(debug=True, host='0.0.0.0', port=5001)
+        logger.warning('ANTHROPIC_API_KEY is not set — AI analysis will fail.')
+    app.run(debug=False, host='127.0.0.1', port=5001)
