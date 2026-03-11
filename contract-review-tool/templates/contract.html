@@ -65,8 +65,9 @@
 
                 <div class="loading" id="loading" style="display:none;">
                     <div class="spinner"></div>
-                    <p>Analyzing your contract with AI...</p>
-                    <p class="loading-subtext">This typically takes 15–30 seconds</p>
+                    <p id="loadingStage">Reading contract...</p>
+                    <p class="loading-subtext">Typically 15–30 seconds &nbsp;·&nbsp; <span id="elapsedTime">0s</span></p>
+                    <pre id="streamPreview" class="stream-preview"></pre>
                 </div>
 
                 <div class="error-message" id="errorMessage" style="display:none;"></div>
@@ -96,10 +97,17 @@
     <script>
         let selectedFile = null;
 
+        const STAGES = [
+            [0,  'Reading contract...'],
+            [4,  'Identifying key terms...'],
+            [10, 'Assessing risks...'],
+            [18, 'Generating negotiation points...'],
+            [25, 'Finalizing analysis...'],
+        ];
+
         function handleFileSelect(input) {
             selectedFile = input.files[0];
             if (!selectedFile) return;
-
             document.getElementById('fileName').style.display = 'block';
             document.getElementById('fileName').textContent = `Selected: ${selectedFile.name}`;
             document.getElementById('fileLabel').textContent = selectedFile.name;
@@ -114,29 +122,69 @@
             document.getElementById('loading').style.display = 'block';
             document.getElementById('errorMessage').style.display = 'none';
 
+            const stageEl   = document.getElementById('loadingStage');
+            const elapsedEl = document.getElementById('elapsedTime');
+            const preview   = document.getElementById('streamPreview');
+            const startTime = Date.now();
+
+            const timer = setInterval(() => {
+                const s = Math.floor((Date.now() - startTime) / 1000);
+                elapsedEl.textContent = s + 's';
+                for (let i = STAGES.length - 1; i >= 0; i--) {
+                    if (s >= STAGES[i][0]) { stageEl.textContent = STAGES[i][1]; break; }
+                }
+            }, 500);
+
             const formData = new FormData();
             formData.append('contract', selectedFile);
 
             try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
+                const response = await fetch('/upload', { method: 'POST', body: formData });
 
-                const data = await response.json();
-
-                if (!response.ok || data.error) {
-                    throw new Error(data.error || 'Analysis failed');
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error || 'Upload failed');
                 }
 
-                sessionStorage.setItem('analysisResults', JSON.stringify(data));
-                window.location.href = '/results';
+                const reader  = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        if (!line.startsWith('data: ')) continue;
+                        const payload = JSON.parse(line.slice(6));
+
+                        if (payload.type === 'chunk') {
+                            preview.classList.add('visible');
+                            preview.textContent += payload.text;
+                            preview.scrollTop = preview.scrollHeight;
+
+                        } else if (payload.type === 'done') {
+                            clearInterval(timer);
+                            sessionStorage.setItem('analysisResults', JSON.stringify(payload.analysis));
+                            window.location.href = '/results';
+                            return;
+
+                        } else if (payload.type === 'error') {
+                            throw new Error(payload.message);
+                        }
+                    }
+                }
 
             } catch (error) {
+                clearInterval(timer);
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('analyzeBtn').disabled = false;
                 document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorMessage').textContent = `Error: ${error.message}`;
+                document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
             }
         }
     </script>

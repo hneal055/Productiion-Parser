@@ -3,7 +3,7 @@ Contract Review Tool - AI-Powered Contract Analysis
 Copyright (c) 2024. All rights reserved.
 """
 
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, Response, stream_with_context
 from flask_sqlalchemy import SQLAlchemy
 import os
 import json
@@ -168,61 +168,80 @@ def extract_text_from_file(file_path, filename):
 # AI analysis
 # ---------------------------------------------------------------------------
 
-def analyze_contract_with_ai(contract_text):
+def _build_analysis_prompt(contract_text):
+    """Build a concise prompt that targets 800-1200 output tokens (~15-20s generation)."""
+    # Cap input to ~12,000 chars (~3,000 tokens) to bound total request time
+    text = contract_text[:12000]
+    if len(contract_text) > 12000:
+        text += '\n\n[Document truncated — first 12,000 characters analyzed]'
+    return f"""You are an expert contract analyst. Review this contract concisely.
+
+CONTRACT:
+{text}
+
+Respond in this exact structure. Be concise — 1-2 sentences per item maximum.
+
+KEY TERMS:
+- Parties: [names and roles]
+- Duration: [term length and dates]
+- Payment: [amounts, schedule, method]
+- Deliverables: [what each party must provide]
+- Termination: [conditions and notice required]
+- Renewal: [auto-renewal or extension terms]
+
+RISK ANALYSIS:
+- [HIGH/MEDIUM/LOW] [Risk title]: [1-sentence explanation. Quote: "relevant clause"]
+(list 4-6 most important risks)
+
+FAIRNESS ASSESSMENT:
+[FAVORABLE/NEUTRAL/UNFAVORABLE]: [2-3 sentences explaining why]
+
+NEGOTIATION POINTS:
+- [Point title]: [specific language to propose and why it matters]
+(list 3-4 points)"""
+
+
+def stream_contract_analysis(contract_text, filename):
+    """Generator: streams Claude tokens as SSE, saves to DB at completion."""
     api_key = os.environ.get('ANTHROPIC_API_KEY')
     if not api_key:
-        return {'error': 'API key not configured. Please set ANTHROPIC_API_KEY environment variable.'}
+        yield f"data: {json.dumps({'type': 'error', 'message': 'ANTHROPIC_API_KEY not configured'})}\n\n"
+        return
+
+    client = anthropic.Anthropic(api_key=api_key)
+    prompt = _build_analysis_prompt(contract_text)
+    full_text = []
 
     try:
-        client = anthropic.Anthropic(api_key=api_key)
+        with client.messages.stream(
+            model='claude-sonnet-4-6',
+            max_tokens=1500,
+            messages=[{'role': 'user', 'content': prompt}]
+        ) as stream:
+            for text in stream.text_stream:
+                full_text.append(text)
+                yield f"data: {json.dumps({'type': 'chunk', 'text': text})}\n\n"
 
-        prompt = f"""You are an expert contract analyst. Analyze the following contract and provide a comprehensive review.
-
-CONTRACT TEXT:
-{contract_text}
-
-Please provide a detailed analysis in the following structure:
-
-1. KEY TERMS:
-List and explain all important terms including:
-- Parties involved
-- Contract duration
-- Payment terms
-- Deliverables/obligations
-- Termination conditions
-- Renewal terms
-
-2. RISK ANALYSIS:
-Identify potential risks and problematic clauses:
-- Rate each risk as HIGH, MEDIUM, or LOW
-- Explain why each is a risk
-- Quote the specific clause from the contract
-
-3. FAIRNESS ASSESSMENT:
-Overall assessment: FAVORABLE, NEUTRAL, or UNFAVORABLE
-Explain your reasoning.
-
-4. NEGOTIATION POINTS:
-Provide 3-5 specific suggestions for negotiation:
-- What to ask for
-- Specific language to propose
-- Why this matters
-
-Be specific, quote relevant clauses, and provide actionable insights."""
-
-        message = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=4000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-
-        response_text = message.content[0].text
+        response_text = ''.join(full_text)
         analysis = parse_ai_response(response_text)
         analysis['raw_response'] = response_text
-        return analysis
+        analysis['filename'] = filename
+        analysis['analyzed_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        record = AnalysisHistory(
+            filename=filename,
+            fairness=analysis.get('fairness', 'NEUTRAL'),
+            results_json=json.dumps(analysis)
+        )
+        db.session.add(record)
+        db.session.commit()
+        analysis['history_id'] = record.id
+
+        yield f"data: {json.dumps({'type': 'done', 'analysis': analysis})}\n\n"
 
     except Exception as e:
-        return {'error': f'Error analyzing contract: {str(e)}'}
+        db.session.rollback()
+        yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
 
 
 def parse_ai_response(response_text):
@@ -352,28 +371,14 @@ def upload_file():
         if not contract_text or len(contract_text.strip()) < 100:
             return jsonify({'error': 'Could not extract enough text from the file.'}), 400
 
-        analysis = analyze_contract_with_ai(contract_text)
-
-        if 'error' in analysis:
-            return jsonify({'error': analysis['error']}), 500
-
-        analysis['filename'] = filename
-        analysis['analyzed_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-        # Persist to database
-        record = AnalysisHistory(
-            filename=filename,
-            fairness=analysis.get('fairness', 'NEUTRAL'),
-            results_json=json.dumps(analysis)
-        )
-        db.session.add(record)
-        db.session.commit()
-        analysis['history_id'] = record.id
-
-        return jsonify(analysis)
-
     except Exception as e:
         return jsonify({'error': f'Error processing file: {str(e)}'}), 500
+
+    return Response(
+        stream_with_context(stream_contract_analysis(contract_text, filename)),
+        mimetype='text/event-stream',
+        headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'}
+    )
 
 
 @app.route('/api/analyze', methods=['POST'])
