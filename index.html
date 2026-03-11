@@ -3,395 +3,742 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scene Reader Studio Technologies</title>
+    <title>Scene Reader Studio Technologies — Production Intelligence Platform</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+        :root {
+            --purple:  #667eea;
+            --violet:  #764ba2;
+            --indigo:  #818cf8;
+            --cyan:    #22d3ee;
+            --green:   #10b981;
+            --amber:   #f59e0b;
+            --bg:      #08081a;
+            --surface: #11112a;
+            --card:    #0e0e26;
+            --border:  rgba(102,126,234,0.18);
+            --text:    #e8eaf6;
+            --muted:   rgba(168,185,234,0.5);
+            --dim:     rgba(168,185,234,0.28);
+        }
+
+        html { scroll-behavior: smooth; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0f0f1a;
-            color: #e8eaf6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
-        /* ── Header ───────────────────────────────────────────────────── */
+        /* ── Animated mesh background ──────────────────────────────────── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% 10%, rgba(102,126,234,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(118,75,162,0.07) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 30% at 60% 30%, rgba(6,182,212,0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body > * { position: relative; z-index: 1; }
+
+        /* ── Header ────────────────────────────────────────────────────── */
         header {
-            background: linear-gradient(135deg, #1a1a3e 0%, #2d1b69 50%, #1a2a4a 100%);
-            border-bottom: 1px solid rgba(102, 126, 234, 0.3);
-            padding: 28px 40px;
+            background: rgba(8,8,26,0.85);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 48px;
+            height: 68px;
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo-mark {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--purple), var(--violet));
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 18px;
             flex-shrink: 0;
-            box-shadow: 0 4px 16px rgba(102,126,234,0.4);
+            box-shadow: 0 0 20px rgba(102,126,234,0.35);
         }
 
         .logo-text h1 {
-            font-size: 1.4rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            background: linear-gradient(135deg, #c4b5fd, #93c5fd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.2px;
         }
 
         .logo-text p {
-            font-size: 0.78rem;
-            color: rgba(168, 185, 234, 0.6);
-            letter-spacing: 0.8px;
+            font-size: 0.68rem;
+            color: var(--dim);
+            letter-spacing: 1.2px;
             text-transform: uppercase;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
-        .header-badge {
+        nav {
             margin-left: auto;
-            background: rgba(102, 126, 234, 0.15);
-            border: 1px solid rgba(102, 126, 234, 0.4);
-            color: #a78bfa;
-            padding: 5px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        /* ── Hero ─────────────────────────────────────────────────────── */
-        .hero {
-            text-align: center;
-            padding: 64px 40px 48px;
-        }
-
-        .hero h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #e8eaf6 30%, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 14px;
-            letter-spacing: -0.5px;
-        }
-
-        .hero p {
-            color: rgba(168, 185, 234, 0.65);
-            font-size: 1.05rem;
-            max-width: 520px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* ── Tool Cards ───────────────────────────────────────────────── */
-        .tools {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            max-width: 1080px;
-            margin: 0 auto;
-            padding: 0 40px 64px;
-            width: 100%;
-        }
-
-        .tool-card {
-            background: linear-gradient(145deg, #1c1c38, #141428);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            border-radius: 20px;
-            padding: 32px 28px;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            border-radius: 20px 20px 0 0;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(102, 126, 234, 0.5);
-            box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(102,126,234,0.15);
-        }
-
-        .tool-card:hover::before { opacity: 1; }
-
-        /* Per-card accent colours */
-        .card-screenplay::before { background: linear-gradient(90deg, #667eea, #764ba2); }
-        .card-budget::before     { background: linear-gradient(90deg, #10b981, #059669); }
-        .card-contract::before   { background: linear-gradient(90deg, #f59e0b, #d97706); }
-
-        .card-screenplay:hover { box-shadow: 0 16px 48px rgba(102,126,234,0.2), 0 0 0 1px rgba(102,126,234,0.2); }
-        .card-budget:hover     { box-shadow: 0 16px 48px rgba(16,185,129,0.15), 0 0 0 1px rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.4); }
-        .card-contract:hover   { box-shadow: 0 16px 48px rgba(245,158,11,0.15), 0 0 0 1px rgba(245,158,11,0.2); border-color: rgba(245,158,11,0.4); }
-
-        .card-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .card-screenplay .card-icon { background: rgba(102, 126, 234, 0.15); }
-        .card-budget     .card-icon { background: rgba(16, 185, 129, 0.15); }
-        .card-contract   .card-icon { background: rgba(245, 158, 11, 0.15); }
-
-        .card-body h3 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #e8eaf6;
-            margin-bottom: 6px;
-        }
-
-        .card-body p {
-            font-size: 0.88rem;
-            color: rgba(168, 185, 234, 0.55);
-            line-height: 1.55;
-        }
-
-        .card-features {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-top: 4px;
-        }
-
-        .card-features li {
-            font-size: 0.82rem;
-            color: rgba(168, 185, 234, 0.5);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .card-features li::before {
-            content: '›';
-            font-weight: 700;
-            font-size: 1rem;
+        .nav-status {
+            display: flex;
+            gap: 6px;
+            margin-right: 16px;
         }
 
-        .card-screenplay .card-features li::before { color: #667eea; }
-        .card-budget     .card-features li::before { color: #10b981; }
-        .card-contract   .card-features li::before { color: #f59e0b; }
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.72rem;
+            color: var(--dim);
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #374151;
+            flex-shrink: 0;
+        }
+
+        .status-pill.checking .status-dot {
+            background: var(--amber);
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+
+        .status-pill.online  .status-dot { background: var(--green); box-shadow: 0 0 6px rgba(16,185,129,0.6); }
+        .status-pill.offline .status-dot { background: #ef4444; }
+
+        .header-badge {
+            background: rgba(102,126,234,0.12);
+            border: 1px solid rgba(102,126,234,0.3);
+            color: #a78bfa;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+        }
+
+        /* ── Hero ──────────────────────────────────────────────────────── */
+        .hero {
+            text-align: center;
+            padding: 96px 48px 72px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(102,126,234,0.1);
+            border: 1px solid rgba(102,126,234,0.25);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a78bfa;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        .hero-eyebrow::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--purple);
+            box-shadow: 0 0 8px rgba(102,126,234,0.8);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero h2 {
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            margin-bottom: 24px;
+            background: linear-gradient(160deg,
+                #ffffff 0%,
+                #c4b5fd 40%,
+                #818cf8 70%,
+                #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 1.15rem;
+            color: var(--muted);
+            max-width: 620px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
+        }
+
+        /* ── Platform stat strip ────────────────────────────────────────── */
+        .stat-strip {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(255,255,255,0.02);
+            overflow: hidden;
+            max-width: 700px;
+            margin: 0 auto 0;
+        }
+
+        .stat-item {
+            flex: 1;
+            padding: 20px 24px;
+            text-align: center;
+            border-right: 1px solid var(--border);
+        }
+
+        .stat-item:last-child { border-right: none; }
+
+        .stat-value {
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 3px;
+        }
+
+        /* ── Capability ribbon ──────────────────────────────────────────── */
+        .capability-ribbon {
+            max-width: 1100px;
+            margin: 72px auto 0;
+            padding: 0 48px;
+            width: 100%;
+        }
+
+        .ribbon-label {
+            font-size: 0.72rem;
+            color: var(--dim);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .ribbon-chips {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            border: 1px solid;
+            letter-spacing: 0.1px;
+        }
+
+        .chip-purple { background: rgba(102,126,234,0.08); border-color: rgba(102,126,234,0.22); color: #a5b4fc; }
+        .chip-cyan   { background: rgba(6,182,212,0.08);  border-color: rgba(6,182,212,0.22);  color: #67e8f9; }
+        .chip-green  { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.22); color: #6ee7b7; }
+        .chip-amber  { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .chip-rose   { background: rgba(244,63,94,0.08);  border-color: rgba(244,63,94,0.22);  color: #fda4af; }
+
+        .chip-icon { font-size: 0.95rem; }
+
+        /* ── Cards section ──────────────────────────────────────────────── */
+        .section-header {
+            max-width: 1100px;
+            margin: 64px auto 0;
+            padding: 0 48px;
+            width: 100%;
+        }
+
+        .section-header h3 {
+            font-size: 0.72rem;
+            color: var(--dim);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .section-header p {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #e8eaf6;
+            letter-spacing: -0.3px;
+        }
+
+        .tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
+            margin: 24px auto 0;
+            padding: 0 48px 80px;
+            width: 100%;
+        }
+
+        .tool-card {
+            background: linear-gradient(160deg, #0f0f2a 0%, #0a0a20 100%);
+            border: 1px solid rgba(102,126,234,0.15);
+            border-radius: 20px;
+            padding: 28px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            transition: transform 0.22s cubic-bezier(.22,.68,0,1.2), border-color 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle inner glow on hover */
+        .tool-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .card-screenplay::after { background: radial-gradient(ellipse at 20% 0%, rgba(102,126,234,0.12) 0%, transparent 60%); }
+        .card-contract::after   { background: radial-gradient(ellipse at 20% 0%, rgba(245,158,11,0.10) 0%, transparent 60%); }
+        .card-budget::after     { background: radial-gradient(ellipse at 20% 0%, rgba(16,185,129,0.10) 0%, transparent 60%); }
+        .card-api::after        { background: radial-gradient(ellipse at 20% 0%, rgba(6,182,212,0.10) 0%, transparent 60%); }
+
+        .tool-card:hover {
+            transform: translateY(-5px) scale(1.005);
+        }
+
+        .tool-card:hover::after { opacity: 1; }
+
+        /* Top accent bar */
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            border-radius: 20px 20px 0 0;
+            transition: opacity 0.2s;
+        }
+
+        .card-screenplay::before { background: linear-gradient(90deg, #667eea, #a78bfa); }
+        .card-contract::before   { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+        .card-budget::before     { background: linear-gradient(90deg, #10b981, #059669); }
+        .card-api::before        { background: linear-gradient(90deg, #06b6d4, #6366f1); }
+
+        .card-screenplay:hover { border-color: rgba(102,126,234,0.4);  box-shadow: 0 20px 60px rgba(102,126,234,0.18), 0 0 0 1px rgba(102,126,234,0.1); }
+        .card-contract:hover   { border-color: rgba(245,158,11,0.35);  box-shadow: 0 20px 60px rgba(245,158,11,0.14), 0 0 0 1px rgba(245,158,11,0.08); }
+        .card-budget:hover     { border-color: rgba(16,185,129,0.35);  box-shadow: 0 20px 60px rgba(16,185,129,0.14), 0 0 0 1px rgba(16,185,129,0.08); }
+        .card-api:hover        { border-color: rgba(6,182,212,0.35);   box-shadow: 0 20px 60px rgba(6,182,212,0.14),  0 0 0 1px rgba(6,182,212,0.08); }
+
+        /* Card header row */
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .card-screenplay .card-icon { background: rgba(102,126,234,0.14); box-shadow: 0 0 20px rgba(102,126,234,0.12); }
+        .card-contract   .card-icon { background: rgba(245,158,11,0.12);  box-shadow: 0 0 20px rgba(245,158,11,0.10); }
+        .card-budget     .card-icon { background: rgba(16,185,129,0.12);  box-shadow: 0 0 20px rgba(16,185,129,0.10); }
+        .card-api        .card-icon { background: rgba(6,182,212,0.12);   box-shadow: 0 0 20px rgba(6,182,212,0.10); }
+
+        .card-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+
+        .card-screenplay .card-tag { background: rgba(102,126,234,0.12); color: #818cf8; border: 1px solid rgba(102,126,234,0.25); }
+        .card-contract   .card-tag { background: rgba(245,158,11,0.12);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+        .card-budget     .card-tag { background: rgba(16,185,129,0.12);  color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+        .card-api        .card-tag { background: rgba(6,182,212,0.12);   color: #22d3ee; border: 1px solid rgba(6,182,212,0.25); }
+
+        .card-body h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f0f0ff;
+            margin-bottom: 8px;
+            letter-spacing: -0.2px;
+        }
+
+        .card-body p {
+            font-size: 0.87rem;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Feature list */
+        .card-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 18px 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-features li {
+            font-size: 0.83rem;
+            color: rgba(168,185,234,0.6);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .feat-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .card-screenplay .feat-dot { background: #667eea; }
+        .card-contract   .feat-dot { background: #f59e0b; }
+        .card-budget     .feat-dot { background: #10b981; }
+        .card-api        .feat-dot { background: #06b6d4; }
 
         .card-footer {
-            margin-top: auto;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255,255,255,0.06);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .card-port {
-            font-size: 0.75rem;
-            color: rgba(168, 185, 234, 0.35);
-            font-family: 'Courier New', monospace;
-            letter-spacing: 0.3px;
+            font-size: 0.72rem;
+            color: var(--dim);
+            font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
         }
 
         .card-launch {
             font-size: 0.82rem;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: gap 0.15s;
+            letter-spacing: 0.1px;
         }
 
         .card-screenplay .card-launch { color: #818cf8; }
-        .card-budget     .card-launch { color: #34d399; }
         .card-contract   .card-launch { color: #fbbf24; }
+        .card-budget     .card-launch { color: #34d399; }
+        .card-api        .card-launch { color: #22d3ee; }
 
-        .tool-card:hover .card-launch { gap: 10px; }
+        .tool-card:hover .card-launch { gap: 9px; }
 
-        /* ── Status bar ───────────────────────────────────────────────── */
-        .status-bar {
-            max-width: 1080px;
-            margin: 0 auto 40px;
-            padding: 0 40px;
+        /* ── Platform overview strip ────────────────────────────────────── */
+        .platform-overview {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 48px;
             width: 100%;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
         }
 
-        .status-pill {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 6px 14px;
-            font-size: 0.78rem;
-            color: rgba(168, 185, 234, 0.5);
+            overflow: hidden;
         }
 
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #6b7280;
+        .overview-cell {
+            background: var(--card);
+            padding: 28px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .status-pill.checking .status-dot {
-            background: #f59e0b;
-            animation: pulse 1.2s ease-in-out infinite;
+        .overview-icon {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
         }
 
-        .status-pill.online .status-dot  { background: #10b981; }
-        .status-pill.offline .status-dot { background: #ef4444; }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.3; }
+        .overview-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #e8eaf6;
         }
 
-        /* ── Footer ───────────────────────────────────────────────────── */
-        footer {
+        .overview-desc {
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        /* ── Footer ────────────────────────────────────────────────────── */
+        .footer-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent);
             margin-top: auto;
-            padding: 20px 40px;
-            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        footer {
+            padding: 28px 48px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 16px;
+            background: rgba(8,8,26,0.6);
         }
 
-        footer p {
-            font-size: 0.78rem;
-            color: rgba(168, 185, 234, 0.3);
+        .footer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .footer-brand {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(168,185,234,0.45);
+        }
+
+        .footer-copy {
+            font-size: 0.72rem;
+            color: var(--dim);
         }
 
         .footer-links {
             display: flex;
-            gap: 20px;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .footer-links a {
-            font-size: 0.78rem;
-            color: rgba(168, 185, 234, 0.3);
+            font-size: 0.72rem;
+            color: var(--dim);
             text-decoration: none;
-            transition: color 0.15s;
-        }
-
-        .footer-links a:hover { color: rgba(168, 185, 234, 0.7); }
-
-        /* ── Sub-nav links inside AURA Enterprise card ───────────────── */
-        .card-subnav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 4px;
-        }
-
-        .card-subnav a {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #818cf8;
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.25);
+            padding: 4px 10px;
             border-radius: 6px;
-            padding: 3px 10px;
-            text-decoration: none;
-            transition: background 0.15s, border-color 0.15s;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: color 0.15s, border-color 0.15s;
         }
 
-        .card-subnav a:hover {
-            background: rgba(102, 126, 234, 0.22);
-            border-color: rgba(102, 126, 234, 0.5);
-            color: #a78bfa;
+        .footer-links a:hover {
+            color: rgba(168,185,234,0.7);
+            border-color: rgba(102,126,234,0.3);
         }
 
-        /* ── API card accent (cyan) ───────────────────────────────────── */
-        .card-api::before    { background: linear-gradient(90deg, #06b6d4, #0284c7); }
-        .card-api:hover      { box-shadow: 0 16px 48px rgba(6,182,212,0.15), 0 0 0 1px rgba(6,182,212,0.2); border-color: rgba(6,182,212,0.4); }
-        .card-api .card-icon { background: rgba(6, 182, 212, 0.15); }
-        .card-api .card-features li::before { color: #22d3ee; }
-        .card-api .card-launch { color: #22d3ee; }
+        /* ── Animations ────────────────────────────────────────────────── */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.25; }
+        }
 
-        /* ── Responsive ───────────────────────────────────────────────── */
-        @media (max-width: 600px) {
-            header { padding: 20px 20px; }
-            .hero  { padding: 40px 20px 32px; }
-            .hero h2 { font-size: 1.6rem; }
-            .tools { padding: 0 20px 48px; }
-            .status-bar { padding: 0 20px; }
-            footer { padding: 16px 20px; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero          { animation: fadeUp 0.6s ease both; }
+        .capability-ribbon { animation: fadeUp 0.6s 0.1s ease both; }
+        .section-header    { animation: fadeUp 0.6s 0.15s ease both; }
+        .tools         { animation: fadeUp 0.6s 0.2s ease both; }
+        .platform-overview { animation: fadeUp 0.6s 0.25s ease both; }
+
+        /* ── Utility classes ───────────────────────────────────────────── */
+        .platform-overview--padded { padding-bottom: 80px; }
+
+        code.endpoint {
+            font-size: 0.78rem;
+            opacity: 0.8;
+            font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+        }
+
+        /* ── Responsive ────────────────────────────────────────────────── */
+        @media (max-width: 900px) {
+            .overview-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 700px) {
+            header { padding: 0 20px; }
+            .nav-status { display: none; }
+            .hero { padding: 64px 24px 48px; }
+            .stat-strip { flex-wrap: wrap; }
+            .capability-ribbon,
+            .section-header,
+            .tools,
+            .platform-overview { padding-left: 20px; padding-right: 20px; }
+            footer { padding: 20px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- ── Sticky header ─────────────────────────────────────────────────── -->
     <header>
         <div class="logo-mark">🎬</div>
         <div class="logo-text">
             <h1>Scene Reader Studio Technologies</h1>
             <p>Production Intelligence Platform</p>
         </div>
-        <span class="header-badge">v2026</span>
+        <nav>
+            <div class="nav-status">
+                <div class="status-pill checking" id="pill-5001">
+                    <span class="status-dot"></span>Screenplay &amp; Contracts · :5001
+                </div>
+                <div class="status-pill checking" id="pill-8082">
+                    <span class="status-dot"></span>Budget Parser · :8082
+                </div>
+                <div class="status-pill checking" id="pill-8083">
+                    <span class="status-dot"></span>ScreenFlow API · :8083
+                </div>
+            </div>
+            <span class="header-badge">v2026</span>
+        </nav>
     </header>
 
+    <!-- ── Hero ─────────────────────────────────────────────────────────── -->
     <section class="hero">
-        <h2>Production Tools Suite</h2>
-        <p>AI-powered analysis for film &amp; TV production — screenplays, budgets, and contracts in one place.</p>
+        <div class="hero-eyebrow">Powered by Anthropic Claude AI</div>
+
+        <h2>The Complete AI Production<br>Intelligence Platform</h2>
+
+        <p class="hero-sub">
+            From script to screen — AI-powered screenplay analysis, patent-pending budget risk management,
+            and real-time contract review in one integrated platform built for film &amp; TV professionals.
+        </p>
+
+        <div class="stat-strip">
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Integrated Tools</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Risk Categories</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">&lt;30s</div>
+                <div class="stat-label">Analysis Time</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Script Formats</div>
+            </div>
+        </div>
     </section>
 
-    <!-- Live status indicators -->
-    <div class="status-bar" id="statusBar">
-        <div class="status-pill checking" id="pill-5001">
-            <span class="status-dot"></span> Screenplay &amp; Contracts · :5001
+    <!-- ── Capability ribbon ─────────────────────────────────────────────── -->
+    <div class="capability-ribbon">
+        <p class="ribbon-label">Platform Capabilities</p>
+        <div class="ribbon-chips">
+            <span class="chip chip-purple"><span class="chip-icon">🤖</span>Claude AI Analysis</span>
+            <span class="chip chip-cyan"><span class="chip-icon">⚡</span>Real-time SSE Streaming</span>
+            <span class="chip chip-green"><span class="chip-icon">📊</span>Patent-Pending Risk Scoring</span>
+            <span class="chip chip-amber"><span class="chip-icon">📄</span>PDF · DOCX · TXT · CSV Input</span>
+            <span class="chip chip-purple"><span class="chip-icon">🎬</span>Fountain · FDX · TXT Scripts</span>
+            <span class="chip chip-rose"><span class="chip-icon">🔐</span>Secure Auth &amp; API Key Management</span>
+            <span class="chip chip-cyan"><span class="chip-icon">🌐</span>REST API with Rate Limiting</span>
+            <span class="chip chip-green"><span class="chip-icon">💾</span>Excel · PDF · JSON Export</span>
+            <span class="chip chip-amber"><span class="chip-icon">📋</span>WGA Format Validation</span>
+            <span class="chip chip-purple"><span class="chip-icon">📈</span>Multi-Budget Variance Analysis</span>
         </div>
-        <div class="status-pill checking" id="pill-8082">
-            <span class="status-dot"></span> Budget Parser · :8082
-        </div>
-        <div class="status-pill checking" id="pill-8083">
-            <span class="status-dot"></span> ScreenFlow API · :8083
-        </div>
+    </div>
+
+    <!-- ── Tool cards ─────────────────────────────────────────────────────── -->
+    <div class="section-header">
+        <h3>Tools</h3>
+        <p>Choose your workflow — or use them all together.</p>
     </div>
 
     <main class="tools">
 
-        <!-- Screenplay Analysis → :5001 dashboard -->
+        <!-- Screenplay Analysis -->
         <a href="http://localhost:5001" class="tool-card card-screenplay" target="_blank" rel="noopener">
-            <div class="card-icon">🎬</div>
+            <div class="card-header">
+                <div class="card-icon">🎬</div>
+                <span class="card-tag">AURA Enterprise</span>
+            </div>
             <div class="card-body">
                 <h3>Screenplay Analysis</h3>
-                <p>AI-powered screenplay intelligence — analyze, batch process, and review scripts with full history.</p>
+                <p>AI-powered screenplay intelligence that delivers deep narrative scoring, commercial viability assessment, and WGA format validation — in seconds, not days.</p>
             </div>
             <ul class="card-features">
-                <li>Single &amp; batch screenplay analysis</li>
-                <li>Commercial potential · narrative scoring</li>
-                <li>Real-time streaming AI (SSE)</li>
-                <li>Full analysis history &amp; export</li>
+                <li><span class="feat-dot"></span>Genre classification · themes · character depth analysis</li>
+                <li><span class="feat-dot"></span>Commercial potential · market fit · comparable titles</li>
+                <li><span class="feat-dot"></span>Single script or batch processing up to 10 scripts</li>
+                <li><span class="feat-dot"></span>Hollywood format compliance · WGA validation scoring</li>
+                <li><span class="feat-dot"></span>Full analysis history, export, and API access</li>
             </ul>
             <div class="card-footer">
                 <span class="card-port">localhost:5001</span>
@@ -399,18 +746,22 @@
             </div>
         </a>
 
-        <!-- Contract Review → :5001/contract -->
+        <!-- Contract Review -->
         <a href="http://localhost:5001/contract" class="tool-card card-contract" target="_blank" rel="noopener">
-            <div class="card-icon">📋</div>
+            <div class="card-header">
+                <div class="card-icon">📋</div>
+                <span class="card-tag">Contract Review</span>
+            </div>
             <div class="card-body">
-                <h3>Contract Review</h3>
-                <p>Upload PDF, DOCX, or TXT contracts for structured AI review with risk flags and negotiation points.</p>
+                <h3>Contract Review &amp; Risk</h3>
+                <p>Upload any production contract — talent agreements, location permits, crew deals — and get a structured AI review with risk flags, fairness scoring, and negotiation leverage points.</p>
             </div>
             <ul class="card-features">
-                <li>Risk flags · fairness assessment</li>
-                <li>Negotiation point extraction</li>
-                <li>Real-time streaming analysis (SSE)</li>
-                <li>Save as PDF · TXT · JSON</li>
+                <li><span class="feat-dot"></span>PDF · DOCX · TXT contract ingestion</li>
+                <li><span class="feat-dot"></span>Risk flag extraction · FAVORABLE / UNFAVORABLE assessment</li>
+                <li><span class="feat-dot"></span>Negotiation point identification &amp; priority ranking</li>
+                <li><span class="feat-dot"></span>Real-time streaming analysis via SSE</li>
+                <li><span class="feat-dot"></span>Save as PDF · TXT · JSON — print-ready output</li>
             </ul>
             <div class="card-footer">
                 <span class="card-port">localhost:5001/contract</span>
@@ -420,16 +771,20 @@
 
         <!-- Budget Analysis -->
         <a href="http://localhost:8082" class="tool-card card-budget" target="_blank" rel="noopener">
-            <div class="card-icon">💰</div>
+            <div class="card-header">
+                <div class="card-icon">💰</div>
+                <span class="card-tag">Patent Pending</span>
+            </div>
             <div class="card-body">
                 <h3>Budget Analysis &amp; Risk</h3>
-                <p>Film/TV budget parser with 8-category risk scoring, multi-budget comparison, and export.</p>
+                <p>The industry's most advanced film &amp; TV budget parser. Ingest CSV or Excel budgets, score risk across 8 proprietary categories, and export studio-ready reports in minutes.</p>
             </div>
             <ul class="card-features">
-                <li>Risk scoring system (patent pending)</li>
-                <li>Multi-budget variance comparison</li>
-                <li>Excel &amp; PDF report export</li>
-                <li>AI-powered line-item insights</li>
+                <li><span class="feat-dot"></span>8-category risk scoring system (patent pending)</li>
+                <li><span class="feat-dot"></span>Multi-budget variance comparison with chart visualizations</li>
+                <li><span class="feat-dot"></span>AI-powered line-item anomaly detection &amp; insights</li>
+                <li><span class="feat-dot"></span>Excel &amp; PDF export — production-ready format</li>
+                <li><span class="feat-dot"></span>SQLite-backed history with full audit trail</li>
             </ul>
             <div class="card-footer">
                 <span class="card-port">localhost:8082</span>
@@ -439,37 +794,78 @@
 
         <!-- ScreenFlow AURA REST API -->
         <a href="http://localhost:8083" class="tool-card card-api" target="_blank" rel="noopener">
-            <div class="card-icon">⚡</div>
+            <div class="card-header">
+                <div class="card-icon">⚡</div>
+                <span class="card-tag">REST API</span>
+            </div>
             <div class="card-body">
                 <h3>ScreenFlow AURA API</h3>
-                <p>REST API for programmatic screenplay intelligence — integrate parse, analyze, and validate into your pipeline.</p>
+                <p>Integrate screenplay intelligence directly into your pipeline. A production-grade REST API with API key auth, rate limiting, and full JSON responses — ready for any language or platform.</p>
             </div>
             <ul class="card-features">
-                <li>JSON API · API key auth · rate limited</li>
-                <li>Parse · analyze · validate · batch endpoints</li>
-                <li>Admin key management endpoints</li>
-                <li>Usage metrics &amp; history</li>
+                <li><span class="feat-dot"></span><code class="endpoint">POST /api/parse</code> · <code class="endpoint">/api/analyze</code> · <code class="endpoint">/api/validate</code></li>
+                <li><span class="feat-dot"></span>Batch endpoint — process up to 10 scripts per request</li>
+                <li><span class="feat-dot"></span>API key auth · per-key rate limiting · admin management</li>
+                <li><span class="feat-dot"></span>Usage metrics, analysis history, and pagination</li>
+                <li><span class="feat-dot"></span>Retry logic · fault-tolerant · sub-30s response times</li>
             </ul>
             <div class="card-footer">
                 <span class="card-port">localhost:8083</span>
-                <span class="card-launch">View API →</span>
+                <span class="card-launch">View API Docs →</span>
             </div>
         </a>
 
     </main>
 
+    <!-- ── Platform overview ──────────────────────────────────────────────── -->
+    <div class="platform-overview platform-overview--padded">
+        <div class="overview-grid">
+            <div class="overview-cell">
+                <div class="overview-icon">🏗️</div>
+                <div class="overview-title">Built for Production</div>
+                <div class="overview-desc">
+                    Every tool is purpose-built for film &amp; TV workflows — not generic AI wrapped in a UI.
+                    Secure session auth, SQLite-backed history, Alembic migrations, and Docker-ready deployments
+                    mean you can run this on a laptop or a production server.
+                </div>
+            </div>
+            <div class="overview-cell">
+                <div class="overview-icon">🧠</div>
+                <div class="overview-title">Claude AI at the Core</div>
+                <div class="overview-desc">
+                    Powered by Anthropic's Claude Sonnet — the same model trusted by enterprise teams for
+                    nuanced reasoning, long-form analysis, and structured JSON output. Every response streams
+                    in real time so you see insights as they generate, not after a 60-second wait.
+                </div>
+            </div>
+            <div class="overview-cell">
+                <div class="overview-icon">🔒</div>
+                <div class="overview-title">Secure &amp; IP-Protected</div>
+                <div class="overview-desc">
+                    HMAC-hashed credentials, session cookies with HTTPS enforcement, API key rotation,
+                    rate limiting, and zero plaintext secrets at rest. The 8-category budget risk scoring
+                    engine is proprietary IP — patent application filed. WGA registration included.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Footer ────────────────────────────────────────────────────────── -->
+    <div class="footer-divider"></div>
     <footer>
-        <p>&copy; 2026 Scene Reader Studio Technologies LLC. All rights reserved. Proprietary.</p>
+        <div class="footer-left">
+            <span class="footer-brand">Scene Reader Studio Technologies LLC</span>
+            <span class="footer-copy">&copy; 2026 · All rights reserved · Proprietary &amp; Confidential</span>
+        </div>
         <div class="footer-links">
-            <a href="http://localhost:8083/api/health" target="_blank">AURA Health</a>
-            <a href="http://localhost:8082/api/health" target="_blank">Budget Health</a>
-            <a href="http://localhost:5001/api/health" target="_blank">Contract Health</a>
-            <a href="README.md" target="_blank">Docs</a>
+            <a href="http://localhost:5001/api/health" target="_blank" rel="noopener">Contract Health</a>
+            <a href="http://localhost:8082/api/health" target="_blank" rel="noopener">Budget Health</a>
+            <a href="http://localhost:8083/api/health" target="_blank" rel="noopener">AURA Health</a>
+            <a href="README.md" target="_blank" rel="noopener">Docs</a>
         </div>
     </footer>
 
     <script>
-        // Probe each service health endpoint and update status pills
         const services = [
             { id: 'pill-5001', url: 'http://localhost:5001/api/health' },
             { id: 'pill-8082', url: 'http://localhost:8082/api/health' },
@@ -483,15 +879,12 @@
                 const timer = setTimeout(() => ctrl.abort(), 3000);
                 const r = await fetch(svc.url, { signal: ctrl.signal });
                 clearTimeout(timer);
-                pill.classList.remove('checking');
-                pill.classList.add(r.ok ? 'online' : 'offline');
+                pill.className = 'status-pill ' + (r.ok ? 'online' : 'offline');
             } catch {
-                pill.classList.remove('checking');
-                pill.classList.add('offline');
+                pill.className = 'status-pill offline';
             }
         }
 
-        // Run checks on load, then every 30 seconds
         services.forEach(checkService);
         setInterval(() => services.forEach(checkService), 30000);
     </script>
