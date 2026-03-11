@@ -1,0 +1,18 @@
+# ----------------------------------------------------------------
+# Caddyfile — ScreenFlow AURA HTTPS reverse proxy
+# ----------------------------------------------------------------
+# Option 1: Local dev with self-signed cert
+# localhost {
+#     tls internal
+#     reverse_proxy 127.0.0.1:8083
+# }
+
+# Option 2: Public domain with automatic Let's Encrypt cert
+# yourdomain.com {
+#     reverse_proxy 127.0.0.1:8083
+# }
+
+localhost {
+    tls internal
+    reverse_proxy 127.0.0.1:8083
+}

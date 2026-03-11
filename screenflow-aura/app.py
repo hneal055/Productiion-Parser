@@ -3,8 +3,7 @@ ScreenFlow AURA — AI-Powered Screenplay Analysis API
 Rewritten from http.server to Flask with real Claude AI, SQLite persistence, and API key auth.
 """
 
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+import logging
 import os
 import json
 import hmac
@@ -12,10 +11,21 @@ import hashlib
 import time
 from datetime import datetime
 from functools import wraps
-from dotenv import load_dotenv
+
 import anthropic
+from dotenv import load_dotenv
+from flask import Flask, request, jsonify
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv(override=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(name)s: %(message)s',
+)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -29,6 +39,13 @@ app.secret_key = _secret_key
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///aura.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=['500 per day', '120 per hour'],
+    storage_uri='memory://',
+)
 
 
 # ── Model ───────────────────────────────────────────────────────────────────
@@ -128,6 +145,7 @@ def health():
 
 @app.route('/api/parse', methods=['POST'])
 @require_api_key
+@limiter.limit('20 per hour')
 def parse():
     """Single screenplay parse — full AI analysis."""
     data = request.get_json(silent=True) or {}
@@ -196,11 +214,13 @@ Return this exact JSON structure:
         return jsonify({'success': True, 'analysis': result})
 
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+        logger.error('Parse error', exc_info=True)
+        return jsonify({'success': False, 'error': 'Analysis failed. Please try again.'}), 500
 
 
 @app.route('/api/analyze', methods=['POST'])
 @require_api_key
+@limiter.limit('20 per hour')
 def analyze():
     """Deep narrative analysis — character arcs, commercial viability, market fit."""
     data = request.get_json(silent=True) or {}
@@ -272,11 +292,13 @@ Return this exact JSON structure:
         return jsonify({'success': True, 'analysis': result})
 
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+        logger.error('Analyze error', exc_info=True)
+        return jsonify({'success': False, 'error': 'Analysis failed. Please try again.'}), 500
 
 
 @app.route('/api/validate', methods=['POST'])
 @require_api_key
+@limiter.limit('20 per hour')
 def validate():
     """Format and compliance validation."""
     data = request.get_json(silent=True) or {}
@@ -333,11 +355,13 @@ Return this exact JSON structure:
         return jsonify({'success': True, 'validation': result})
 
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+        logger.error('Validate error', exc_info=True)
+        return jsonify({'success': False, 'error': 'Validation failed. Please try again.'}), 500
 
 
 @app.route('/api/batch/parse', methods=['POST'])
 @require_api_key
+@limiter.limit('5 per hour')
 def batch_parse():
     """Batch parse multiple screenplays — returns an array of analyses."""
     data = request.get_json(silent=True) or {}
@@ -393,9 +417,10 @@ Return this exact JSON structure:
             db.session.add(record)
 
         except Exception as e:
+            logger.error('Batch item error for %s', label, exc_info=True)
             results.append({
                 'item_id': label,
-                'error': str(e),
+                'error': 'Processing failed',
                 'quick_verdict': {'overall_score': 0, 'commercial_potential': 'N/A', 'recommendation': 'Processing error'}
             })
 
@@ -476,7 +501,7 @@ def metrics():
 
 if __name__ == '__main__':
     if not os.environ.get('ANTHROPIC_API_KEY'):
-        print('WARNING: ANTHROPIC_API_KEY not set — AI calls will fail')
+        logger.warning('ANTHROPIC_API_KEY is not set — AI calls will fail.')
     if not os.environ.get('AURA_API_KEY'):
-        print('WARNING: AURA_API_KEY not set — all protected endpoints will return 500')
-    app.run(debug=True, host='0.0.0.0', port=8083)
+        logger.warning('AURA_API_KEY is not set — all protected endpoints will return 500.')
+    app.run(debug=False, host='127.0.0.1', port=8083)

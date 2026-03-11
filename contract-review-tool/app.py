@@ -17,7 +17,6 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
-from flask_wtf.csrf import generate_csrf
 from werkzeug.utils import secure_filename
 
 load_dotenv(override=True)
@@ -55,7 +54,7 @@ app.secret_key = _secret_key
 # Session cookie hardening
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_COOKIE_SECURE'] = False  # Set True when serving over HTTPS
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('HTTPS', '').lower() == 'true'
 
 # SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///history.db'

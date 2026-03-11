@@ -1,6 +1,9 @@
-flask
-flask-sqlalchemy
-anthropic
-python-dotenv
-gunicorn
-pytest
+anthropic==0.84.0
+Flask==3.1.3
+Flask-Limiter==4.1.1
+Flask-SQLAlchemy==3.1.1
+python-dotenv==1.2.2
+SQLAlchemy==2.0.48
+waitress==3.0.2
+Werkzeug==3.1.6
+pytest==9.0.2

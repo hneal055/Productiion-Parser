@@ -66,4 +66,9 @@ echo Press CTRL+C to stop the server
 echo ================================================================
 echo.
 
-%PYTHON% app.py
+REM Use waitress for production-safe serving (no debug mode)
+if exist "venv\Scripts\waitress-serve.exe" (
+    venv\Scripts\waitress-serve --host=127.0.0.1 --port=8083 app:app
+) else (
+    %PYTHON% app.py
+)
