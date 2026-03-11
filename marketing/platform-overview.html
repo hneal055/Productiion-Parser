@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scene Reader Studio Technologies — Platform Overview</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --purple:  #6366f1;
+            --violet:  #8b5cf6;
+            --indigo:  #818cf8;
+            --cyan:    #06b6d4;
+            --green:   #10b981;
+            --amber:   #f59e0b;
+            --red:     #ef4444;
+            --bg:      #ffffff;
+            --ink:     #0f172a;
+            --ink2:    #1e293b;
+            --ink3:    #334155;
+            --muted:   #64748b;
+            --light:   #f1f5f9;
+            --border:  #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* ── Page wrapper ─────────────────────────────────────────────── */
+        .page {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* ── Cover / Hero ─────────────────────────────────────────────── */
+        .cover {
+            background: linear-gradient(145deg, #0f0c29 0%, #302b63 45%, #1a1a4e 100%);
+            padding: 72px 64px 64px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: -120px; right: -120px;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .cover::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -60px;
+            width: 360px; height: 360px;
+            background: radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .cover-logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 56px;
+        }
+
+        .cover-logo-mark {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 24px rgba(99,102,241,0.5);
+        }
+
+        .cover-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cover-logo-name {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #c4b5fd;
+            letter-spacing: 0.1px;
+        }
+
+        .cover-logo-sub {
+            font-size: 0.65rem;
+            color: rgba(196,181,253,0.5);
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .cover-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(99,102,241,0.15);
+            border: 1px solid rgba(99,102,241,0.35);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #a5b4fc;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .cover-eyebrow-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #6366f1;
+            box-shadow: 0 0 8px rgba(99,102,241,0.9);
+        }
+
+        .cover h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: -1.5px;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .cover h1 span {
+            background: linear-gradient(135deg, #a5b4fc 0%, #67e8f9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cover-tagline {
+            font-size: 1.05rem;
+            color: rgba(196,181,253,0.7);
+            max-width: 560px;
+            line-height: 1.65;
+            margin-bottom: 48px;
+            font-weight: 400;
+        }
+
+        .cover-stats {
+            display: flex;
+            gap: 0;
+            border: 1px solid rgba(99,102,241,0.25);
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.03);
+            max-width: 580px;
+        }
+
+        .cover-stat {
+            flex: 1;
+            padding: 18px 20px;
+            border-right: 1px solid rgba(99,102,241,0.2);
+            text-align: center;
+        }
+
+        .cover-stat:last-child { border-right: none; }
+
+        .cover-stat-val {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .cover-stat-label {
+            font-size: 0.65rem;
+            color: rgba(196,181,253,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            margin-top: 2px;
+        }
+
+        /* ── Divider ──────────────────────────────────────────────────── */
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #06b6d4, #10b981);
+        }
+
+        /* ── Body sections ────────────────────────────────────────────── */
+        .section {
+            padding: 56px 64px;
+        }
+
+        .section-alt {
+            background: var(--light);
+        }
+
+        .section-dark {
+            background: #0f172a;
+            color: white;
+        }
+
+        .eyebrow {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--purple);
+            margin-bottom: 10px;
+        }
+
+        .section-dark .eyebrow { color: #a5b4fc; }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.6px;
+            color: var(--ink);
+            margin-bottom: 14px;
+            line-height: 1.2;
+        }
+
+        .section-dark .section-title { color: #f1f5f9; }
+
+        .section-body {
+            font-size: 0.95rem;
+            color: var(--muted);
+            max-width: 640px;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        .section-dark .section-body { color: #94a3b8; }
+
+        /* ── Feature grid ─────────────────────────────────────────────── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px 22px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+
+        .fc-purple::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+        .fc-cyan::before   { background: linear-gradient(90deg, #06b6d4, #6366f1); }
+        .fc-green::before  { background: linear-gradient(90deg, #10b981, #06b6d4); }
+        .fc-amber::before  { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+
+        .fc-icon {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+
+        .fc-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+
+        .fc-desc {
+            font-size: 0.8rem;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        /* ── Tool blocks ──────────────────────────────────────────────── */
+        .tool-block {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .tool-block:last-child { margin-bottom: 0; }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tool-icon-wrap {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .ti-purple { background: #ede9fe; }
+        .ti-amber  { background: #fef3c7; }
+        .ti-green  { background: #d1fae5; }
+        .ti-cyan   { background: #cffafe; }
+
+        .tool-meta { flex: 1; }
+
+        .tool-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .tool-tagline {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .tool-badge {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+
+        .tb-purple { background: #ede9fe; color: #6d28d9; }
+        .tb-amber  { background: #fef3c7; color: #b45309; }
+        .tb-green  { background: #d1fae5; color: #047857; }
+        .tb-cyan   { background: #cffafe; color: #0e7490; }
+
+        .tool-body {
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .tool-desc {
+            font-size: 0.83rem;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        .tool-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .tool-features li {
+            font-size: 0.8rem;
+            color: var(--ink3);
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            line-height: 1.4;
+        }
+
+        .feat-bullet {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .fb-purple { background: #6366f1; }
+        .fb-amber  { background: #f59e0b; }
+        .fb-green  { background: #10b981; }
+        .fb-cyan   { background: #06b6d4; }
+
+        /* ── Capabilities chips ───────────────────────────────────────── */
+        .chip-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            border: 1px solid;
+        }
+
+        .c-purple { background: #ede9fe; border-color: #c4b5fd; color: #5b21b6; }
+        .c-cyan   { background: #cffafe; border-color: #a5f3fc; color: #0e7490; }
+        .c-green  { background: #d1fae5; border-color: #a7f3d0; color: #065f46; }
+        .c-amber  { background: #fef3c7; border-color: #fde68a; color: #92400e; }
+        .c-rose   { background: #ffe4e6; border-color: #fecdd3; color: #9f1239; }
+
+        /* ── Architecture / Tech stack ────────────────────────────────── */
+        .tech-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .tech-cell {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .tech-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .section-dark .tech-label { color: #475569; }
+
+        .tech-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .tech-item {
+            font-size: 0.8rem;
+            color: var(--ink3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-dark .tech-item { color: #94a3b8; }
+
+        .tech-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--purple);
+            flex-shrink: 0;
+        }
+
+        .section-dark .tech-dot { background: #6366f1; }
+
+        /* ── API table ────────────────────────────────────────────────── */
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .api-table th {
+            text-align: left;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.06);
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.72rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .api-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #cbd5e1;
+            vertical-align: top;
+        }
+
+        .api-table tr:last-child td { border-bottom: none; }
+
+        .method-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        .m-get  { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .m-post { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+
+        code {
+            font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.82em;
+            background: rgba(99,102,241,0.12);
+            color: #a5b4fc;
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+
+        /* ── IP / Security callout ────────────────────────────────────── */
+        .callout {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 1px solid #fcd34d;
+            border-left: 4px solid #f59e0b;
+            border-radius: 10px;
+            padding: 18px 20px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+        .callout-text { font-size: 0.84rem; color: #78350f; line-height: 1.55; }
+
+        .callout-text strong { font-weight: 700; color: #92400e; }
+
+        /* ── Use cases ────────────────────────────────────────────────── */
+        .use-case-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .use-case {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .uc-role {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--purple);
+            margin-bottom: 6px;
+        }
+
+        .uc-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+
+        .uc-desc {
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ── Footer ───────────────────────────────────────────────────── */
+        .doc-footer {
+            background: #0f172a;
+            padding: 36px 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .doc-footer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .doc-footer-brand {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #c4b5fd;
+        }
+
+        .doc-footer-copy {
+            font-size: 0.72rem;
+            color: #475569;
+        }
+
+        .doc-footer-right {
+            text-align: right;
+        }
+
+        .doc-footer-version {
+            font-size: 0.72rem;
+            color: #475569;
+        }
+
+        /* ── Print ────────────────────────────────────────────────────── */
+        @media print {
+            body { background: white; }
+            .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .section-dark { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .doc-footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .section-divider { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .tool-block { break-inside: avoid; }
+            .feature-card { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- ── Cover ─────────────────────────────────────────────────────────── -->
+    <div class="cover">
+        <div class="cover-logo">
+            <div class="cover-logo-mark">🎬</div>
+            <div class="cover-logo-text">
+                <span class="cover-logo-name">Scene Reader Studio Technologies LLC</span>
+                <span class="cover-logo-sub">Production Intelligence Platform</span>
+            </div>
+        </div>
+
+        <div class="cover-eyebrow">
+            <span class="cover-eyebrow-dot"></span>
+            Powered by Anthropic Claude AI
+        </div>
+
+        <h1>The Complete AI Production<br><span>Intelligence Platform</span></h1>
+
+        <p class="cover-tagline">
+            From script to screen — AI-powered screenplay analysis, patent-pending budget risk
+            management, and real-time contract review in one integrated platform built for
+            film &amp; TV professionals.
+        </p>
+
+        <div class="cover-stats">
+            <div class="cover-stat">
+                <div class="cover-stat-val">3</div>
+                <div class="cover-stat-label">Integrated Tools</div>
+            </div>
+            <div class="cover-stat">
+                <div class="cover-stat-val">8</div>
+                <div class="cover-stat-label">Risk Categories</div>
+            </div>
+            <div class="cover-stat">
+                <div class="cover-stat-val">&lt;30s</div>
+                <div class="cover-stat-label">Analysis Time</div>
+            </div>
+            <div class="cover-stat">
+                <div class="cover-stat-val">3</div>
+                <div class="cover-stat-label">Script Formats</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- ── Executive Summary ─────────────────────────────────────────────── -->
+    <div class="section">
+        <p class="eyebrow">Executive Summary</p>
+        <h2 class="section-title">One Platform. Every Stage of Production.</h2>
+        <p class="section-body">
+            Scene Reader Studio Technologies delivers the film and television industry's only fully
+            integrated AI production intelligence suite. Where individual tools address individual
+            problems, our platform connects screenplay development, financial risk assessment, and
+            legal contract review into a single, secure, Claude AI–powered workflow. The result is
+            faster decisions, lower risk exposure, and production-ready analysis that used to take
+            days — now delivered in under 30 seconds.
+        </p>
+
+        <div class="feature-grid">
+            <div class="feature-card fc-purple">
+                <div class="fc-icon">🧠</div>
+                <div class="fc-title">Claude AI at Every Stage</div>
+                <div class="fc-desc">Every analysis — from narrative scoring to contract risk flags — runs on Anthropic's Claude Sonnet, the industry benchmark for long-form reasoning and structured output. Real-time SSE streaming means insights appear as they generate.</div>
+            </div>
+            <div class="feature-card fc-cyan">
+                <div class="fc-icon">⚡</div>
+                <div class="fc-title">Real-Time Streaming Analysis</div>
+                <div class="fc-desc">Server-Sent Events (SSE) architecture delivers results token-by-token, eliminating the 45–60 second wait typical of AI tools. Users see analysis flowing in real time, not a loading spinner followed by a wall of text.</div>
+            </div>
+            <div class="feature-card fc-green">
+                <div class="fc-icon">🔐</div>
+                <div class="fc-title">Production-Grade Security</div>
+                <div class="fc-desc">HMAC-hashed credentials, secure session cookies with HTTPS enforcement, API key rotation with soft/hard revocation, per-key rate limiting, and zero plaintext secrets at rest. Alembic migrations for zero-downtime schema changes.</div>
+            </div>
+            <div class="feature-card fc-amber">
+                <div class="fc-icon">📦</div>
+                <div class="fc-title">Deploy Anywhere</div>
+                <div class="fc-desc">Each tool ships with a Dockerfile and docker-compose orchestration for one-command cloud deployment. Windows BAT scripts and local venv support for on-premises use. SQLite-backed with full audit history — no external database required.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Capabilities ───────────────────────────────────────────────────── -->
+    <div class="section section-alt">
+        <p class="eyebrow">Platform Capabilities</p>
+        <h2 class="section-title">Everything Production Needs. Nothing It Doesn't.</h2>
+        <p class="section-body">
+            Ten core capabilities across three tools — built on open standards, secured by design,
+            and purpose-engineered for film and television production workflows.
+        </p>
+        <div class="chip-grid">
+            <span class="chip c-purple">🤖 Claude AI Analysis Engine</span>
+            <span class="chip c-cyan">⚡ Real-Time SSE Streaming</span>
+            <span class="chip c-green">📊 Patent-Pending Risk Scoring</span>
+            <span class="chip c-amber">📄 PDF · DOCX · TXT · CSV Ingestion</span>
+            <span class="chip c-purple">🎬 Fountain · FDX · TXT Script Formats</span>
+            <span class="chip c-rose">🔐 Secure Auth &amp; API Key Management</span>
+            <span class="chip c-cyan">🌐 REST API with Rate Limiting</span>
+            <span class="chip c-green">💾 Excel · PDF · JSON Export</span>
+            <span class="chip c-amber">📋 WGA Format Validation</span>
+            <span class="chip c-purple">📈 Multi-Budget Variance Analysis</span>
+        </div>
+    </div>
+
+    <!-- ── Tools: Screenplay ──────────────────────────────────────────────── -->
+    <div class="section">
+        <p class="eyebrow">Tool Suite</p>
+        <h2 class="section-title">Three Tools. One Platform.</h2>
+        <p class="section-body">
+            Each tool is independently deployable and production-hardened. Together they cover
+            the full pre-production intelligence cycle.
+        </p>
+
+        <div class="tool-block">
+            <div class="tool-header">
+                <div class="tool-icon-wrap ti-purple">🎬</div>
+                <div class="tool-meta">
+                    <div class="tool-name">Screenplay Analysis — AURA Enterprise</div>
+                    <div class="tool-tagline">AI-powered screenplay intelligence · localhost:5001 · v3.1.1</div>
+                </div>
+                <span class="tool-badge tb-purple">AURA Enterprise</span>
+            </div>
+            <div class="tool-body">
+                <div class="tool-desc">
+                    The most advanced screenplay evaluation engine available to independent and
+                    studio productions. Submit any script in Fountain, Final Draft FDX, plain text,
+                    or PDF format and receive a comprehensive intelligence report in under 30 seconds.
+                    <br><br>
+                    Batch processing handles up to 10 scripts simultaneously with individual scoring
+                    and a unified comparative report — ideal for development slates, festival
+                    submissions, or coverage workflows.
+                    <br><br>
+                    The AURA REST API extends full screenplay intelligence to any production pipeline
+                    via authenticated JSON endpoints, enabling integration with coverage databases,
+                    scheduling software, or custom development workflows.
+                </div>
+                <ul class="tool-features">
+                    <li><span class="feat-bullet fb-purple"></span>Genre classification · primary themes · narrative arc analysis</li>
+                    <li><span class="feat-bullet fb-purple"></span>Character depth scoring · main cast identification</li>
+                    <li><span class="feat-bullet fb-purple"></span>Commercial potential · market fit · comparable titles</li>
+                    <li><span class="feat-bullet fb-purple"></span>Quality score (0–100) · overall recommendation</li>
+                    <li><span class="feat-bullet fb-purple"></span>Single &amp; batch analysis (up to 10 scripts)</li>
+                    <li><span class="feat-bullet fb-purple"></span>WGA Hollywood format compliance validation</li>
+                    <li><span class="feat-bullet fb-purple"></span>Fountain · FDX · TXT · PDF script ingestion</li>
+                    <li><span class="feat-bullet fb-purple"></span>Full analysis history with pagination &amp; export</li>
+                    <li><span class="feat-bullet fb-purple"></span>REST API: /parse · /analyze · /validate · /batch</li>
+                    <li><span class="feat-bullet fb-purple"></span>API key auth · per-key rate limiting (20 req/hr)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tool-block">
+            <div class="tool-header">
+                <div class="tool-icon-wrap ti-amber">📋</div>
+                <div class="tool-meta">
+                    <div class="tool-name">Contract Review &amp; Risk Analysis</div>
+                    <div class="tool-tagline">AI-powered legal document review · localhost:5001/contract · v1.3.1</div>
+                </div>
+                <span class="tool-badge tb-amber">Legal Intelligence</span>
+            </div>
+            <div class="tool-body">
+                <div class="tool-desc">
+                    Upload any production contract — talent agreements, location permits, crew
+                    deals, distribution agreements, co-production treaties — and receive a
+                    structured AI review in under 30 seconds.
+                    <br><br>
+                    The analysis streams in real time via SSE, delivering risk flags, a
+                    FAVORABLE / UNFAVORABLE / NEUTRAL fairness assessment, key term extraction,
+                    and prioritized negotiation leverage points as Claude processes the document.
+                    <br><br>
+                    Results are fully exportable as print-ready PDF, plain-text TXT, or raw JSON
+                    for integration with legal management systems. Every analysis is stored with
+                    full audit history.
+                </div>
+                <ul class="tool-features">
+                    <li><span class="feat-bullet fb-amber"></span>PDF · DOCX · TXT contract ingestion</li>
+                    <li><span class="feat-bullet fb-amber"></span>FAVORABLE / UNFAVORABLE / NEUTRAL assessment</li>
+                    <li><span class="feat-bullet fb-amber"></span>Risk flag extraction with severity classification</li>
+                    <li><span class="feat-bullet fb-amber"></span>Key term identification &amp; plain-language summary</li>
+                    <li><span class="feat-bullet fb-amber"></span>Negotiation point extraction &amp; priority ranking</li>
+                    <li><span class="feat-bullet fb-amber"></span>Real-time streaming analysis (SSE)</li>
+                    <li><span class="feat-bullet fb-amber"></span>Save as PDF · TXT · JSON — print-ready output</li>
+                    <li><span class="feat-bullet fb-amber"></span>Full analysis history with search</li>
+                    <li><span class="feat-bullet fb-amber"></span>Secure login · session auth · multi-user support</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tool-block">
+            <div class="tool-header">
+                <div class="tool-icon-wrap ti-green">💰</div>
+                <div class="tool-meta">
+                    <div class="tool-name">Budget Analysis &amp; Risk Management</div>
+                    <div class="tool-tagline">Film/TV budget intelligence · localhost:8082 · v2.5.0</div>
+                </div>
+                <span class="tool-badge tb-green">Patent Pending</span>
+            </div>
+            <div class="tool-body">
+                <div class="tool-desc">
+                    The industry's most advanced film and television budget risk engine. Upload
+                    CSV or Excel budget files and receive an immediate risk assessment across
+                    eight proprietary categories — a patent-pending methodology developed
+                    specifically for production finance.
+                    <br><br>
+                    Compare multiple budgets side-by-side with variance analysis, Chart.js
+                    visualizations, and modal detail views that drill into line-item discrepancies.
+                    AI-powered anomaly detection flags unusual expenditures and provides
+                    context-aware insights for each budget category.
+                    <br><br>
+                    Export production-ready Excel reports and PDF summaries formatted for
+                    financiers, studios, and completion bond providers.
+                </div>
+                <ul class="tool-features">
+                    <li><span class="feat-bullet fb-green"></span>8-category proprietary risk scoring (patent pending)</li>
+                    <li><span class="feat-bullet fb-green"></span>CSV &amp; Excel budget ingestion</li>
+                    <li><span class="feat-bullet fb-green"></span>Multi-budget variance comparison</li>
+                    <li><span class="feat-bullet fb-green"></span>Interactive Chart.js dashboard visualizations</li>
+                    <li><span class="feat-bullet fb-green"></span>AI-powered line-item anomaly detection</li>
+                    <li><span class="feat-bullet fb-green"></span>Above-the-line / below-the-line breakdown</li>
+                    <li><span class="feat-bullet fb-green"></span>Excel &amp; PDF export — studio-ready format</li>
+                    <li><span class="feat-bullet fb-green"></span>SQLite-backed history with full audit trail</li>
+                    <li><span class="feat-bullet fb-green"></span>Secure login · Alembic migrations · Docker-ready</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── API Reference ───────────────────────────────────────────────────── -->
+    <div class="section section-dark">
+        <p class="eyebrow">Developer API</p>
+        <h2 class="section-title">ScreenFlow AURA REST API</h2>
+        <p class="section-body">
+            Integrate screenplay intelligence directly into your pipeline. A production-grade
+            REST API with API key authentication, per-key rate limiting, usage metrics, and
+            full JSON responses — ready for any language or platform.
+        </p>
+
+        <table class="api-table">
+            <thead>
+                <tr>
+                    <th>Endpoint</th>
+                    <th>Method</th>
+                    <th>Auth</th>
+                    <th>Description</th>
+                    <th>Rate Limit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>/api/health</code></td>
+                    <td><span class="method-badge m-get">GET</span></td>
+                    <td>None</td>
+                    <td>Service status &amp; analysis count</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><code>/api/parse</code></td>
+                    <td><span class="method-badge m-post">POST</span></td>
+                    <td>API Key</td>
+                    <td>Full screenplay parse — metrics, genre, quality score, themes, recommendations</td>
+                    <td>20 / hr</td>
+                </tr>
+                <tr>
+                    <td><code>/api/analyze</code></td>
+                    <td><span class="method-badge m-post">POST</span></td>
+                    <td>API Key</td>
+                    <td>Deep narrative analysis — character depth, commercial viability, risk, comps</td>
+                    <td>20 / hr</td>
+                </tr>
+                <tr>
+                    <td><code>/api/validate</code></td>
+                    <td><span class="method-badge m-post">POST</span></td>
+                    <td>API Key</td>
+                    <td>WGA/Hollywood format compliance check — issues, severity, certification status</td>
+                    <td>20 / hr</td>
+                </tr>
+                <tr>
+                    <td><code>/api/batch/parse</code></td>
+                    <td><span class="method-badge m-post">POST</span></td>
+                    <td>API Key</td>
+                    <td>Batch process up to 10 scripts — parallel scoring with quick-verdict summaries</td>
+                    <td>5 / hr</td>
+                </tr>
+                <tr>
+                    <td><code>/api/history</code></td>
+                    <td><span class="method-badge m-get">GET</span></td>
+                    <td>API Key</td>
+                    <td>Paginated analysis history with full result JSON</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><code>/api/metrics</code></td>
+                    <td><span class="method-badge m-get">GET</span></td>
+                    <td>API Key</td>
+                    <td>Usage metrics broken down by endpoint type</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><code>/api/admin/keys</code></td>
+                    <td><span class="method-badge m-post">POST</span></td>
+                    <td>Admin Token</td>
+                    <td>Create new API key — raw key returned once, HMAC-hashed at rest</td>
+                    <td>—</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 24px;">
+            <div class="tech-row">
+                <div class="tech-cell">
+                    <div class="tech-label">Supported Script Formats</div>
+                    <div class="tech-items">
+                        <div class="tech-item"><span class="tech-dot"></span>.fountain — Fountain markup</div>
+                        <div class="tech-item"><span class="tech-dot"></span>.fdx — Final Draft XML</div>
+                        <div class="tech-item"><span class="tech-dot"></span>.txt — Production draft</div>
+                        <div class="tech-item"><span class="tech-dot"></span>.pdf — PDF screenplay</div>
+                    </div>
+                </div>
+                <div class="tech-cell">
+                    <div class="tech-label">Response Fields (Parse)</div>
+                    <div class="tech-items">
+                        <div class="tech-item"><span class="tech-dot"></span>quality_score · estimated_pages</div>
+                        <div class="tech-item"><span class="tech-dot"></span>primary_genre · themes[]</div>
+                        <div class="tech-item"><span class="tech-dot"></span>commercial_potential</div>
+                        <div class="tech-item"><span class="tech-dot"></span>recommendations[]</div>
+                    </div>
+                </div>
+                <div class="tech-cell">
+                    <div class="tech-label">Security Model</div>
+                    <div class="tech-items">
+                        <div class="tech-item"><span class="tech-dot"></span>HMAC-SHA256 key hashing</div>
+                        <div class="tech-item"><span class="tech-dot"></span>Per-key rate limiting</div>
+                        <div class="tech-item"><span class="tech-dot"></span>Soft + hard key revocation</div>
+                        <div class="tech-item"><span class="tech-dot"></span>Admin token separation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Use Cases ──────────────────────────────────────────────────────── -->
+    <div class="section section-alt">
+        <p class="eyebrow">Use Cases</p>
+        <h2 class="section-title">Built for Every Role in Production.</h2>
+        <p class="section-body">
+            From the development executive reading 50 scripts a week to the line producer
+            stress-testing a $40M budget — the platform delivers the right intelligence
+            to the right person at the right moment.
+        </p>
+        <div class="use-case-grid">
+            <div class="use-case">
+                <div class="uc-role">Development Executive</div>
+                <div class="uc-title">Slash Script Coverage Time</div>
+                <div class="uc-desc">Batch-analyze an entire submission pile overnight. Wake up to scored, ranked scripts with commercial potential assessments and comparable titles already mapped.</div>
+            </div>
+            <div class="use-case">
+                <div class="uc-role">Line Producer</div>
+                <div class="uc-title">De-Risk the Budget</div>
+                <div class="uc-desc">Upload your working budget and get an 8-category risk score before the greenlight meeting. Identify above-the-line overruns and anomalous line items before they become problems.</div>
+            </div>
+            <div class="use-case">
+                <div class="uc-role">Business Affairs</div>
+                <div class="uc-title">Faster Contract Review</div>
+                <div class="uc-desc">Get structured risk flags and negotiation leverage points on every deal memo, location agreement, and talent contract — in 30 seconds, not 3 hours.</div>
+            </div>
+            <div class="use-case">
+                <div class="uc-role">Showrunner / Writer</div>
+                <div class="uc-title">Format Validation Before Submission</div>
+                <div class="uc-desc">Run WGA Hollywood format compliance checks on any draft before it goes to network. Catch slug line issues, character intro problems, and transition violations automatically.</div>
+            </div>
+            <div class="use-case">
+                <div class="uc-role">Production Company</div>
+                <div class="uc-title">Platform Integration via API</div>
+                <div class="uc-desc">Embed screenplay intelligence into your existing production management software using the AURA REST API. Authenticated, rate-limited, fully documented JSON endpoints.</div>
+            </div>
+            <div class="use-case">
+                <div class="uc-role">Completion Bond Provider</div>
+                <div class="uc-title">Independent Risk Verification</div>
+                <div class="uc-desc">Run any submitted budget through the patent-pending risk engine for an independent second opinion. Export PDF summaries formatted for underwriting review.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Technology & Architecture ─────────────────────────────────────── -->
+    <div class="section">
+        <p class="eyebrow">Technology</p>
+        <h2 class="section-title">Architecture Built to Last.</h2>
+        <p class="section-body">
+            Every component is chosen for reliability, security, and deployability — not novelty.
+            The platform runs on proven open-source foundations with a clear upgrade path to
+            cloud-hosted production infrastructure.
+        </p>
+
+        <div class="callout" style="margin-bottom: 28px;">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-text">
+                <strong>Intellectual Property Notice:</strong> The 8-category budget risk scoring
+                methodology powering the Budget Analysis &amp; Risk tool is proprietary IP of Scene
+                Reader Studio Technologies LLC. Patent application filed. WGA registration on file
+                for all sample screenplays. All rights reserved. Unauthorized reproduction or
+                reverse engineering of the risk scoring algorithm is prohibited.
+            </div>
+        </div>
+
+        <div class="tech-row">
+            <div class="tech-cell" style="background: var(--light); border-color: var(--border);">
+                <div class="tech-label">Core Stack</div>
+                <div class="tech-items">
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--purple)"></span>Python 3.11+ / Flask</div>
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--purple)"></span>Anthropic Claude Sonnet</div>
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--purple)"></span>SQLAlchemy + Alembic</div>
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--purple)"></span>SQLite (upgradeable to Postgres)</div>
+                </div>
+            </div>
+            <div class="tech-cell" style="background: var(--light); border-color: var(--border);">
+                <div class="tech-label">Frontend</div>
+                <div class="tech-items">
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--cyan)"></span>Vanilla HTML/CSS/JS</div>
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--cyan)"></span>Chart.js visualizations</div>
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--cyan)"></span>Server-Sent Events (SSE)</div>
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--cyan)"></span>Zero external dependencies</div>
+                </div>
+            </div>
+            <div class="tech-cell" style="background: var(--light); border-color: var(--border);">
+                <div class="tech-label">Deployment</div>
+                <div class="tech-items">
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--green)"></span>Docker + docker-compose</div>
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--green)"></span>Waitress WSGI (Windows-safe)</div>
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--green)"></span>Caddy / NGINX TLS reverse proxy</div>
+                    <div class="tech-item" style="color:var(--ink3)"><span class="tech-dot" style="background:var(--green)"></span>Local BAT scripts for Windows</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Footer ─────────────────────────────────────────────────────────── -->
+    <div class="section-divider"></div>
+    <div class="doc-footer">
+        <div class="doc-footer-left">
+            <span class="doc-footer-brand">Scene Reader Studio Technologies LLC</span>
+            <span class="doc-footer-copy">&copy; 2026 · All rights reserved · Proprietary &amp; Confidential</span>
+            <span class="doc-footer-copy" style="margin-top:2px;">Not for distribution. Internal use only.</span>
+        </div>
+        <div class="doc-footer-right">
+            <div class="doc-footer-version">Platform v2026</div>
+            <div class="doc-footer-version">contract-review-tool v1.3.1 · budget-parser v2.5.0 · screenflow-aura v3.1.1</div>
+            <div class="doc-footer-version" style="margin-top:4px;">Powered by Anthropic Claude Sonnet</div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
