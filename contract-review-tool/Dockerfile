@@ -16,9 +16,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py .
 COPY templates/ templates/
 COPY static/ static/
+COPY migrations/ migrations/
 
 # Create uploads directory
-RUN mkdir -p uploads
+RUN mkdir -p uploads instance
 
 # Non-root user for security
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app

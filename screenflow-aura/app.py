@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_migrate import Migrate, upgrade as migrate_upgrade
 from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv(override=True)
@@ -39,6 +40,7 @@ app.secret_key = _secret_key
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///aura.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 limiter = Limiter(
     get_remote_address,
@@ -73,8 +75,44 @@ class AuraAnalysis(db.Model):
         }
 
 
+class ApiKey(db.Model):
+    __tablename__ = 'api_keys'
+    id = db.Column(db.Integer, primary_key=True)
+    key_hash = db.Column(db.String(64), unique=True, nullable=False)  # SHA-256 hex
+    label = db.Column(db.String(128), nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    @staticmethod
+    def hash(raw_key: str) -> str:
+        return hashlib.sha256(raw_key.encode()).hexdigest()
+
+
+def _seed_api_keys():
+    """Seed default API key from AURA_API_KEY env var if no keys exist."""
+    from sqlalchemy import inspect as sa_inspect
+    try:
+        if 'api_keys' not in sa_inspect(db.engine).get_table_names():
+            return
+        raw_key = os.environ.get('AURA_API_KEY', '')
+        if not raw_key:
+            return
+        key_hash = ApiKey.hash(raw_key)
+        if not ApiKey.query.filter_by(key_hash=key_hash).first():
+            db.session.add(ApiKey(key_hash=key_hash, label='Default (from AURA_API_KEY env var)'))
+            db.session.commit()
+            logger.info('Default API key seeded.')
+    except Exception:
+        logger.debug('_seed_api_keys skipped (tables not ready)', exc_info=True)
+
+
 with app.app_context():
-    db.create_all()
+    _migrations_dir = os.path.join(os.path.dirname(__file__), 'migrations')
+    if os.path.isdir(_migrations_dir):
+        migrate_upgrade()
+    else:
+        db.create_all()
+    _seed_api_keys()
 
 
 # ── Auth ─────────────────────────────────────────────────────────────────────
@@ -90,17 +128,27 @@ def _get_request_api_key():
 def require_api_key(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        provided = _get_request_api_key()
-        expected = os.environ.get('AURA_API_KEY', '')
-        if not provided:
+        raw_key = _get_request_api_key()
+        if not raw_key:
             return jsonify({'error': 'API key required', 'hint': 'Pass X-API-Key header'}), 401
-        if not expected:
-            return jsonify({'error': 'AURA_API_KEY not configured on server'}), 500
-        if not hmac.compare_digest(
-            hashlib.sha256(provided.encode()).digest(),
-            hashlib.sha256(expected.encode()).digest()
-        ):
+        key_hash = ApiKey.hash(raw_key)
+        active_key = ApiKey.query.filter_by(key_hash=key_hash, is_active=True).first()
+        if not active_key:
             return jsonify({'error': 'Invalid API key'}), 403
+        return f(*args, **kwargs)
+    return decorated
+
+
+def require_admin_token(f):
+    """Protect admin routes with AURA_ADMIN_TOKEN env var (separate from API keys)."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        admin_token = os.environ.get('AURA_ADMIN_TOKEN', '')
+        if not admin_token:
+            return jsonify({'error': 'Admin access not configured (AURA_ADMIN_TOKEN not set)'}), 503
+        provided = request.headers.get('X-Admin-Token', '')
+        if not hmac.compare_digest(admin_token, provided):
+            return jsonify({'error': 'Invalid admin token'}), 403
         return f(*args, **kwargs)
     return decorated
 
@@ -495,6 +543,76 @@ def metrics():
         'by_type': {t: c for t, c in by_type},
         'timestamp': datetime.utcnow().isoformat(),
     })
+
+
+# ── Admin: Key Management ─────────────────────────────────────────────────────
+
+@app.route('/api/admin/keys', methods=['GET'])
+@require_admin_token
+def admin_list_keys():
+    """List all API keys (hashes never returned)."""
+    keys = ApiKey.query.order_by(ApiKey.created_at.desc()).all()
+    return jsonify({
+        'keys': [
+            {
+                'id': k.id,
+                'label': k.label,
+                'is_active': k.is_active,
+                'created_at': k.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            }
+            for k in keys
+        ],
+        'total': len(keys),
+        'active': sum(1 for k in keys if k.is_active),
+    })
+
+
+@app.route('/api/admin/keys', methods=['POST'])
+@require_admin_token
+def admin_create_key():
+    """Generate a new API key. Raw key is returned ONCE — store it securely."""
+    data = request.get_json(silent=True) or {}
+    label = (data.get('label') or '').strip()
+    if not label:
+        return jsonify({'error': 'label is required'}), 400
+
+    import secrets as _secrets
+    raw_key = _secrets.token_hex(32)
+    key_hash = ApiKey.hash(raw_key)
+
+    if ApiKey.query.filter_by(key_hash=key_hash).first():
+        return jsonify({'error': 'Key collision — try again'}), 500
+
+    key = ApiKey(key_hash=key_hash, label=label, is_active=True)
+    db.session.add(key)
+    db.session.commit()
+    logger.info('Admin created API key id=%d label=%s', key.id, label)
+
+    return jsonify({
+        'id': key.id,
+        'label': key.label,
+        'api_key': raw_key,
+        'warning': 'Store this key securely — it will not be shown again.',
+    }), 201
+
+
+@app.route('/api/admin/keys/<int:key_id>', methods=['DELETE'])
+@require_admin_token
+def admin_revoke_key(key_id):
+    """Revoke (deactivate) a key. Pass ?permanent=1 to hard-delete."""
+    key = ApiKey.query.get_or_404(key_id)
+    permanent = request.args.get('permanent', '').lower() in ('1', 'true', 'yes')
+
+    if permanent:
+        db.session.delete(key)
+        db.session.commit()
+        logger.info('Admin permanently deleted API key id=%d', key_id)
+        return jsonify({'deleted': True, 'id': key_id})
+
+    key.is_active = False
+    db.session.commit()
+    logger.info('Admin revoked API key id=%d label=%s', key_id, key.label)
+    return jsonify({'revoked': True, 'id': key_id, 'label': key.label})
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────

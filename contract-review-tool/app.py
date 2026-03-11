@@ -15,8 +15,10 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, Response, stream_with_context
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_migrate import Migrate, upgrade as migrate_upgrade
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
+from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 load_dotenv(override=True)
@@ -60,6 +62,7 @@ app.config['SESSION_COOKIE_SECURE'] = os.environ.get('HTTPS', '').lower() == 'tr
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///history.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 csrf = CSRFProtect(app)
 
@@ -78,6 +81,21 @@ ALLOWED_EXTENSIONS = {'pdf', 'txt', 'docx', 'doc'}
 # Database model
 # ---------------------------------------------------------------------------
 
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
 class AnalysisHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(256), nullable=False)
@@ -94,8 +112,33 @@ class AnalysisHistory(db.Model):
         }
 
 
+def _seed_admin():
+    """Create default admin user from env vars if no users exist."""
+    from sqlalchemy import inspect as sa_inspect
+    try:
+        if 'users' not in sa_inspect(db.engine).get_table_names():
+            return  # tables not yet created (e.g. during migration generation)
+        username = os.environ.get('ADMIN_USERNAME', 'admin')
+        password = os.environ.get('ADMIN_PASSWORD') or os.environ.get('APP_PASSWORD', '')
+        if not password:
+            return
+        if not User.query.filter_by(username=username).first():
+            user = User(username=username, is_admin=True)
+            user.set_password(password)
+            db.session.add(user)
+            db.session.commit()
+            logger.info('Admin user "%s" created.', username)
+    except Exception:
+        logger.debug('_seed_admin skipped (tables not ready)', exc_info=True)
+
+
 with app.app_context():
-    db.create_all()
+    _migrations_dir = os.path.join(os.path.dirname(__file__), 'migrations')
+    if os.path.isdir(_migrations_dir):
+        migrate_upgrade()
+    else:
+        db.create_all()  # fallback before migrations/ is initialised
+    _seed_admin()
 
 
 # ---------------------------------------------------------------------------
@@ -105,17 +148,10 @@ with app.app_context():
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not session.get('logged_in'):
+        if not session.get('user_id'):
             return redirect(url_for('login', next=request.path))
         return f(*args, **kwargs)
     return decorated
-
-
-def check_password(candidate: str) -> bool:
-    app_password = os.environ.get('APP_PASSWORD', '')
-    if not app_password:
-        return False
-    return hmac.compare_digest(candidate.encode(), app_password.encode())
 
 
 # ---------------------------------------------------------------------------
@@ -126,12 +162,14 @@ def check_password(candidate: str) -> bool:
 def login():
     error = None
     if request.method == 'POST':
+        username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
-        if check_password(password):
-            session['logged_in'] = True
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            session['user_id'] = user.id
             next_url = request.args.get('next') or '/'
             return redirect(next_url)
-        error = 'Incorrect password. Please try again.'
+        error = 'Invalid username or password.'
     return render_template('login.html', error=error)
 
 

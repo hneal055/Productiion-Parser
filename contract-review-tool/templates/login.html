@@ -34,6 +34,20 @@
 
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-600 mb-2" for="username">
+                        <i class="fas fa-user mr-1"></i> Username
+                    </label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                        placeholder="Enter username"
+                        autofocus
+                        required
+                    >
+                </div>
                 <div class="mb-5">
                     <label class="block text-sm font-medium text-gray-600 mb-2" for="password">
                         <i class="fas fa-lock mr-1"></i> Password
@@ -43,8 +57,7 @@
                         id="password"
                         name="password"
                         class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
-                        placeholder="Enter access password"
-                        autofocus
+                        placeholder="Enter password"
                         required
                     >
                 </div>

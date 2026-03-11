@@ -13,19 +13,20 @@ import os
 import json
 import uuid
 import html as html_lib
-import hmac
 import logging
+from datetime import datetime
 from functools import wraps
+
+from dotenv import load_dotenv
+from flask_migrate import Migrate, upgrade as migrate_upgrade
+from werkzeug.utils import secure_filename
+import anthropic
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
 )
 logger = logging.getLogger(__name__)
-from datetime import datetime
-from werkzeug.utils import secure_filename
-from dotenv import load_dotenv
-import anthropic
 
 load_dotenv(override=True)
 
@@ -36,7 +37,7 @@ from flask_limiter.util import get_remote_address
 from flask_wtf.csrf import CSRFProtect, generate_csrf
 
 # Import database
-from database_models import db, BudgetAnalysis, BudgetLineItem, BudgetComparison, get_recent_analyses
+from database_models import db, User, BudgetAnalysis, BudgetLineItem, BudgetComparison, get_recent_analyses
 
 # Import your existing modules
 from risk_manager import RiskManager
@@ -59,6 +60,7 @@ app.secret_key = _secret_key
 # Session cookie security
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('HTTPS', '').lower() == 'true'
 
 # CSRF protection
 csrf = CSRFProtect(app)
@@ -77,6 +79,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
 db.init_app(app)
+migrate_ext = Migrate(app, db)
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
@@ -91,17 +94,33 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# Create database tables
-with app.app_context():
-    db.create_all()
-    # Add ai_insights_json column to existing databases (idempotent)
+def _seed_admin():
+    """Create default admin user from env vars if no users exist."""
+    from sqlalchemy import inspect as sa_inspect
     try:
-        from sqlalchemy import text
-        with db.engine.connect() as conn:
-            conn.execute(text('ALTER TABLE budget_analyses ADD COLUMN ai_insights_json TEXT'))
-            conn.commit()
+        if 'users' not in sa_inspect(db.engine).get_table_names():
+            return
+        username = os.environ.get('ADMIN_USERNAME', 'admin')
+        password = os.environ.get('ADMIN_PASSWORD') or os.environ.get('APP_PASSWORD', '')
+        if not password:
+            return
+        if not User.query.filter_by(username=username).first():
+            user = User(username=username, is_admin=True)
+            user.set_password(password)
+            db.session.add(user)
+            db.session.commit()
+            logger.info('Admin user "%s" created.', username)
     except Exception:
-        pass  # Column already exists
+        logger.debug('_seed_admin skipped (tables not ready)', exc_info=True)
+
+
+with app.app_context():
+    _migrations_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'migrations')
+    if os.path.isdir(_migrations_dir):
+        migrate_upgrade()
+    else:
+        db.create_all()
+    _seed_admin()
 
 
 def allowed_file(filename):
@@ -113,20 +132,23 @@ def allowed_file(filename):
 # Authentication
 # ---------------------------------------------------------------------------
 
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get('user_id'):
+            return redirect(url_for('login', next=request.path))
+        return f(*args, **kwargs)
+    return decorated
+
+
+# Keep check_password for tests and backward compat
 def check_password(candidate: str) -> bool:
+    """Legacy single-password check — used by test suite."""
+    import hmac
     app_password = os.environ.get('APP_PASSWORD', '')
     if not app_password:
         return False
     return hmac.compare_digest(candidate.encode(), app_password.encode())
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not session.get('logged_in'):
-            return redirect(url_for('login', next=request.path))
-        return f(*args, **kwargs)
-    return decorated
 
 
 def find_optimizations(df):
@@ -244,11 +266,14 @@ def generate_recent_analyses():
 def login():
     error = None
     if request.method == 'POST':
-        if check_password(request.form.get('password', '')):
-            session['logged_in'] = True
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            session['user_id'] = user.id
             return redirect(request.args.get('next') or url_for('index'))
-        error = 'Incorrect password.'
-        logger.warning('Failed login attempt from %s', request.remote_addr)
+        error = 'Invalid username or password.'
+        logger.warning('Failed login attempt for "%s" from %s', username, request.remote_addr)
 
     return render_template_string("""
     <!DOCTYPE html>
@@ -264,11 +289,12 @@ def login():
                          box-shadow:0 8px 32px rgba(0,0,0,0.18); text-align:center; }
             .login-box h1 { font-size:1.6rem; color:#2c3e50; margin-bottom:8px; }
             .login-box p { color:#7f8c8d; margin-bottom:28px; }
-            .login-box input[type=password] { width:100%; padding:12px 16px; border:2px solid #e0e0e0;
-                border-radius:8px; font-size:1rem; margin-bottom:16px; box-sizing:border-box; }
-            .login-box input[type=password]:focus { outline:none; border-color:#3498db; }
+            .login-box input[type=text], .login-box input[type=password] {
+                width:100%; padding:12px 16px; border:2px solid #e0e0e0;
+                border-radius:8px; font-size:1rem; margin-bottom:12px; box-sizing:border-box; }
+            .login-box input:focus { outline:none; border-color:#3498db; }
             .login-box button { width:100%; padding:13px; background:#3498db; color:white;
-                border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; }
+                border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; margin-top:4px; }
             .login-box button:hover { background:#2980b9; }
             .error { background:#fadbd8; color:#c0392b; padding:10px 14px; border-radius:8px;
                      margin-bottom:16px; font-size:0.92rem; }
@@ -282,7 +308,8 @@ def login():
             {% if error %}<div class="error">{{ error }}</div>{% endif %}
             <form method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="password" name="password" placeholder="Enter access password" autofocus required>
+                <input type="text" name="username" placeholder="Username" autofocus required>
+                <input type="password" name="password" placeholder="Password" required>
                 <button type="submit">Sign In →</button>
             </form>
         </div>

@@ -12,11 +12,14 @@ from unittest.mock import patch, MagicMock
 os.environ.setdefault('SECRET_KEY', 'test-secret-key')
 os.environ.setdefault('AURA_API_KEY', 'test-api-key')
 os.environ.setdefault('ANTHROPIC_API_KEY', 'test-anthropic-key')
+os.environ.setdefault('AURA_ADMIN_TOKEN', 'test-admin-token')
 
 from app import app, db
 
 VALID_KEY = 'test-api-key'
 HEADERS = {'X-API-Key': VALID_KEY}
+ADMIN_TOKEN = 'test-admin-token'
+ADMIN_HEADERS = {'X-Admin-Token': ADMIN_TOKEN}
 SAMPLE_SCREENPLAY = (
     "INT. COFFEE SHOP - DAY\n\n"
     "ALICE (30s, intense) stares at her laptop screen.\n\n"
@@ -70,12 +73,16 @@ MOCK_VALIDATE_RESPONSE = json.dumps({
 def client():
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-    # Force test API key — load_dotenv(override=True) runs at import time so we
-    # must set this again here; the decorator reads os.environ at request time.
     orig_aura_key = os.environ.get('AURA_API_KEY')
     os.environ['AURA_API_KEY'] = VALID_KEY
     with app.app_context():
         db.create_all()
+        # Seed the test API key into the ApiKey table so require_api_key passes
+        from app import ApiKey
+        key_hash = ApiKey.hash(VALID_KEY)
+        if not ApiKey.query.filter_by(key_hash=key_hash).first():
+            db.session.add(ApiKey(key_hash=key_hash, label='test-key'))
+            db.session.commit()
         yield app.test_client()
         db.session.remove()
         db.drop_all()
@@ -240,3 +247,85 @@ def test_metrics(client):
     data = resp.get_json()
     assert 'total_analyses' in data
     assert 'by_type' in data
+
+
+# ── Admin: Key Management ─────────────────────────────────────────────────────
+
+def test_admin_list_keys_requires_token(client):
+    resp = client.get('/api/admin/keys')
+    assert resp.status_code == 403
+
+
+def test_admin_list_keys_wrong_token(client):
+    resp = client.get('/api/admin/keys', headers={'X-Admin-Token': 'wrong'})
+    assert resp.status_code == 403
+
+
+def test_admin_list_keys(client):
+    resp = client.get('/api/admin/keys', headers=ADMIN_HEADERS)
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert 'keys' in data
+    assert 'total' in data
+    assert 'active' in data
+    # The seeded test-api-key should appear
+    assert data['total'] >= 1
+
+
+def test_admin_create_key(client):
+    resp = client.post('/api/admin/keys',
+                       json={'label': 'Integration Test Key'},
+                       headers=ADMIN_HEADERS)
+    assert resp.status_code == 201
+    data = resp.get_json()
+    assert 'api_key' in data
+    assert len(data['api_key']) == 64  # 32-byte hex
+    assert data['label'] == 'Integration Test Key'
+    assert 'warning' in data
+
+
+def test_admin_create_key_missing_label(client):
+    resp = client.post('/api/admin/keys', json={}, headers=ADMIN_HEADERS)
+    assert resp.status_code == 400
+
+
+def test_admin_revoke_key(client):
+    # Create a key, then revoke it
+    create_resp = client.post('/api/admin/keys',
+                              json={'label': 'To Be Revoked'},
+                              headers=ADMIN_HEADERS)
+    key_id = create_resp.get_json()['id']
+
+    revoke_resp = client.delete(f'/api/admin/keys/{key_id}', headers=ADMIN_HEADERS)
+    assert revoke_resp.status_code == 200
+    data = revoke_resp.get_json()
+    assert data['revoked'] is True
+    assert data['id'] == key_id
+
+    # Revoked key should not work for API calls
+    from app import ApiKey
+    with client.application.app_context():
+        k = ApiKey.query.get(key_id)
+        assert k is not None
+        assert k.is_active is False
+
+
+def test_admin_delete_key_permanent(client):
+    create_resp = client.post('/api/admin/keys',
+                              json={'label': 'To Be Deleted'},
+                              headers=ADMIN_HEADERS)
+    key_id = create_resp.get_json()['id']
+
+    del_resp = client.delete(f'/api/admin/keys/{key_id}?permanent=1', headers=ADMIN_HEADERS)
+    assert del_resp.status_code == 200
+    data = del_resp.get_json()
+    assert data['deleted'] is True
+
+    from app import ApiKey
+    with client.application.app_context():
+        assert ApiKey.query.get(key_id) is None
+
+
+def test_admin_revoke_nonexistent_key(client):
+    resp = client.delete('/api/admin/keys/99999', headers=ADMIN_HEADERS)
+    assert resp.status_code == 404

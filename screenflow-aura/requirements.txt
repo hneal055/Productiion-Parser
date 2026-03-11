@@ -7,3 +7,5 @@ SQLAlchemy==2.0.48
 waitress==3.0.2
 Werkzeug==3.1.6
 pytest==9.0.2
+Flask-Migrate==4.1.0
+gunicorn==23.0.0

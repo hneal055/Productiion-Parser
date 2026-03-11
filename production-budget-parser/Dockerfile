@@ -17,6 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY *.py .
 COPY static/ static/
 COPY templates/ templates/
+COPY migrations/ migrations/
 
 # Create required directories
 RUN mkdir -p uploads outputs instance

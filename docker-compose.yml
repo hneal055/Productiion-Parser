@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  contract-review:
+    build:
+      context: ./contract-review-tool
+    image: production-parser/contract-review:latest
+    container_name: contract-review
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./contract-review-tool/.env
+    volumes:
+      - contract_review_uploads:/app/uploads
+      - contract_review_db:/app/instance
+
+  budget-parser:
+    build:
+      context: ./production-budget-parser
+    image: production-parser/budget-parser:latest
+    container_name: budget-parser
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    env_file:
+      - ./production-budget-parser/.env
+    volumes:
+      - budget_uploads:/app/uploads
+      - budget_outputs:/app/outputs
+      - budget_db:/app/instance
+
+  screenflow-aura:
+    build:
+      context: ./screenflow-aura
+    image: production-parser/screenflow-aura:latest
+    container_name: screenflow-aura
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    env_file:
+      - ./screenflow-aura/.env
+    volumes:
+      - aura_db:/app/instance
+
+volumes:
+  contract_review_uploads:
+  contract_review_db:
+  budget_uploads:
+  budget_outputs:
+  budget_db:
+  aura_db:

@@ -42,6 +42,9 @@ MOCK_STREAM_CHUNKS = [
 ]
 
 
+USERNAME = 'admin'
+
+
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
@@ -51,6 +54,13 @@ def client():
     os.environ['APP_PASSWORD'] = PASSWORD
     with app.app_context():
         db.create_all()
+        # Create admin user for tests (skip if _seed_admin already created it)
+        from app import User
+        if not User.query.filter_by(username=USERNAME).first():
+            u = User(username=USERNAME, is_admin=True)
+            u.set_password(PASSWORD)
+            db.session.add(u)
+            db.session.commit()
         yield app.test_client()
         db.session.remove()
         db.drop_all()
@@ -61,7 +71,9 @@ def client():
 
 
 def login(client):
-    return client.post('/login', data={'password': PASSWORD}, follow_redirects=True)
+    return client.post('/login',
+                       data={'username': USERNAME, 'password': PASSWORD},
+                       follow_redirects=True)
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -78,14 +90,15 @@ def test_login_success(client):
 
 
 def test_login_wrong_password(client):
-    resp = client.post('/login', data={'password': 'wrongpass'}, follow_redirects=True)
-    assert b'Incorrect password' in resp.data
+    resp = client.post('/login', data={'username': USERNAME, 'password': 'wrongpass'},
+                       follow_redirects=True)
+    assert b'Invalid username or password' in resp.data
 
 
 def test_empty_password_rejected(client):
-    os.environ['APP_PASSWORD'] = 'testpassword'
-    resp = client.post('/login', data={'password': ''}, follow_redirects=True)
-    assert b'Incorrect password' in resp.data
+    resp = client.post('/login', data={'username': USERNAME, 'password': ''},
+                       follow_redirects=True)
+    assert b'Invalid username or password' in resp.data
 
 
 def test_root_redirects_to_login_when_unauthenticated(client):
