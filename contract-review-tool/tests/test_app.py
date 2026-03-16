@@ -132,7 +132,7 @@ def test_pages_accessible_after_login(client):
 # ── Health ────────────────────────────────────────────────────────────────────
 
 def test_health_no_auth_required(client):
-    resp = client.get('/health')
+    resp = client.get('/api/health')
     assert resp.status_code == 200
     data = resp.get_json()
     assert data['status'] == 'healthy'
@@ -230,3 +230,112 @@ def test_parse_ai_response_detects_unfavorable():
     # so the first matching branch wins. Verify the parser at least produces a
     # valid fairness value (covers the code path regardless of which branch won).
     assert result['fairness'] in ('FAVORABLE', 'UNFAVORABLE', 'NEUTRAL')
+
+# -- Additional API route tests ------------------------------------------------
+
+def _make_mock_response(text):
+    """Return a mock anthropic messages.create response."""
+    mock_resp = MagicMock()
+    mock_resp.content = [MagicMock(text=text)]
+    return mock_resp
+
+
+MOCK_ANALYZE_JSON = json.dumps({
+    "quick_verdict": {
+        "commercial_score": 78,
+        "recommendation": "Strong premise with compelling characters.",
+        "priority_level": "HIGH PRIORITY",
+        "estimated_roi": "3x-5x"
+    },
+    "detailed_analysis": {
+        "structural_breakdown": {"pacing_score": 80, "act_breakdown": {"act1": "solid", "act2": "good", "act3": "strong"}},
+        "character_analysis": {"main_characters": "Alice, Bob", "character_depth_score": 75},
+        "market_potential": {"market_potential": "HIGH - strong hook", "target_audience": "adults 18-45"}
+    },
+    "technical_metrics": {
+        "document_metrics": {"primary_genre": "drama", "estimated_pages": 2, "character_count": 500},
+        "processing_time": "1.2s"
+    }
+})
+
+
+def test_api_analyze_no_content(client):
+    login(client)
+    resp = client.post('/api/analyze', json={})
+    assert resp.status_code == 400
+
+
+def test_api_analyze_missing_anthropic_key(client):
+    login(client)
+    orig = os.environ.pop('ANTHROPIC_API_KEY', None)
+    try:
+        resp = client.post('/api/analyze', json={'screenplay': SAMPLE_TEXT})
+        assert resp.status_code == 500
+        assert resp.get_json()['success'] is False
+    finally:
+        if orig:
+            os.environ['ANTHROPIC_API_KEY'] = orig
+
+
+def test_api_analyze_success(client):
+    login(client)
+    with patch('anthropic.Anthropic') as MockClient:
+        MockClient.return_value.messages.create.return_value = _make_mock_response(MOCK_ANALYZE_JSON)
+        resp = client.post('/api/analyze', json={'screenplay': SAMPLE_TEXT})
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert data['success'] is True
+    assert 'result' in data
+
+
+def test_api_extract_text_no_file(client):
+    login(client)
+    resp = client.post('/api/extract-text', data={}, content_type='multipart/form-data')
+    assert resp.status_code == 400
+
+
+def test_api_extract_text_unsupported_type(client):
+    login(client)
+    import io as _io
+    data = {'file': (_io.BytesIO(b'<exe content>'), 'binary.exe')}
+    resp = client.post('/api/extract-text', data=data, content_type='multipart/form-data')
+    assert resp.status_code == 400
+
+
+def test_api_extract_text_txt(client):
+    import io as _io
+    login(client)
+    data = {'file': (_io.BytesIO(SAMPLE_TEXT.encode()), 'contract.txt')}
+    resp = client.post('/api/extract-text', data=data, content_type='multipart/form-data')
+    assert resp.status_code == 200
+    assert 'text' in resp.get_json()
+
+
+def test_api_batch_analyze_no_body(client):
+    login(client)
+    resp = client.post('/api/batch/analyze', json={})
+    assert resp.status_code == 400
+
+
+def test_api_batch_analyze_success(client):
+    login(client)
+    batch_json = json.dumps({
+        "assessment_id": "test.txt",
+        "quick_verdict": {"commercial_score": 70, "recommendation": "Good", "priority_level": "MEDIUM PRIORITY", "estimated_roi": "2x"},
+        "technical_metrics": {"document_metrics": {"primary_genre": "drama", "estimated_pages": 2, "character_count": 400}, "processing_time": "0.9s"}
+    })
+    with patch('anthropic.Anthropic') as MockClient:
+        MockClient.return_value.messages.create.return_value = _make_mock_response(batch_json)
+        resp = client.post('/api/batch/analyze', json={
+            'screenplays': [{'content': SAMPLE_TEXT, 'filename': 'test.txt'}]
+        })
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert data['success'] is True
+    assert 'results' in data
+
+
+def test_api_routes_require_login(client):
+    for path in ['/api/analyze', '/api/extract-text', '/api/batch/analyze']:
+        resp = client.post(path, json={})
+        assert resp.status_code == 302, f'{path} should redirect unauthenticated'

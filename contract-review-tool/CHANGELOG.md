@@ -76,3 +76,31 @@ All notable changes to this project are documented here.
 - Results page with structured display of analysis sections
 - Analysis history page with past reviews
 - Batch analysis endpoint (`/api/batch`)
+
+## [1.3.2] — 2026-03-16
+
+### Rate Limiting & Test Coverage
+
+#### Security
+
+- Added `@limiter.limit()` to three previously unprotected API routes:
+  - `/api/analyze` — 10 per hour per IP
+  - `/api/extract-text` — 30 per hour per IP
+  - `/api/batch/analyze` — 5 per hour per IP
+- All three routes already had `@csrf.exempt` and `@login_required`; rate limiting closes the remaining gap
+
+#### Tests
+
+- `tests/test_app.py` — Fixed health endpoint path (`/health` → `/api/health`)
+- Added 9 new tests covering `/api/analyze`, `/api/extract-text`, `/api/batch/analyze`:
+  - `test_api_analyze_no_content` — 400 on missing screenplay field
+  - `test_api_analyze_missing_anthropic_key` — 500 when `ANTHROPIC_API_KEY` not set
+  - `test_api_analyze_success` — 200 with mocked Claude response
+  - `test_api_extract_text_no_file` — 400 on missing file field
+  - `test_api_extract_text_unsupported_type` — 400 on `.exe` upload
+  - `test_api_extract_text_txt` — 200 extracts text from `.txt` file
+  - `test_api_batch_analyze_no_body` — 400 on empty request
+  - `test_api_batch_analyze_success` — 200 with mocked Claude response
+  - `test_api_routes_require_login` — all three routes redirect unauthenticated requests
+- Total test count: 19 → 28
+

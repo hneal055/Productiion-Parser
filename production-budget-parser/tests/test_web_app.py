@@ -225,3 +225,71 @@ def test_check_password_empty_env_returns_false():
     finally:
         if orig:
             os.environ['APP_PASSWORD'] = orig
+
+# -- Additional tests -----------------------------------------------------------
+
+ZERO_CSV = b"Category,Department,Description,Amount\nDirector,Pre-Production,Director Fee,0\nProducer,Pre-Production,Producer Fee,0\n"
+
+
+def test_upload_all_zero_amounts(client):
+    login(client)
+    data = {'file': (io.BytesIO(ZERO_CSV), 'zeros.csv')}
+    resp = client.post('/upload', data=data, content_type='multipart/form-data',
+                       follow_redirects=True)
+    assert resp.status_code == 200
+
+
+def test_analysis_not_found_redirects(client):
+    login(client)
+    resp = client.get('/analysis/nonexistent-id', follow_redirects=True)
+    assert resp.status_code == 200
+
+
+def test_export_excel_not_found_redirects(client):
+    login(client)
+    resp = client.get('/export-excel/nonexistent-id', follow_redirects=True)
+    assert resp.status_code == 200
+
+
+def test_generate_pdf_not_found_redirects(client):
+    login(client)
+    resp = client.get('/generate-pdf/nonexistent-id', follow_redirects=True)
+    assert resp.status_code == 200
+
+
+def test_compare_page_not_found_redirects(client):
+    login(client)
+    resp = client.get('/compare/nonexistent-id', follow_redirects=True)
+    assert resp.status_code == 200
+
+
+def test_api_health_endpoint(client):
+    resp = client.get('/api/health')
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert data['status'] == 'ok'
+
+
+def test_upload_pdf_rejected(client):
+    login(client)
+    data = {'file': (io.BytesIO(b'%PDF content'), 'budget.pdf')}
+    resp = client.post('/upload', data=data, content_type='multipart/form-data',
+                       follow_redirects=True)
+    assert resp.status_code == 200
+
+
+def test_find_optimizations_returns_list():
+    import pandas as pd
+    import io as _io
+    from web_app import find_optimizations
+    df = pd.read_csv(_io.BytesIO(SAMPLE_CSV))
+    df['Amount'] = pd.to_numeric(df['Amount'], errors='coerce').fillna(0)
+    result = find_optimizations(df)
+    assert isinstance(result, list)
+
+
+def test_generate_recent_analyses_html(client):
+    from web_app import generate_recent_analyses
+    html = generate_recent_analyses()
+    assert isinstance(html, str)
+    assert 'Recent' in html

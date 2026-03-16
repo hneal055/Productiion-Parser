@@ -144,3 +144,36 @@ All notable changes to this project are documented here.
 - Excel export and PDF report generation
 - Chart.js interactive visualizations
 - Basic authentication via `flask_auth.py`
+
+## [2.6.0] — 2026-03-16
+
+### Template Architecture & UI Hardening
+
+#### Template Extraction
+
+- All inline HTML removed from `web_app.py` — replaced with proper Jinja2 `render_template()` calls
+  - `templates/login.html` — extracted from `render_template_string()`
+  - `templates/home.html` — extracted from `index()` f-string (CSRF token, flash messages, upload form, features grid, recent analyses)
+  - `templates/analysis.html` — extracted from `view_analysis()` 700-line f-string; 25 Jinja2 context variables; dynamic sections (risk, optimizations) pre-computed in Python and passed as `| safe` strings
+- `render_template_string` fully removed from application code
+
+#### Chart Management
+
+- `static/js/charts.js` — Added `chartInstances` registry object and `destroyIfExists(id)` helper to prevent duplicate chart instances on re-render
+- Removed stray `console.log('Initializing charts with data:', chartData)` debug statement
+
+#### UX Improvements
+
+- Upload form: `onsubmit="startUploadFeedback(this)"` disables button and shows "⏳ Analyzing…" during upload
+- `templates/index.html` tab switching fixed — panels now correctly show/hide on tab click (was broken: no panel IDs, no hide logic)
+- `templates/index.html` clipboard `copyResults()`: added HTTPS/`isSecureContext` fallback using `document.execCommand('copy')` for HTTP contexts
+
+#### CSS
+
+- `static/css/modern-styles.css` — Added `@media (max-width: 768px)` override: `.stat-value { font-size: 1.4rem; word-break: break-all }` to prevent long dollar amounts overflowing cards on mobile
+
+#### Tests
+
+- `tests/test_web_app.py` — 9 new tests: zero-amount CSV upload, all not-found redirects (analysis, excel, PDF, compare), API health endpoint, PDF extension rejection, `find_optimizations()` return type, `generate_recent_analyses()` HTML output
+- Total test count: 20 → 29
+

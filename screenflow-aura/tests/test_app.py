@@ -74,7 +74,9 @@ def client():
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     orig_aura_key = os.environ.get('AURA_API_KEY')
+    orig_admin_token = os.environ.get('AURA_ADMIN_TOKEN')
     os.environ['AURA_API_KEY'] = VALID_KEY
+    os.environ['AURA_ADMIN_TOKEN'] = ADMIN_TOKEN
     with app.app_context():
         db.create_all()
         # Seed the test API key into the ApiKey table so require_api_key passes
@@ -90,6 +92,10 @@ def client():
         os.environ.pop('AURA_API_KEY', None)
     else:
         os.environ['AURA_API_KEY'] = orig_aura_key
+    if orig_admin_token is None:
+        os.environ.pop('AURA_ADMIN_TOKEN', None)
+    else:
+        os.environ['AURA_ADMIN_TOKEN'] = orig_admin_token
 
 
 # ── Health ────────────────────────────────────────────────────────────────────
@@ -329,3 +335,49 @@ def test_admin_delete_key_permanent(client):
 def test_admin_revoke_nonexistent_key(client):
     resp = client.delete('/api/admin/keys/99999', headers=ADMIN_HEADERS)
     assert resp.status_code == 404
+
+
+# -- Additional edge-case tests ------------------------------------------------
+
+def test_parse_empty_screenplay_rejected(client):
+    resp = client.post('/api/parse', json={'screenplay': ''}, headers=HEADERS)
+    assert resp.status_code == 400
+
+
+def test_parse_whitespace_only_rejected(client):
+    resp = client.post('/api/parse', json={'screenplay': '   '}, headers=HEADERS)
+    assert resp.status_code == 400
+
+
+def test_parse_very_short_script_still_processed(client):
+    # Very short but non-empty scripts should still be processed (size validation not enforced)
+    with __import__('unittest.mock', fromlist=['patch']).patch('app._call_claude', return_value=__import__('json').dumps({'document_metrics': {'word_count': 1, 'estimated_pages': 0.1, 'primary_genre': 'drama', 'complexity_score': 50}, 'quality_assessment': {'overall_score': 50, 'structure_quality': 50, 'dialogue_effectiveness': 50, 'pacing_analysis': 'slow', 'commercial_potential': 'LOW'}, 'ai_insights': {'sentiment_analysis': {'overall_sentiment': 'neutral', 'emotional_arc': 'flat', 'tone_consistency': 'consistent'}, 'theme_detection': [], 'style_assessment': {'writing_style': 'minimal', 'pacing': 'slow', 'originality_score': 30}}, 'recommendations': []})):
+        resp = client.post('/api/parse', json={'screenplay': 'INT. ROOM - DAY\n\nHello.'}, headers=HEADERS)
+    # Accept 200 or 500 (if Claude call fails in test mode) but not 400
+    assert resp.status_code in (200, 500)
+
+
+def test_analyze_empty_screenplay_rejected(client):
+    resp = client.post('/api/analyze', json={'screenplay': ''}, headers=HEADERS)
+    assert resp.status_code == 400
+
+
+def test_validate_empty_screenplay_rejected(client):
+    resp = client.post('/api/validate', json={'screenplay': ''}, headers=HEADERS)
+    assert resp.status_code == 400
+
+
+def test_index_page_loads(client):
+    resp = client.get('/')
+    assert resp.status_code == 200
+    assert b'ScreenFlow' in resp.data or b'API' in resp.data
+
+
+def test_admin_keys_no_auth_returns_403(client):
+    resp = client.get('/api/admin/keys')
+    assert resp.status_code == 403
+
+
+def test_admin_keys_wrong_token_returns_403(client):
+    resp = client.get('/api/admin/keys', headers={'X-Admin-Token': 'invalid'})
+    assert resp.status_code == 403

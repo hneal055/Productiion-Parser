@@ -452,6 +452,7 @@ def upload_file():
 @app.route('/api/analyze', methods=['POST'])
 @login_required
 @csrf.exempt
+@limiter.limit('10 per hour')
 def api_analyze():
     import time
     data = request.get_json()
@@ -536,6 +537,7 @@ Return this exact JSON structure:
 @app.route('/api/extract-text', methods=['POST'])
 @login_required
 @csrf.exempt
+@limiter.limit('30 per hour')
 def extract_text():
     if 'file' not in request.files:
         return jsonify({'error': 'No file uploaded'}), 400
@@ -562,6 +564,7 @@ def extract_text():
 @app.route('/api/batch/analyze', methods=['POST'])
 @login_required
 @csrf.exempt
+@limiter.limit('5 per hour')
 def api_batch_analyze():
     import time
     data = request.get_json()

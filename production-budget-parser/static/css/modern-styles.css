@@ -630,6 +630,11 @@ tbody tr:last-child td {
     .btn {
         width: 100%;
     }
+
+    .stat-value {
+        font-size: 1.4rem;
+        word-break: break-all;
+    }
     
     table {
         font-size: 0.9rem;

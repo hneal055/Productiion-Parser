@@ -1,0 +1,531 @@
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Budget Analysis - {{ filename }}</title>
+            <link rel="stylesheet" href="/static/css/modern-styles.css">
+            <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+            <script src="/static/js/charts.js" defer></script>
+            <style>
+                /* Line Items Modal */
+                #li-modal-overlay {
+                    display: none;
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0,0,0,0.55);
+                    z-index: 1000;
+                    align-items: flex-start;
+                    justify-content: center;
+                    padding: 40px 20px;
+                    overflow-y: auto;
+                }
+                #li-modal-overlay.open { display: flex; }
+                #li-modal {
+                    background: white;
+                    border-radius: 14px;
+                    width: 100%;
+                    max-width: 1050px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                    overflow: hidden;
+                    animation: slideDown 0.22s ease;
+                }
+                @keyframes slideDown {
+                    from { transform: translateY(-30px); opacity: 0; }
+                    to  { transform: translateY(0);     opacity: 1; }
+                }
+                #li-modal-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 18px 24px;
+                    background: var(--primary-color);
+                    color: white;
+                }
+                #li-modal-header h2 { margin: 0; font-size: 1.2rem; }
+                #li-close {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 1.6rem;
+                    cursor: pointer;
+                    line-height: 1;
+                    padding: 0 4px;
+                }
+                #li-search {
+                    width: 100%;
+                    padding: 10px 16px;
+                    border: none;
+                    border-bottom: 1px solid #e0e0e0;
+                    font-size: 0.95rem;
+                    outline: none;
+                }
+                #li-table-wrap { overflow-x: auto; max-height: 60vh; overflow-y: auto; }
+                #li-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 0.9rem;
+                }
+                #li-table thead th {
+                    position: sticky;
+                    top: 0;
+                    background: #f4f6f9;
+                    padding: 10px 14px;
+                    text-align: left;
+                    font-weight: 700;
+                    color: var(--dark-color);
+                    border-bottom: 2px solid #ddd;
+                    text-transform: uppercase;
+                    font-size: 0.78rem;
+                    letter-spacing: 0.5px;
+                }
+                #li-table tbody tr { border-bottom: 1px solid #f0f0f0; }
+                #li-table tbody tr:hover { background: #f0f7ff; }
+                #li-table tbody td { padding: 9px 14px; color: #444; }
+                #li-modal-footer {
+                    padding: 12px 20px;
+                    background: #f9f9f9;
+                    border-top: 1px solid #eee;
+                    font-size: 0.85rem;
+                    color: #888;
+                }
+                .stat-card.clickable { cursor: pointer; }
+
+                /* Risk Modal */
+                #risk-modal-overlay {
+                    display: none;
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0,0,0,0.55);
+                    z-index: 1000;
+                    align-items: flex-start;
+                    justify-content: center;
+                    padding: 40px 20px;
+                    overflow-y: auto;
+                }
+                #risk-modal-overlay.open { display: flex; }
+                #risk-modal {
+                    background: white;
+                    border-radius: 14px;
+                    width: 100%;
+                    max-width: 860px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                    overflow: hidden;
+                    animation: slideDown 0.22s ease;
+                }
+                #risk-modal-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 18px 24px;
+                    color: white;
+                }
+                #risk-modal-header h2 { margin: 0; font-size: 1.2rem; }
+                #risk-close {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 1.6rem;
+                    cursor: pointer;
+                    line-height: 1;
+                    padding: 0 4px;
+                }
+                .risk-modal-section {
+                    padding: 16px 20px 6px;
+                    font-size: 0.82rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.8px;
+                    color: #888;
+                    border-bottom: 1px solid #eee;
+                }
+                #risk-modal table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 0.9rem;
+                }
+                #risk-modal table thead th {
+                    background: #f4f6f9;
+                    padding: 9px 16px;
+                    text-align: left;
+                    font-weight: 700;
+                    color: var(--dark-color);
+                    border-bottom: 2px solid #ddd;
+                    text-transform: uppercase;
+                    font-size: 0.76rem;
+                    letter-spacing: 0.5px;
+                }
+                #risk-modal table tbody tr { border-bottom: 1px solid #f5f5f5; }
+                #risk-modal table tbody tr:hover { background: #fff5f5; }
+                #risk-modal table tbody td { padding: 10px 16px; color: #444; }
+                #risk-modal-footer {
+                    padding: 12px 20px;
+                    background: #f9f9f9;
+                    border-top: 1px solid #eee;
+                    font-size: 0.85rem;
+                    color: #888;
+                }
+
+                /* Budget Breakdown Modal */
+                #budget-modal-overlay {
+                    display: none;
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0,0,0,0.55);
+                    z-index: 1000;
+                    align-items: flex-start;
+                    justify-content: center;
+                    padding: 40px 20px;
+                    overflow-y: auto;
+                }
+                #budget-modal-overlay.open { display: flex; }
+                #budget-modal {
+                    background: white;
+                    border-radius: 14px;
+                    width: 100%;
+                    max-width: 750px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                    overflow: hidden;
+                    animation: slideDown 0.22s ease;
+                }
+                #budget-modal-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 18px 24px;
+                    background: #27ae60;
+                    color: white;
+                }
+                #budget-modal-header h2 { margin: 0; font-size: 1.2rem; }
+                #budget-close {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 1.6rem;
+                    cursor: pointer;
+                    line-height: 1;
+                    padding: 0 4px;
+                }
+                #budget-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 0.9rem;
+                }
+                #budget-table thead th {
+                    background: #f4f6f9;
+                    padding: 10px 16px;
+                    text-align: left;
+                    font-weight: 700;
+                    color: var(--dark-color);
+                    border-bottom: 2px solid #ddd;
+                    text-transform: uppercase;
+                    font-size: 0.78rem;
+                    letter-spacing: 0.5px;
+                }
+                #budget-table tbody tr { border-bottom: 1px solid #f0f0f0; }
+                #budget-table tbody tr:hover { background: #f0fff4; }
+                #budget-table tbody td { padding: 11px 16px; color: #444; }
+                #budget-modal-footer {
+                    padding: 12px 20px;
+                    background: #f9f9f9;
+                    border-top: 1px solid #eee;
+                    font-size: 0.85rem;
+                    color: #888;
+                }
+
+                /* Department Modal */
+                #dept-modal-overlay {
+                    display: none;
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0,0,0,0.55);
+                    z-index: 1000;
+                    align-items: flex-start;
+                    justify-content: center;
+                    padding: 40px 20px;
+                    overflow-y: auto;
+                }
+                #dept-modal-overlay.open { display: flex; }
+                #dept-modal {
+                    background: white;
+                    border-radius: 14px;
+                    width: 100%;
+                    max-width: 750px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                    overflow: hidden;
+                    animation: slideDown 0.22s ease;
+                }
+                #dept-modal-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 18px 24px;
+                    background: #6c5ce7;
+                    color: white;
+                }
+                #dept-modal-header h2 { margin: 0; font-size: 1.2rem; }
+                #dept-close {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 1.6rem;
+                    cursor: pointer;
+                    line-height: 1;
+                    padding: 0 4px;
+                }
+                #dept-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 0.9rem;
+                }
+                #dept-table thead th {
+                    background: #f4f6f9;
+                    padding: 10px 16px;
+                    text-align: left;
+                    font-weight: 700;
+                    color: var(--dark-color);
+                    border-bottom: 2px solid #ddd;
+                    text-transform: uppercase;
+                    font-size: 0.78rem;
+                    letter-spacing: 0.5px;
+                }
+                #dept-table tbody tr { border-bottom: 1px solid #f0f0f0; }
+                #dept-table tbody tr:hover { background: #f5f3ff; }
+                #dept-table tbody td { padding: 11px 16px; color: #444; }
+                #dept-modal-footer {
+                    padding: 12px 20px;
+                    background: #f9f9f9;
+                    border-top: 1px solid #eee;
+                    font-size: 0.85rem;
+                    color: #888;
+                }
+            </style>
+        </head>
+        <body>
+            <!-- Line Items Modal -->
+            <div id="li-modal-overlay">
+                <div id="li-modal">
+                    <div id="li-modal-header">
+                        <h2>📋 Line Items — {{ filename }}</h2>
+                        <button id="li-close" onclick="closeLI()" title="Close">×</button>
+                    </div>
+                    <input id="li-search" type="text" placeholder="🔍  Filter by any column..." oninput="filterLI(this.value)">
+                    <div id="li-table-wrap">
+                        <table id="li-table">
+                            <thead><tr>{{ header_cells | safe }}</tr></thead>
+                            <tbody id="li-tbody">{{ line_item_rows | safe }}</tbody>
+                        </table>
+                    </div>
+                    <div id="li-modal-footer" id="li-count">{{ line_items }} items total</div>
+                </div>
+            </div>
+
+            <!-- Risk Modal -->
+            <div id="risk-modal-overlay">
+                <div id="risk-modal">
+                    <div id="risk-modal-header" style="background:{{ risk_level_color }};">
+                        <h2>⚠️ Risk Assessment — {{ filename }}</h2>
+                        <button id="risk-close" onclick="closeRisk()" title="Close">×</button>
+                    </div>
+                    <!-- Score banner -->
+                    <div style="display:flex;gap:24px;padding:16px 20px;background:#fafafa;border-bottom:1px solid #eee;flex-wrap:wrap;">
+                        <div style="text-align:center;min-width:100px;">
+                            <div style="font-size:2rem;font-weight:700;color:{{ risk_level_color }};">{{ risk_score_fmt }}</div>
+                            <div style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;">Risk Score</div>
+                        </div>
+                        <div style="text-align:center;min-width:100px;">
+                            <div style="font-size:2rem;font-weight:700;color:{{ risk_level_color }};">{{ risk_level_label }}</div>
+                            <div style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;">Risk Level</div>
+                        </div>
+                        <div style="text-align:center;min-width:120px;">
+                            <div style="font-size:2rem;font-weight:700;color:#e74c3c;">${{ risk_amount_fmt }}</div>
+                            <div style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;">Amount at Risk</div>
+                        </div>
+                        <div style="text-align:center;min-width:100px;">
+                            <div style="font-size:2rem;font-weight:700;color:#e74c3c;">{{ risk_pct_1dp }}%</div>
+                            <div style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;">Budget at Risk</div>
+                        </div>
+                    </div>
+                    <!-- Risk categories -->
+                    <div class="risk-modal-section">Risk Categories Detected</div>
+                    <div style="overflow-x:auto;max-height:260px;overflow-y:auto;">
+                        <table>
+                            <thead><tr><th>Category</th><th style="text-align:right;">Items</th><th style="text-align:right;">Amount ($)</th><th>Exposure</th></tr></thead>
+                            <tbody>{{ risk_cat_rows | safe }}</tbody>
+                        </table>
+                    </div>
+                    <!-- Top risk items -->
+                    <div class="risk-modal-section">Top Risk Items by Amount</div>
+                    <div style="overflow-x:auto;max-height:260px;overflow-y:auto;">
+                        <table>
+                            <thead><tr><th>Description</th><th>Department</th><th style="text-align:right;">Amount ($)</th><th style="text-align:right;">% of Budget</th></tr></thead>
+                            <tbody>{{ risk_item_rows | safe }}</tbody>
+                        </table>
+                    </div>
+                    <div id="risk-modal-footer">Risk score 0–100 · Items flagged by keyword matching and cost threshold (≥5% of total budget)</div>
+                </div>
+            </div>
+
+            <!-- Budget Breakdown Modal -->
+            <div id="budget-modal-overlay">
+                <div id="budget-modal">
+                    <div id="budget-modal-header">
+                        <h2>💵 Budget Breakdown — {{ filename }}</h2>
+                        <button id="budget-close" onclick="closeBudget()" title="Close">×</button>
+                    </div>
+                    <div style="overflow-x:auto;max-height:65vh;overflow-y:auto;">
+                        <table id="budget-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th style="text-align:right;">Total ($)</th>
+                                    <th style="text-align:right;">Items</th>
+                                    <th>% of Budget</th>
+                                </tr>
+                            </thead>
+                            <tbody>{{ budget_rows | safe }}</tbody>
+                        </table>
+                    </div>
+                    <div id="budget-modal-footer">{{ num_categories }} categories · Total ${{ total_budget_2dp }}</div>
+                </div>
+            </div>
+
+            <!-- Department Modal -->
+            <div id="dept-modal-overlay">
+                <div id="dept-modal">
+                    <div id="dept-modal-header">
+                        <h2>🏢 Departments — {{ filename }}</h2>
+                        <button id="dept-close" onclick="closeDept()" title="Close">×</button>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table id="dept-table">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th style="text-align:right;">Total ($)</th>
+                                    <th style="text-align:right;">Items</th>
+                                    <th>% of Budget</th>
+                                </tr>
+                            </thead>
+                            <tbody>{{ dept_rows | safe }}</tbody>
+                        </table>
+                    </div>
+                    <div id="dept-modal-footer">{{ num_depts }} departments · Total ${{ total_budget_2dp }}</div>
+                </div>
+            </div>
+
+            <div class="container">
+                <!-- Header -->
+                <div class="header fade-in">
+                    <h1>💰 Budget Analysis Results</h1>
+                    <p>{{ filename }} - Analyzed on {{ timestamp_str }}</p>
+                    <p style="font-size: 0.9rem; color: #666;">
+                        💾 Stored in database - Analysis ID: {{ file_id_short }}...
+                    </p>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="stats-grid fade-in">
+                    <div class="stat-card clickable" onclick="openBudget()" title="Click to view budget breakdown">
+                        <div class="stat-icon">💵</div>
+                        <div class="stat-value">${{ total_budget_0dp }}</div>
+                        <div class="stat-label">Total Budget</div>
+                        <div style="font-size:0.75rem;color:#27ae60;margin-top:6px;font-weight:600;">Click to view ↗</div>
+                    </div>
+
+                    <div class="stat-card clickable" onclick="openLI()" title="Click to view all line items">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-value">{{ line_items }}</div>
+                        <div class="stat-label">Line Items</div>
+                        <div style="font-size:0.75rem;color:var(--primary-color);margin-top:6px;font-weight:600;">Click to view ↗</div>
+                    </div>
+
+                    <div class="stat-card clickable" onclick="openDept()" title="Click to view departments">
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-value">{{ num_depts_display }}</div>
+                        <div class="stat-label">Departments</div>
+                        <div style="font-size:0.75rem;color:#6c5ce7;margin-top:6px;font-weight:600;">Click to view ↗</div>
+                    </div>
+
+                    <div class="stat-card clickable" onclick="openRisk()" title="Click to view risk details" style="border-top-color:{{ risk_level_color }};">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-value" style="color:{{ risk_level_color }};">{{ risk_level_display }}</div>
+                        <div class="stat-label">Risk Level</div>
+                        <div style="font-size:0.75rem;color:{{ risk_level_color }};margin-top:6px;font-weight:600;">Click to view ↗</div>
+                    </div>
+                </div>
+
+                <script>
+                    function openRisk() {
+                        document.getElementById('risk-modal-overlay').classList.add('open');
+                    }
+                    function closeRisk() {
+                        document.getElementById('risk-modal-overlay').classList.remove('open');
+                    }
+                    document.getElementById('risk-modal-overlay').addEventListener('click', function(e) {
+                        if (e.target === this) closeRisk();
+                    });
+                    function openBudget() {
+                        document.getElementById('budget-modal-overlay').classList.add('open');
+                    }
+                    function closeBudget() {
+                        document.getElementById('budget-modal-overlay').classList.remove('open');
+                    }
+                    document.getElementById('budget-modal-overlay').addEventListener('click', function(e) {
+                        if (e.target === this) closeBudget();
+                    });
+                    function openLI() {
+                        document.getElementById('li-modal-overlay').classList.add('open');
+                        document.getElementById('li-search').focus();
+                    }
+                    function closeLI() {
+                        document.getElementById('li-modal-overlay').classList.remove('open');
+                        document.getElementById('li-search').value = '';
+                        filterLI('');
+                    }
+                    document.getElementById('li-modal-overlay').addEventListener('click', function(e) {
+                        if (e.target === this) closeLI();
+                    });
+                    function openDept() {
+                        document.getElementById('dept-modal-overlay').classList.add('open');
+                    }
+                    function closeDept() {
+                        document.getElementById('dept-modal-overlay').classList.remove('open');
+                    }
+                    document.getElementById('dept-modal-overlay').addEventListener('click', function(e) {
+                        if (e.target === this) closeDept();
+                    });
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') { closeLI(); closeDept(); closeBudget(); closeRisk(); }
+                    });
+                    function filterLI(query) {
+                        const q = query.toLowerCase();
+                        const rows = document.querySelectorAll('#li-tbody tr');
+                        let visible = 0;
+                        rows.forEach(r => {
+                            const match = r.textContent.toLowerCase().includes(q);
+                            r.style.display = match ? '' : 'none';
+                            if (match) visible++;
+                        });
+                        document.getElementById('li-modal-footer').textContent =
+                            q ? visible + ' of {{ line_items }} items match' : '{{ line_items }} items total';
+                    }
+                </script>
+                {{ risk_section_html | safe }}
+                <!-- Visualizations -->
+                <div class="section-card fade-in">
+                    <h2>&#x1F4CA; Visual Analysis</h2>
+                    {{ charts_html | safe }}
+                </div>
+                {{ optimizations_section_html | safe }}
+                <!-- Actions -->
+                <div class="actions fade-in">
+                    <a href="/" class="btn btn-secondary">&#x2190; Back to Dashboard</a>
+                    <a href="/export-excel/{{ file_id }}" class="btn btn-success">&#x1F4CA; Export to Excel</a>
+                    <a href="/generate-pdf/{{ file_id }}" class="btn btn-primary">&#x1F4C4; Generate PDF Report</a>
+                    <a href="/logout" class="btn btn-secondary" style="margin-left:auto;">Logout</a>
+                    <a href="/compare/{{ file_id }}" class="btn btn-warning">&#x1F504; Compare Budgets</a>
+                </div>
+            </div>
+        </body>
+        </html>

@@ -1,0 +1,83 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Budget Analysis & Risk Management</title>
+        <link rel="stylesheet" href="/static/css/modern-styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <!-- Header -->
+            <div class="header fade-in" style="position:relative;">
+                <a href="/logout" style="position:absolute;top:1rem;right:1rem;color:#94a3b8;font-size:0.85rem;text-decoration:none;">Logout</a>
+                <h1>💰 Budget Analysis & Risk Management</h1>
+                <p>Upload your budget CSV file for comprehensive analysis</p>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+                    ✨ <strong>Now with Database Storage!</strong> - Your data is saved permanently
+                </p>
+            </div>
+
+            {{ flash_html | safe }}
+
+            <!-- Upload Form -->
+            <div class="upload-section fade-in">
+                <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form" onsubmit="startUploadFeedback(this)">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-group">
+                        <label for="file">Choose CSV File:</label>
+                        <input type="file" name="file" id="file" accept=".csv" required>
+                    </div>
+                    <button type="submit" id="upload-btn" class="btn btn-primary">
+                        📊 Analyze Budget
+                    </button>
+                </form>
+                <script>
+                function startUploadFeedback(form) {
+                    var btn = document.getElementById("upload-btn");
+                    btn.disabled = true;
+                    btn.textContent = "⏳ Analyzing…";
+                    btn.style.opacity = "0.7";
+                }
+                </script>
+            </div>
+            
+            <!-- Features Grid -->
+            <div class="features-grid fade-in">
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Risk Assessment</h3>
+                    <p>Automated risk scoring and categorization</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Smart Recommendations</h3>
+                    <p>AI-powered optimization suggestions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Visual Analytics</h3>
+                    <p>Interactive charts and graphs</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <h3>Export Reports</h3>
+                    <p>Excel and PDF report generation</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Budget Comparison</h3>
+                    <p>Compare multiple budget versions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Database Storage</h3>
+                    <p>Never lose your analysis data!</p>
+                </div>
+            </div>
+            
+            <!-- Recent Analyses -->
+            {{ recent_analyses_html | safe }}
+        </div>
+    </body>
+    </html>

@@ -109,7 +109,7 @@
         </div>
 
         <!-- Results Panel -->
-        <div class="card">
+        <div class="card panel" id="panel-summary">
             <h3>Parsed Results</h3>
             <div id="results-box">Results will appear here...</div>
 
@@ -119,7 +119,7 @@
         </div>
 
         <!-- Process Text Panel -->
-        <div class="card">
+        <div class="card panel" id="panel-budget" style="display:none">
             <h3>Process Text</h3>
             <textarea id="input-text" placeholder="Paste production notes, budget text, or contract data..."></
             <br />
@@ -127,7 +127,7 @@
         </div>
 
         <!-- Upload Panel -->
-        <div class="card">
+        <div class="card panel" id="panel-contracts" style="display:none">
             <h3>Upload File (CSV / Excel / TXT / PDF)</h3>
 
             <input type="file" id="file-input" accept=".csv,.xlsx,.xls,.txt,.pdf" />
@@ -146,6 +146,9 @@
             tab.addEventListener("click", () => {
                 document.querySelector(".tab.active").classList.remove("active");
                 tab.classList.add("active");
+                document.querySelectorAll(".panel").forEach(p => p.style.display = "none");
+                const target = document.getElementById("panel-" + tab.dataset.tab);
+                if (target) target.style.display = "block";
             });
         });
 
@@ -187,8 +190,19 @@
         // ---------- COPY RESULTS ----------
         function copyResults() {
             const results = document.getElementById("results-box").textContent;
-            navigator.clipboard.writeText(results);
-            alert("Copied to clipboard!");
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(results).then(() => alert("Copied to clipboard!"));
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = results;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                alert("Copied to clipboard!");
+            }
         }
 
         // ---------- DOWNLOAD JSON ----------

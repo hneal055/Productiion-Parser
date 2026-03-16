@@ -6,7 +6,7 @@ Enhanced with PATH A Features: Interactive Charts, Modern UI, Excel Export
 ================================================================================
 """
 
-from flask import Flask, request, render_template_string, redirect, url_for, send_file, flash, jsonify, get_flashed_messages, session
+from flask import Flask, request, render_template, redirect, url_for, send_file, flash, jsonify, get_flashed_messages, session
 import pandas as pd
 import io
 import os
@@ -275,47 +275,7 @@ def login():
         error = 'Invalid username or password.'
         logger.warning('Failed login attempt for "%s" from %s', username, request.remote_addr)
 
-    return render_template_string("""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sign In — Budget Parser</title>
-        <link rel="stylesheet" href="/static/css/modern-styles.css">
-        <style>
-            body { display:flex; align-items:center; justify-content:center; min-height:100vh; }
-            .login-box { background:white; border-radius:16px; padding:48px 40px; width:100%; max-width:400px;
-                         box-shadow:0 8px 32px rgba(0,0,0,0.18); text-align:center; }
-            .login-box h1 { font-size:1.6rem; color:#2c3e50; margin-bottom:8px; }
-            .login-box p { color:#7f8c8d; margin-bottom:28px; }
-            .login-box input[type=text], .login-box input[type=password] {
-                width:100%; padding:12px 16px; border:2px solid #e0e0e0;
-                border-radius:8px; font-size:1rem; margin-bottom:12px; box-sizing:border-box; }
-            .login-box input:focus { outline:none; border-color:#3498db; }
-            .login-box button { width:100%; padding:13px; background:#3498db; color:white;
-                border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; margin-top:4px; }
-            .login-box button:hover { background:#2980b9; }
-            .error { background:#fadbd8; color:#c0392b; padding:10px 14px; border-radius:8px;
-                     margin-bottom:16px; font-size:0.92rem; }
-        </style>
-    </head>
-    <body>
-        <div class="login-box">
-            <div style="font-size:2.5rem;margin-bottom:12px;">💰</div>
-            <h1>Budget Parser</h1>
-            <p>Scene Reader Studio Technologies</p>
-            {% if error %}<div class="error">{{ error }}</div>{% endif %}
-            <form method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="text" name="username" placeholder="Username" autofocus required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Sign In →</button>
-            </form>
-        </div>
-    </body>
-    </html>
-    """, error=error)
+    return render_template('login.html', error=error)
 
 
 @app.route('/logout')
@@ -329,8 +289,6 @@ def logout():
 def index():
     """Homepage with upload form and recent analyses"""
     recent_analyses_html = generate_recent_analyses()
-    csrf_token = generate_csrf()
-
     # Build flash messages HTML
     messages = get_flashed_messages(with_categories=True)
     flash_html = ''
@@ -338,85 +296,7 @@ def index():
         color = '#c0392b' if category == 'error' else '#27ae60'
         flash_html += f'<div style="background:{color};color:white;padding:12px 20px;border-radius:8px;margin-bottom:12px;font-weight:600;">{html_lib.escape(message)}</div>'
 
-    html = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Budget Analysis & Risk Management</title>
-        <link rel="stylesheet" href="/static/css/modern-styles.css">
-    </head>
-    <body>
-        <div class="container">
-            <!-- Header -->
-            <div class="header fade-in" style="position:relative;">
-                <a href="/logout" style="position:absolute;top:1rem;right:1rem;color:#94a3b8;font-size:0.85rem;text-decoration:none;">Logout</a>
-                <h1>💰 Budget Analysis & Risk Management</h1>
-                <p>Upload your budget CSV file for comprehensive analysis</p>
-                <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
-                    ✨ <strong>Now with Database Storage!</strong> - Your data is saved permanently
-                </p>
-            </div>
-
-            {flash_html}
-
-            <!-- Upload Form -->
-            <div class="upload-section fade-in">
-                <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
-                    <input type="hidden" name="csrf_token" value="{csrf_token}">
-                    <div class="form-group">
-                        <label for="file">Choose CSV File:</label>
-                        <input type="file" name="file" id="file" accept=".csv" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        📊 Analyze Budget
-                    </button>
-                </form>
-            </div>
-            
-            <!-- Features Grid -->
-            <div class="features-grid fade-in">
-                <div class="feature-card">
-                    <div class="feature-icon">📈</div>
-                    <h3>Risk Assessment</h3>
-                    <p>Automated risk scoring and categorization</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💡</div>
-                    <h3>Smart Recommendations</h3>
-                    <p>AI-powered optimization suggestions</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Visual Analytics</h3>
-                    <p>Interactive charts and graphs</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📄</div>
-                    <h3>Export Reports</h3>
-                    <p>Excel and PDF report generation</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔄</div>
-                    <h3>Budget Comparison</h3>
-                    <p>Compare multiple budget versions</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💾</div>
-                    <h3>Database Storage</h3>
-                    <p>Never lose your analysis data!</p>
-                </div>
-            </div>
-            
-            <!-- Recent Analyses -->
-            {recent_analyses_html}
-        </div>
-    </body>
-    </html>
-    """
-    
-    return html
+    return render_template('home.html', flash_html=flash_html, recent_analyses_html=recent_analyses_html)
 
 
 @app.route('/upload', methods=['POST'])
@@ -677,603 +557,87 @@ def view_analysis(file_id):
                 </td>
             </tr>"""
 
-        # Build complete page
-        html = f"""
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Budget Analysis - {filename}</title>
-            <link rel="stylesheet" href="/static/css/modern-styles.css">
-            <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-            <script src="/static/js/charts.js" defer></script>
-            <style>
-                /* Line Items Modal */
-                #li-modal-overlay {{
-                    display: none;
-                    position: fixed;
-                    inset: 0;
-                    background: rgba(0,0,0,0.55);
-                    z-index: 1000;
-                    align-items: flex-start;
-                    justify-content: center;
-                    padding: 40px 20px;
-                    overflow-y: auto;
-                }}
-                #li-modal-overlay.open {{ display: flex; }}
-                #li-modal {{
-                    background: white;
-                    border-radius: 14px;
-                    width: 100%;
-                    max-width: 1050px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                    overflow: hidden;
-                    animation: slideDown 0.22s ease;
-                }}
-                @keyframes slideDown {{
-                    from {{ transform: translateY(-30px); opacity: 0; }}
-                    to  {{ transform: translateY(0);     opacity: 1; }}
-                }}
-                #li-modal-header {{
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 18px 24px;
-                    background: var(--primary-color);
-                    color: white;
-                }}
-                #li-modal-header h2 {{ margin: 0; font-size: 1.2rem; }}
-                #li-close {{
-                    background: none;
-                    border: none;
-                    color: white;
-                    font-size: 1.6rem;
-                    cursor: pointer;
-                    line-height: 1;
-                    padding: 0 4px;
-                }}
-                #li-search {{
-                    width: 100%;
-                    padding: 10px 16px;
-                    border: none;
-                    border-bottom: 1px solid #e0e0e0;
-                    font-size: 0.95rem;
-                    outline: none;
-                }}
-                #li-table-wrap {{ overflow-x: auto; max-height: 60vh; overflow-y: auto; }}
-                #li-table {{
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 0.9rem;
-                }}
-                #li-table thead th {{
-                    position: sticky;
-                    top: 0;
-                    background: #f4f6f9;
-                    padding: 10px 14px;
-                    text-align: left;
-                    font-weight: 700;
-                    color: var(--dark-color);
-                    border-bottom: 2px solid #ddd;
-                    text-transform: uppercase;
-                    font-size: 0.78rem;
-                    letter-spacing: 0.5px;
-                }}
-                #li-table tbody tr {{ border-bottom: 1px solid #f0f0f0; }}
-                #li-table tbody tr:hover {{ background: #f0f7ff; }}
-                #li-table tbody td {{ padding: 9px 14px; color: #444; }}
-                #li-modal-footer {{
-                    padding: 12px 20px;
-                    background: #f9f9f9;
-                    border-top: 1px solid #eee;
-                    font-size: 0.85rem;
-                    color: #888;
-                }}
-                .stat-card.clickable {{ cursor: pointer; }}
+        # ── Pre-computed display strings ──────────────────────────────────
+        risk_score_fmt      = f"{risk_score:.0f}"
+        risk_amount_fmt     = f"{risk_amount:,.0f}"
+        risk_pct_1dp        = f"{risk_pct:.1f}"
+        total_budget_0dp    = f"{total_budget:,.0f}"
+        total_budget_2dp    = f"{total_budget:,.2f}"
+        num_depts_display   = str(len(set(df['Department']))) if 'Department' in df.columns else 'N/A'
+        risk_level_display  = analysis.risk_level
+        timestamp_str       = timestamp.strftime('%B %d, %Y at %I:%M %p')
+        file_id_short       = file_id[:8]
 
-                /* Risk Modal */
-                #risk-modal-overlay {{
-                    display: none;
-                    position: fixed;
-                    inset: 0;
-                    background: rgba(0,0,0,0.55);
-                    z-index: 1000;
-                    align-items: flex-start;
-                    justify-content: center;
-                    padding: 40px 20px;
-                    overflow-y: auto;
-                }}
-                #risk-modal-overlay.open {{ display: flex; }}
-                #risk-modal {{
-                    background: white;
-                    border-radius: 14px;
-                    width: 100%;
-                    max-width: 860px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                    overflow: hidden;
-                    animation: slideDown 0.22s ease;
-                }}
-                #risk-modal-header {{
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 18px 24px;
-                    color: white;
-                }}
-                #risk-modal-header h2 {{ margin: 0; font-size: 1.2rem; }}
-                #risk-close {{
-                    background: none;
-                    border: none;
-                    color: white;
-                    font-size: 1.6rem;
-                    cursor: pointer;
-                    line-height: 1;
-                    padding: 0 4px;
-                }}
-                .risk-modal-section {{
-                    padding: 16px 20px 6px;
-                    font-size: 0.82rem;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    letter-spacing: 0.8px;
-                    color: #888;
-                    border-bottom: 1px solid #eee;
-                }}
-                #risk-modal table {{
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 0.9rem;
-                }}
-                #risk-modal table thead th {{
-                    background: #f4f6f9;
-                    padding: 9px 16px;
-                    text-align: left;
-                    font-weight: 700;
-                    color: var(--dark-color);
-                    border-bottom: 2px solid #ddd;
-                    text-transform: uppercase;
-                    font-size: 0.76rem;
-                    letter-spacing: 0.5px;
-                }}
-                #risk-modal table tbody tr {{ border-bottom: 1px solid #f5f5f5; }}
-                #risk-modal table tbody tr:hover {{ background: #fff5f5; }}
-                #risk-modal table tbody td {{ padding: 10px 16px; color: #444; }}
-                #risk-modal-footer {{
-                    padding: 12px 20px;
-                    background: #f9f9f9;
-                    border-top: 1px solid #eee;
-                    font-size: 0.85rem;
-                    color: #888;
-                }}
+        # Fallbacks for empty risk rows
+        if not risk_cat_rows:
+            risk_cat_rows = '<tr><td colspan="4" style="padding:16px;color:#aaa;text-align:center;">No keyword-matched risk categories found</td></tr>'
+        if not risk_item_rows:
+            risk_item_rows = '<tr><td colspan="4" style="padding:16px;color:#aaa;text-align:center;">No high-cost risk items flagged</td></tr>'
 
-                /* Budget Breakdown Modal */
-                #budget-modal-overlay {{
-                    display: none;
-                    position: fixed;
-                    inset: 0;
-                    background: rgba(0,0,0,0.55);
-                    z-index: 1000;
-                    align-items: flex-start;
-                    justify-content: center;
-                    padding: 40px 20px;
-                    overflow-y: auto;
-                }}
-                #budget-modal-overlay.open {{ display: flex; }}
-                #budget-modal {{
-                    background: white;
-                    border-radius: 14px;
-                    width: 100%;
-                    max-width: 750px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                    overflow: hidden;
-                    animation: slideDown 0.22s ease;
-                }}
-                #budget-modal-header {{
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 18px 24px;
-                    background: #27ae60;
-                    color: white;
-                }}
-                #budget-modal-header h2 {{ margin: 0; font-size: 1.2rem; }}
-                #budget-close {{
-                    background: none;
-                    border: none;
-                    color: white;
-                    font-size: 1.6rem;
-                    cursor: pointer;
-                    line-height: 1;
-                    padding: 0 4px;
-                }}
-                #budget-table {{
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 0.9rem;
-                }}
-                #budget-table thead th {{
-                    background: #f4f6f9;
-                    padding: 10px 16px;
-                    text-align: left;
-                    font-weight: 700;
-                    color: var(--dark-color);
-                    border-bottom: 2px solid #ddd;
-                    text-transform: uppercase;
-                    font-size: 0.78rem;
-                    letter-spacing: 0.5px;
-                }}
-                #budget-table tbody tr {{ border-bottom: 1px solid #f0f0f0; }}
-                #budget-table tbody tr:hover {{ background: #f0fff4; }}
-                #budget-table tbody td {{ padding: 11px 16px; color: #444; }}
-                #budget-modal-footer {{
-                    padding: 12px 20px;
-                    background: #f9f9f9;
-                    border-top: 1px solid #eee;
-                    font-size: 0.85rem;
-                    color: #888;
-                }}
-
-                /* Department Modal */
-                #dept-modal-overlay {{
-                    display: none;
-                    position: fixed;
-                    inset: 0;
-                    background: rgba(0,0,0,0.55);
-                    z-index: 1000;
-                    align-items: flex-start;
-                    justify-content: center;
-                    padding: 40px 20px;
-                    overflow-y: auto;
-                }}
-                #dept-modal-overlay.open {{ display: flex; }}
-                #dept-modal {{
-                    background: white;
-                    border-radius: 14px;
-                    width: 100%;
-                    max-width: 750px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                    overflow: hidden;
-                    animation: slideDown 0.22s ease;
-                }}
-                #dept-modal-header {{
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 18px 24px;
-                    background: #6c5ce7;
-                    color: white;
-                }}
-                #dept-modal-header h2 {{ margin: 0; font-size: 1.2rem; }}
-                #dept-close {{
-                    background: none;
-                    border: none;
-                    color: white;
-                    font-size: 1.6rem;
-                    cursor: pointer;
-                    line-height: 1;
-                    padding: 0 4px;
-                }}
-                #dept-table {{
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 0.9rem;
-                }}
-                #dept-table thead th {{
-                    background: #f4f6f9;
-                    padding: 10px 16px;
-                    text-align: left;
-                    font-weight: 700;
-                    color: var(--dark-color);
-                    border-bottom: 2px solid #ddd;
-                    text-transform: uppercase;
-                    font-size: 0.78rem;
-                    letter-spacing: 0.5px;
-                }}
-                #dept-table tbody tr {{ border-bottom: 1px solid #f0f0f0; }}
-                #dept-table tbody tr:hover {{ background: #f5f3ff; }}
-                #dept-table tbody td {{ padding: 11px 16px; color: #444; }}
-                #dept-modal-footer {{
-                    padding: 12px 20px;
-                    background: #f9f9f9;
-                    border-top: 1px solid #eee;
-                    font-size: 0.85rem;
-                    color: #888;
-                }}
-            </style>
-        </head>
-        <body>
-            <!-- Line Items Modal -->
-            <div id="li-modal-overlay">
-                <div id="li-modal">
-                    <div id="li-modal-header">
-                        <h2>📋 Line Items — {filename}</h2>
-                        <button id="li-close" onclick="closeLI()" title="Close">×</button>
-                    </div>
-                    <input id="li-search" type="text" placeholder="🔍  Filter by any column..." oninput="filterLI(this.value)">
-                    <div id="li-table-wrap">
-                        <table id="li-table">
-                            <thead><tr>{header_cells}</tr></thead>
-                            <tbody id="li-tbody">{line_item_rows}</tbody>
-                        </table>
-                    </div>
-                    <div id="li-modal-footer" id="li-count">{line_items} items total</div>
-                </div>
-            </div>
-
-            <!-- Risk Modal -->
-            <div id="risk-modal-overlay">
-                <div id="risk-modal">
-                    <div id="risk-modal-header" style="background:{risk_level_color};">
-                        <h2>⚠️ Risk Assessment — {filename}</h2>
-                        <button id="risk-close" onclick="closeRisk()" title="Close">×</button>
-                    </div>
-                    <!-- Score banner -->
-                    <div style="display:flex;gap:24px;padding:16px 20px;background:#fafafa;border-bottom:1px solid #eee;flex-wrap:wrap;">
-                        <div style="text-align:center;min-width:100px;">
-                            <div style="font-size:2rem;font-weight:700;color:{risk_level_color};">{risk_score:.0f}</div>
-                            <div style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;">Risk Score</div>
-                        </div>
-                        <div style="text-align:center;min-width:100px;">
-                            <div style="font-size:2rem;font-weight:700;color:{risk_level_color};">{risk_level_label}</div>
-                            <div style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;">Risk Level</div>
-                        </div>
-                        <div style="text-align:center;min-width:120px;">
-                            <div style="font-size:2rem;font-weight:700;color:#e74c3c;">${risk_amount:,.0f}</div>
-                            <div style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;">Amount at Risk</div>
-                        </div>
-                        <div style="text-align:center;min-width:100px;">
-                            <div style="font-size:2rem;font-weight:700;color:#e74c3c;">{risk_pct:.1f}%</div>
-                            <div style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:1px;">Budget at Risk</div>
-                        </div>
-                    </div>
-                    <!-- Risk categories -->
-                    <div class="risk-modal-section">Risk Categories Detected</div>
-                    <div style="overflow-x:auto;max-height:260px;overflow-y:auto;">
-                        <table>
-                            <thead><tr><th>Category</th><th style="text-align:right;">Items</th><th style="text-align:right;">Amount ($)</th><th>Exposure</th></tr></thead>
-                            <tbody>{risk_cat_rows if risk_cat_rows else '<tr><td colspan="4" style="padding:16px;color:#aaa;text-align:center;">No keyword-matched risk categories found</td></tr>'}</tbody>
-                        </table>
-                    </div>
-                    <!-- Top risk items -->
-                    <div class="risk-modal-section">Top Risk Items by Amount</div>
-                    <div style="overflow-x:auto;max-height:260px;overflow-y:auto;">
-                        <table>
-                            <thead><tr><th>Description</th><th>Department</th><th style="text-align:right;">Amount ($)</th><th style="text-align:right;">% of Budget</th></tr></thead>
-                            <tbody>{risk_item_rows if risk_item_rows else '<tr><td colspan="4" style="padding:16px;color:#aaa;text-align:center;">No high-cost risk items flagged</td></tr>'}</tbody>
-                        </table>
-                    </div>
-                    <div id="risk-modal-footer">Risk score 0–100 · Items flagged by keyword matching and cost threshold (≥5% of total budget)</div>
-                </div>
-            </div>
-
-            <!-- Budget Breakdown Modal -->
-            <div id="budget-modal-overlay">
-                <div id="budget-modal">
-                    <div id="budget-modal-header">
-                        <h2>💵 Budget Breakdown — {filename}</h2>
-                        <button id="budget-close" onclick="closeBudget()" title="Close">×</button>
-                    </div>
-                    <div style="overflow-x:auto;max-height:65vh;overflow-y:auto;">
-                        <table id="budget-table">
-                            <thead>
-                                <tr>
-                                    <th>Category</th>
-                                    <th style="text-align:right;">Total ($)</th>
-                                    <th style="text-align:right;">Items</th>
-                                    <th>% of Budget</th>
-                                </tr>
-                            </thead>
-                            <tbody>{budget_rows}</tbody>
-                        </table>
-                    </div>
-                    <div id="budget-modal-footer">{num_categories} categories · Total ${total_budget:,.2f}</div>
-                </div>
-            </div>
-
-            <!-- Department Modal -->
-            <div id="dept-modal-overlay">
-                <div id="dept-modal">
-                    <div id="dept-modal-header">
-                        <h2>🏢 Departments — {filename}</h2>
-                        <button id="dept-close" onclick="closeDept()" title="Close">×</button>
-                    </div>
-                    <div style="overflow-x:auto;">
-                        <table id="dept-table">
-                            <thead>
-                                <tr>
-                                    <th>Department</th>
-                                    <th style="text-align:right;">Total ($)</th>
-                                    <th style="text-align:right;">Items</th>
-                                    <th>% of Budget</th>
-                                </tr>
-                            </thead>
-                            <tbody>{dept_rows}</tbody>
-                        </table>
-                    </div>
-                    <div id="dept-modal-footer">{num_depts} departments · Total ${total_budget:,.2f}</div>
-                </div>
-            </div>
-
-            <div class="container">
-                <!-- Header -->
-                <div class="header fade-in">
-                    <h1>💰 Budget Analysis Results</h1>
-                    <p>{filename} - Analyzed on {timestamp.strftime('%B %d, %Y at %I:%M %p')}</p>
-                    <p style="font-size: 0.9rem; color: #666;">
-                        💾 Stored in database - Analysis ID: {file_id[:8]}...
-                    </p>
-                </div>
-
-                <!-- Statistics Cards -->
-                <div class="stats-grid fade-in">
-                    <div class="stat-card clickable" onclick="openBudget()" title="Click to view budget breakdown">
-                        <div class="stat-icon">💵</div>
-                        <div class="stat-value">${total_budget:,.0f}</div>
-                        <div class="stat-label">Total Budget</div>
-                        <div style="font-size:0.75rem;color:#27ae60;margin-top:6px;font-weight:600;">Click to view ↗</div>
-                    </div>
-
-                    <div class="stat-card clickable" onclick="openLI()" title="Click to view all line items">
-                        <div class="stat-icon">📋</div>
-                        <div class="stat-value">{line_items}</div>
-                        <div class="stat-label">Line Items</div>
-                        <div style="font-size:0.75rem;color:var(--primary-color);margin-top:6px;font-weight:600;">Click to view ↗</div>
-                    </div>
-
-                    <div class="stat-card clickable" onclick="openDept()" title="Click to view departments">
-                        <div class="stat-icon">🏢</div>
-                        <div class="stat-value">{len(set(df['Department'])) if 'Department' in df.columns else 'N/A'}</div>
-                        <div class="stat-label">Departments</div>
-                        <div style="font-size:0.75rem;color:#6c5ce7;margin-top:6px;font-weight:600;">Click to view ↗</div>
-                    </div>
-
-                    <div class="stat-card clickable" onclick="openRisk()" title="Click to view risk details" style="border-top-color:{risk_level_color};">
-                        <div class="stat-icon">⚠️</div>
-                        <div class="stat-value" style="color:{risk_level_color};">{analysis.risk_level}</div>
-                        <div class="stat-label">Risk Level</div>
-                        <div style="font-size:0.75rem;color:{risk_level_color};margin-top:6px;font-weight:600;">Click to view ↗</div>
-                    </div>
-                </div>
-
-                <script>
-                    function openRisk() {{
-                        document.getElementById('risk-modal-overlay').classList.add('open');
-                    }}
-                    function closeRisk() {{
-                        document.getElementById('risk-modal-overlay').classList.remove('open');
-                    }}
-                    document.getElementById('risk-modal-overlay').addEventListener('click', function(e) {{
-                        if (e.target === this) closeRisk();
-                    }});
-                    function openBudget() {{
-                        document.getElementById('budget-modal-overlay').classList.add('open');
-                    }}
-                    function closeBudget() {{
-                        document.getElementById('budget-modal-overlay').classList.remove('open');
-                    }}
-                    document.getElementById('budget-modal-overlay').addEventListener('click', function(e) {{
-                        if (e.target === this) closeBudget();
-                    }});
-                    function openLI() {{
-                        document.getElementById('li-modal-overlay').classList.add('open');
-                        document.getElementById('li-search').focus();
-                    }}
-                    function closeLI() {{
-                        document.getElementById('li-modal-overlay').classList.remove('open');
-                        document.getElementById('li-search').value = '';
-                        filterLI('');
-                    }}
-                    document.getElementById('li-modal-overlay').addEventListener('click', function(e) {{
-                        if (e.target === this) closeLI();
-                    }});
-                    function openDept() {{
-                        document.getElementById('dept-modal-overlay').classList.add('open');
-                    }}
-                    function closeDept() {{
-                        document.getElementById('dept-modal-overlay').classList.remove('open');
-                    }}
-                    document.getElementById('dept-modal-overlay').addEventListener('click', function(e) {{
-                        if (e.target === this) closeDept();
-                    }});
-                    document.addEventListener('keydown', function(e) {{
-                        if (e.key === 'Escape') {{ closeLI(); closeDept(); closeBudget(); closeRisk(); }}
-                    }});
-                    function filterLI(query) {{
-                        const q = query.toLowerCase();
-                        const rows = document.querySelectorAll('#li-tbody tr');
-                        let visible = 0;
-                        rows.forEach(r => {{
-                            const match = r.textContent.toLowerCase().includes(q);
-                            r.style.display = match ? '' : 'none';
-                            if (match) visible++;
-                        }});
-                        document.getElementById('li-modal-footer').textContent =
-                            q ? visible + ' of {line_items} items match' : '{line_items} items total';
-                    }}
-                </script>
-"""
-
-        # Add risk analysis section
-        html += """
-                <!-- Risk Analysis -->
-                <div class="section-card fade-in">
-                    <h2>🎯 Risk Assessment</h2>
-        """
-        
+        # ── Pre-compute risk assessment section ───────────────────────────
+        risk_section_html = '<div class="section-card fade-in"><h2>\U0001f3af Risk Assessment</h2>'
         if 'items_by_category' in risk_analysis:
             for category, items in risk_analysis['items_by_category'].items():
-                html += f"""
-                    <div class="risk-category">
-                        <h3>{category.replace('_', ' ').title()} Risk ({len(items)} items)</h3>
-                        <ul>
-                """
-                for item in items[:5]:  # Show first 5
-                    html += f"""<li>{item.get('description', 'N/A')}: ${item.get('amount', 0):,.2f}</li>"""
-                
+                risk_section_html += (
+                    f'<div class="risk-category">'
+                    f'<h3>{category.replace("_", " ").title()} Risk ({len(items)} items)</h3>'
+                    '<ul>'
+                )
+                for item in items[:5]:
+                    risk_section_html += f'<li>{html_lib.escape(str(item.get("description", "N/A")))}: ${item.get("amount", 0):,.2f}</li>'
                 if len(items) > 5:
-                    html += f"""<li><em>...and {len(items) - 5} more items</em></li>"""
-                
-                html += """
-                        </ul>
-                    </div>
-                """
-        
-        html += """
-                </div>
-        """
-        
-        # Add charts
-        html += f"""
-                <!-- Visualizations -->
-                <div class="section-card fade-in">
-                    <h2>📊 Visual Analysis</h2>
-                    {charts_html}
-                </div>
-        """
-        
-        # Add optimizations
+                    risk_section_html += f'<li><em>...and {len(items) - 5} more items</em></li>'
+                risk_section_html += '</ul></div>'
+        risk_section_html += '</div>'
+
+        # ── Pre-compute optimizations section ─────────────────────────────
+        optimizations_section_html = ''
         if optimizations:
-            html += """
-                <div class="section-card fade-in">
-                    <h2>💡 Optimization Opportunities</h2>
-                    <div class="optimizations-grid">
-            """
-            
+            optimizations_section_html = (
+                '<div class="section-card fade-in">'
+                '<h2>\U0001f4a1 Optimization Opportunities</h2>'
+                '<div class="optimizations-grid">'
+            )
             for opt in optimizations:
                 priority_class = f"priority-{opt['priority'].lower()}"
-                html += f"""
-                    <div class="optimization-card {priority_class}">
-                        <h3>{opt['category']}</h3>
-                        <p>{opt['recommendation']}</p>
-                        <div class="savings">
-                            Potential Savings: <strong>${opt['potential_savings']:,.2f}</strong>
-                        </div>
-                        <div class="priority-badge">{opt['priority']} PRIORITY</div>
-                    </div>
-                """
-            
-            html += """
-                    </div>
-                </div>
-            """
-        
-        # Add action buttons
-        html += f"""
-                <!-- Actions -->
-                <div class="actions fade-in">
-                    <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
-                    <a href="/export-excel/{file_id}" class="btn btn-success">📊 Export to Excel</a>
-                    <a href="/generate-pdf/{file_id}" class="btn btn-primary">📄 Generate PDF Report</a>
-                    <a href="/logout" class="btn btn-secondary" style="margin-left:auto;">Logout</a>
-                    <a href="/compare/{file_id}" class="btn btn-warning">🔄 Compare Budgets</a>
-                </div>
-            </div>
-        </body>
-        </html>
-        """
-        
-        return html
+                optimizations_section_html += (
+                    f'<div class="optimization-card {priority_class}">'
+                    f'<h3>{html_lib.escape(str(opt["category"]))}</h3>'
+                    f'<p>{html_lib.escape(str(opt["recommendation"]))}</p>'
+                    f'<div class="savings">Potential Savings: '
+                    f'<strong>${opt["potential_savings"]:,.2f}</strong></div>'
+                    f'<div class="priority-badge">{html_lib.escape(str(opt["priority"]))} PRIORITY</div>'
+                    '</div>'
+                )
+            optimizations_section_html += '</div></div>'
+
+        return render_template('analysis.html',
+            filename=filename,
+            file_id=file_id,
+            file_id_short=file_id_short,
+            timestamp_str=timestamp_str,
+            total_budget_0dp=total_budget_0dp,
+            total_budget_2dp=total_budget_2dp,
+            line_items=line_items,
+            num_depts_display=num_depts_display,
+            risk_level_display=risk_level_display,
+            risk_level_label=risk_level_label,
+            risk_level_color=risk_level_color,
+            risk_score_fmt=risk_score_fmt,
+            risk_amount_fmt=risk_amount_fmt,
+            risk_pct_1dp=risk_pct_1dp,
+            header_cells=header_cells,
+            line_item_rows=line_item_rows,
+            risk_cat_rows=risk_cat_rows,
+            risk_item_rows=risk_item_rows,
+            budget_rows=budget_rows,
+            dept_rows=dept_rows,
+            num_categories=num_categories,
+            num_depts=num_depts,
+            charts_html=charts_html,
+            risk_section_html=risk_section_html,
+            optimizations_section_html=optimizations_section_html,
+        )
         
     except Exception as e:
         logger.error('Error displaying analysis %s: %s', file_id, e, exc_info=True)

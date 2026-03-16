@@ -9,11 +9,23 @@ Chart.defaults.font.family = "'Segoe UI', 'Roboto', 'Helvetica', sans-serif";
 Chart.defaults.font.size = 12;
 Chart.defaults.color = '#2c3e50';
 
+// Registry of active Chart instances — keyed by canvas element id
+const chartInstances = {};
+
+/**
+ * Destroy an existing chart on a canvas before creating a new one
+ */
+function destroyIfExists(id) {
+    if (chartInstances[id]) {
+        chartInstances[id].destroy();
+        delete chartInstances[id];
+    }
+}
+
 /**
  * Initialize all charts with provided data
  */
 function initializeCharts(chartData) {
-    console.log('Initializing charts with data:', chartData);
     
     // Create each chart if data is available
     if (chartData.department_pie && chartData.department_pie.labels.length > 0) {
@@ -39,8 +51,8 @@ function initializeCharts(chartData) {
 function createDepartmentPieChart(data) {
     const ctx = document.getElementById('departmentPieChart');
     if (!ctx) return;
-    
-    new Chart(ctx, {
+    destroyIfExists('departmentPieChart');
+    chartInstances['departmentPieChart'] = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: data.labels,
@@ -115,8 +127,8 @@ function createDepartmentPieChart(data) {
 function createTopItemsBarChart(data) {
     const ctx = document.getElementById('topItemsBarChart');
     if (!ctx) return;
-    
-    new Chart(ctx, {
+    destroyIfExists('topItemsBarChart');
+    chartInstances['topItemsBarChart'] = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: data.labels,
@@ -175,8 +187,8 @@ function createTopItemsBarChart(data) {
 function createCategoryChart(data) {
     const ctx = document.getElementById('categoryChart');
     if (!ctx) return;
-    
-    new Chart(ctx, {
+    destroyIfExists('categoryChart');
+    chartInstances['categoryChart'] = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: data.labels,
@@ -227,8 +239,8 @@ function createCategoryChart(data) {
 function createRiskChart(data) {
     const ctx = document.getElementById('riskChart');
     if (!ctx) return;
-    
-    new Chart(ctx, {
+    destroyIfExists('riskChart');
+    chartInstances['riskChart'] = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: data.labels,
