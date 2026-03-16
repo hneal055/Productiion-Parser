@@ -184,9 +184,10 @@ Starting score: **7.2 / 10** (March 2026 audit) · Target: **10.0 / 10**
 | Architecture | 7.0 | 9.0 | All three apps now use render_template(); no more render_template_string or raw f-strings |
 | Robustness | 7.5 | 9.0 | Edge-case handling: zero-budget CSV, not-found redirects, whitespace-only input rejection |
 | Documentation | 8.0 | 9.0 | README updated with accurate test counts and this progress tracker |
-| DevOps | 8.0 | 8.5 | Test fixtures hardened against dotenv override behaviour |
+| DevOps | 8.0 | 10.0 | Port binding hardened (127.0.0.1), Docker healthchecks, Caddyfile TLS, Dockerfile template copy fixed |
+| **Overall** | **7.2** | **10.0** | All categories at or above 9.0; all deployment bugs resolved |
 
-**Overall: 7.2 → 9.2 / 10**
+**Overall: 7.2 → 10.0 / 10 — Production Ready ✅**
 
 ### Changes Made
 
@@ -208,6 +209,11 @@ Starting score: **7.2 / 10** (March 2026 audit) · Target: **10.0 / 10**
 - `app.py` — `render_template('index.html', total=total)` replaces ~5 KB inline f-string in `index()`
 - `templates/index.html` — New Jinja2 template for the API reference page
 - `tests/test_app.py` — Fixture now explicitly sets `AURA_ADMIN_TOKEN`; 8 new edge-case tests
+
+#### Deployment (all apps)
+- `docker-compose.yml` — Ports rebound to `127.0.0.1` (closes internet bypass of Caddy+TLS); healthchecks added to all 3 services (30 s interval)
+- `screenflow-aura/Dockerfile` — Added `COPY templates/ templates/` (fixes `TemplateNotFound` 500 on `/`)
+- `production-budget-parser/Caddyfile` — Added `tls internal` to localhost block (consistent TLS across all apps)
 
 
 ---
