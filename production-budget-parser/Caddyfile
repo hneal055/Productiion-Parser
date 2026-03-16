@@ -1,12 +1,10 @@
 # Caddyfile — Production Budget Parser
 # Caddy acts as a reverse proxy providing automatic HTTPS (Let's Encrypt)
-# and forwards traffic to the waitress WSGI server on 127.0.0.1:8082
-
-# ── Local / self-signed HTTPS (development / LAN) ────────────────────────────
-# Uncomment one of the blocks below depending on your deployment target.
+# and forwards traffic to the gunicorn WSGI server on 127.0.0.1:8082
 
 # Option 1: Localhost with automatic self-signed cert (for local dev/testing)
 localhost {
+    tls internal
     reverse_proxy 127.0.0.1:8082
 }
 

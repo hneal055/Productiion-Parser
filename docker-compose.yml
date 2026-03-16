@@ -8,12 +8,18 @@ services:
     container_name: contract-review
     restart: unless-stopped
     ports:
-      - "5001:5001"
+      - "127.0.0.1:5001:5001"
     env_file:
       - ./contract-review-tool/.env
     volumes:
       - contract_review_uploads:/app/uploads
       - contract_review_db:/app/instance
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5001/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
   budget-parser:
     build:
@@ -22,13 +28,19 @@ services:
     container_name: budget-parser
     restart: unless-stopped
     ports:
-      - "8082:8082"
+      - "127.0.0.1:8082:8082"
     env_file:
       - ./production-budget-parser/.env
     volumes:
       - budget_uploads:/app/uploads
       - budget_outputs:/app/outputs
       - budget_db:/app/instance
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8082/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
   screenflow-aura:
     build:
@@ -37,11 +49,17 @@ services:
     container_name: screenflow-aura
     restart: unless-stopped
     ports:
-      - "8083:8083"
+      - "127.0.0.1:8083:8083"
     env_file:
       - ./screenflow-aura/.env
     volumes:
       - aura_db:/app/instance
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8083/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
 volumes:
   contract_review_uploads:
