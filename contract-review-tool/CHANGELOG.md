@@ -4,6 +4,19 @@ All notable changes to this project are documented here.
 
 ---
 
+## [1.3.2] — 2026-03-21
+
+### Action Card Toolbar — Results Page
+
+- `templates/results.html` action button bar confirmed complete with all four cards:
+  - **Back to Dashboard** — returns to `/`
+  - **Save to** dropdown — Save as PDF (print + open details), Save as TXT, Save as JSON (client-side download)
+  - **Print Report** — opens all `<details>` elements before printing; `@media print` hides nav/toolbar
+  - **Copy to Clipboard** — copies raw analysis text from `sessionStorage`
+- `slugFilename()` helper sanitises original filename for safe download names
+
+---
+
 ## [1.2.0] — 2026-03-11
 
 ### Security Hardening

@@ -58,7 +58,7 @@ Then open `index.html` to access all three tools from one place.
 
 ## Projects
 
-### contract-review-tool — v1.3.1
+### contract-review-tool — v1.3.2
 
 AI-powered contract analysis. Upload PDF, DOCX, or TXT for a structured review with risk flags, fairness assessment, and negotiation points — streamed in real-time via SSE.
 
@@ -77,7 +77,7 @@ python app.py
 
 ---
 
-### production-budget-parser — v2.5.0
+### production-budget-parser — v2.6.0
 
 Film/TV budget parser with risk scoring, multi-budget comparison, Excel/PDF export, and AI-powered line-item analysis. SQLite-backed with Alembic migrations.
 
@@ -96,6 +96,7 @@ python web_app.py
 - 8-category risk scoring system (patent pending)
 - Multi-budget comparison with variance analysis
 - Excel + PDF export
+- Action card toolbar — Back to Dashboard, Save to (PDF/Excel/Report), Print Report, Copy to Clipboard
 
 See [CHANGELOG.md](production-budget-parser/CHANGELOG.md) for full version history.
 
@@ -105,7 +106,7 @@ See [CHANGELOG.md](production-budget-parser/CHANGELOG.md) for full version histo
 
 Screenplay intelligence REST API. All endpoints protected by API key auth. Keys managed via admin endpoints — no manual DB edits required.
 
-Root route (`/`) serves an interactive API reference page. `/api/validate` retries once on transient Claude API errors with a 3-second backoff.
+Root route (`/`) serves an interactive API reference page with action card toolbar — Back to Dashboard, Save to (PDF/TXT), Print Report, Copy to Clipboard. `/api/validate` retries once on transient Claude API errors with a 3-second backoff.
 
 **URL:** <http://localhost:8083>
 

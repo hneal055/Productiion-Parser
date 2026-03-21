@@ -4,6 +4,20 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.6.0] — 2026-03-21
+
+### Action Card Toolbar — Analysis Page
+
+- Added action card row to `templates/analysis.html` below analysis results
+- **Back to Dashboard** — returns to `/`
+- **Save to** dropdown — Save as PDF (print dialog), Export to Excel (`/export-excel/<id>`), Generate PDF Report (`/generate-pdf/<id>`)
+- **Print Report** — `window.print()` with print-safe CSS hiding the toolbar
+- **Copy to Clipboard** — copies full page text via `navigator.clipboard`
+- Compare Budgets and Logout preserved in the new card layout
+- `@media print` rule hides `.action-cards` to keep printed output clean
+
+---
+
 ## [2.4.0] — 2026-03-11
 
 ### Comparison Card Modals & Sample Budgets
