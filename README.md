@@ -224,12 +224,12 @@ Starting score: **7.2 / 10** (March 2026 audit) · Target: **10.0 / 10**
 ```text
 production-parser/
 ├── index.html                  # Static landing page — links all three tools
-├── contract-review-tool/       # Port 5001 — v1.3.1
+├── contract-review-tool/       # Port 5001 — v1.3.2
 │   ├── migrations/             # Alembic schema migrations
 │   ├── templates/
 │   ├── tests/
 │   └── Dockerfile
-├── production-budget-parser/   # Port 8082 — v2.5.0
+├── production-budget-parser/   # Port 8082 — v2.6.0
 │   ├── migrations/
 │   ├── templates/
 │   ├── tests/

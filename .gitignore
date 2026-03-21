@@ -37,6 +37,11 @@ instance/
 production-budget-parser/outputs/
 production-budget-parser/uploads/
 
+# Demo / sample files (keep locally, don't commit)
+contract-review-tool/sample_contracts/*.pdf
+contract-review-tool/sample_contracts/*.doc
+contract-review-tool/sample_contracts/*.docx
+
 # Claude AI session files
 .claude/
 

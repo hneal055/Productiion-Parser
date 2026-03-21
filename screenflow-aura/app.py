@@ -200,7 +200,7 @@ def health():
     resp = jsonify({
         'status': 'operational',
         'service': 'ScreenFlow AURA',
-        'version': '3.0.0',
+        'version': '3.1.1',
         'total_analyses': total,
         'timestamp': datetime.utcnow().isoformat(),
     })
