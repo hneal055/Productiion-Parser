@@ -519,7 +519,85 @@
                 </div>
                 {{ optimizations_section_html | safe }}
                 <!-- Actions -->
-                <div class="actions fade-in">
+                <style>
+                    .action-cards { display:flex; flex-wrap:wrap; gap:14px; margin:28px 0; }
+                    .action-card {
+                        display:inline-flex; align-items:center; gap:10px;
+                        padding:14px 22px; border-radius:12px; font-size:0.95rem;
+                        font-weight:600; cursor:pointer; border:2px solid #667eea;
+                        background:white; color:#667eea; text-decoration:none;
+                        transition:background 0.15s,color 0.15s; position:relative;
+                    }
+                    .action-card:hover { background:#667eea; color:white; }
+                    .action-card .ac-icon { font-size:1.1rem; }
+                    /* Save-to dropdown */
+                    .ac-dropdown { position:relative; }
+                    .ac-dropdown-menu {
+                        display:none; position:absolute; bottom:calc(100% + 8px); left:50%;
+                        transform:translateX(-50%); background:white; border:2px solid #667eea;
+                        border-radius:10px; box-shadow:0 8px 24px rgba(102,126,234,0.18);
+                        min-width:180px; z-index:100; overflow:hidden;
+                    }
+                    .ac-dropdown.open .ac-dropdown-menu { display:block; }
+                    .ac-dropdown-menu a {
+                        display:flex; align-items:center; gap:10px; padding:12px 18px;
+                        font-size:0.92rem; font-weight:600; color:#4a5568;
+                        text-decoration:none; cursor:pointer; transition:background 0.15s;
+                    }
+                    .ac-dropdown-menu a:hover { background:#f0f4ff; color:#667eea; }
+                    .ac-dropdown-menu a + a { border-top:1px solid #e8ecf8; }
+                    @media print {
+                        .action-cards, .actions { display:none !important; }
+                    }
+                </style>
+                <div class="action-cards fade-in">
+                    <a href="/" class="action-card">
+                        <span class="ac-icon">🏠</span> Back to Dashboard
+                    </a>
+                    <div class="ac-dropdown" id="budgetSaveDd">
+                        <button onclick="toggleBudgetSave()" class="action-card">
+                            <span class="ac-icon">💾</span> Save to <span style="font-size:0.7rem;margin-left:4px;">▲</span>
+                        </button>
+                        <div class="ac-dropdown-menu">
+                            <a onclick="budgetSavePDF()">📄 Save as PDF</a>
+                            <a href="/export-excel/{{ file_id }}">📊 Export to Excel</a>
+                            <a href="/generate-pdf/{{ file_id }}">📑 Generate PDF Report</a>
+                        </div>
+                    </div>
+                    <button onclick="budgetPrint()" class="action-card">
+                        <span class="ac-icon">🖨️</span> Print Report
+                    </button>
+                    <button onclick="budgetCopy()" class="action-card">
+                        <span class="ac-icon">📋</span> Copy to Clipboard
+                    </button>
+                    <a href="/compare/{{ file_id }}" class="action-card" style="border-color:#f39c12;color:#f39c12;">
+                        <span class="ac-icon">🔄</span> Compare Budgets
+                    </a>
+                    <a href="/logout" class="action-card" style="border-color:#aaa;color:#aaa;margin-left:auto;">Logout</a>
+                </div>
+                <script>
+                    function toggleBudgetSave() {
+                        document.getElementById('budgetSaveDd').classList.toggle('open');
+                    }
+                    document.addEventListener('click', function(e) {
+                        var dd = document.getElementById('budgetSaveDd');
+                        if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+                    });
+                    function budgetSavePDF() {
+                        document.getElementById('budgetSaveDd').classList.remove('open');
+                        window.print();
+                    }
+                    function budgetPrint() { window.print(); }
+                    function budgetCopy() {
+                        var text = document.body.innerText;
+                        navigator.clipboard.writeText(text).then(function() {
+                            alert('Report copied to clipboard!');
+                        }).catch(function() {
+                            alert('Copy failed — please select and copy manually.');
+                        });
+                    }
+                </script>
+                <div class="actions fade-in" style="display:none;">
                     <a href="/" class="btn btn-secondary">&#x2190; Back to Dashboard</a>
                     <a href="/export-excel/{{ file_id }}" class="btn btn-success">&#x1F4CA; Export to Excel</a>
                     <a href="/generate-pdf/{{ file_id }}" class="btn btn-primary">&#x1F4C4; Generate PDF Report</a>

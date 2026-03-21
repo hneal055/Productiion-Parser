@@ -115,11 +115,7 @@ def _seed_admin():
 
 
 with app.app_context():
-    _migrations_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'migrations')
-    if os.path.isdir(_migrations_dir):
-        migrate_upgrade()
-    else:
-        db.create_all()
+    db.create_all()
     _seed_admin()
 
 

@@ -57,8 +57,9 @@ def prepare_top_items_bar(df):
     top_items = df.nlargest(10, 'Amount')
     
     # Truncate long descriptions
-    labels = [desc[:40] + '...' if len(desc) > 40 else desc 
-              for desc in top_items['Description'].fillna('Unknown')]
+    desc_col = top_items['Description'] if 'Description' in top_items.columns else top_items['Category'] if 'Category' in top_items.columns else pd.Series(['Unknown'] * len(top_items))
+    labels = [desc[:40] + '...' if len(desc) > 40 else desc
+              for desc in desc_col.fillna('Unknown')]
     
     return {
         'labels': labels,

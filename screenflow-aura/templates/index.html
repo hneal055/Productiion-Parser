@@ -46,6 +46,32 @@
                    text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
     footer { margin-top: 28px; font-size: 0.75rem; color: rgba(168,185,234,0.25);
               text-align: center; }
+    .action-cards { display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
+    .action-card {
+        display:inline-flex; align-items:center; gap:9px; padding:12px 18px;
+        border-radius:10px; font-size:0.88rem; font-weight:600; cursor:pointer;
+        border:2px solid rgba(102,126,234,0.5); background:transparent;
+        color:#a78bfa; text-decoration:none; transition:background 0.15s,color 0.15s;
+        position:relative;
+    }
+    .action-card:hover { background:rgba(102,126,234,0.15); border-color:#a78bfa; }
+    .ac-icon { font-size:1rem; }
+    .ac-dropdown { position:relative; }
+    .ac-dropdown-menu {
+        display:none; position:absolute; bottom:calc(100% + 8px); left:50%;
+        transform:translateX(-50%); background:#1c1c38; border:2px solid rgba(102,126,234,0.5);
+        border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.4);
+        min-width:170px; z-index:100; overflow:hidden;
+    }
+    .ac-dropdown.open .ac-dropdown-menu { display:block; }
+    .ac-dropdown-menu a {
+        display:flex; align-items:center; gap:10px; padding:11px 16px;
+        font-size:0.88rem; font-weight:600; color:#a78bfa;
+        text-decoration:none; cursor:pointer; transition:background 0.15s;
+    }
+    .ac-dropdown-menu a:hover { background:rgba(102,126,234,0.15); }
+    .ac-dropdown-menu a + a { border-top:1px solid rgba(255,255,255,0.07); }
+    @media print { .action-cards { display:none !important; } }
   </style>
 </head>
 <body>
@@ -86,9 +112,57 @@
         <div class="stat-label">Rate Limit</div>
       </div>
     </div>
+    <div class="action-cards">
+      <a href="/" class="action-card">
+        <span class="ac-icon">🏠</span> Back to Dashboard
+      </a>
+      <div class="ac-dropdown" id="auraSaveDd">
+        <button onclick="toggleAuraSave()" class="action-card">
+          <span class="ac-icon">💾</span> Save to <span style="font-size:0.65rem;margin-left:4px;">▲</span>
+        </button>
+        <div class="ac-dropdown-menu">
+          <a onclick="auraSavePDF()">📄 Save as PDF</a>
+          <a onclick="auraSaveTXT()">📝 Save as TXT</a>
+        </div>
+      </div>
+      <button onclick="auraPrint()" class="action-card">
+        <span class="ac-icon">🖨️</span> Print Report
+      </button>
+      <button onclick="auraCopy()" class="action-card">
+        <span class="ac-icon">📋</span> Copy to Clipboard
+      </button>
+    </div>
   </div>
   <footer>Authentication: X-API-Key header or ?api_key= query param &nbsp;&middot;&nbsp;
     Admin: X-Admin-Token header &nbsp;&middot;&nbsp;
     &copy; 2026 Scene Reader Studio Technologies LLC</footer>
+  <script>
+    function toggleAuraSave() {
+      document.getElementById('auraSaveDd').classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      var dd = document.getElementById('auraSaveDd');
+      if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+    });
+    function auraSavePDF() {
+      document.getElementById('auraSaveDd').classList.remove('open');
+      window.print();
+    }
+    function auraSaveTXT() {
+      document.getElementById('auraSaveDd').classList.remove('open');
+      var text = document.body.innerText;
+      var blob = new Blob([text], {type:'text/plain'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'aura-api-reference.txt';
+      a.click();
+    }
+    function auraPrint() { window.print(); }
+    function auraCopy() {
+      navigator.clipboard.writeText(document.body.innerText).then(function() {
+        alert('Copied to clipboard!');
+      });
+    }
+  </script>
 </body>
 </html>

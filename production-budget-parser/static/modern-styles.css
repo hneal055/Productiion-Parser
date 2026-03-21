@@ -216,7 +216,6 @@ table tbody tr {
 
 table tbody tr:hover {
     background: #f8f9fa;
-    transform: scale(1.01);
 }
 
 table tbody tr:last-child {
@@ -473,6 +472,10 @@ table tbody td strong {
 @media (max-width: 768px) {
     body {
         padding: 10px;
+    }
+
+    .stat-value {
+        font-size: 28px;
     }
     
     .header {

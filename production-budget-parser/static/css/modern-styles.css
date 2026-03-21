@@ -153,6 +153,15 @@ body {
     background: #d68910;
 }
 
+.btn-secondary {
+    background: #7f8c8d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #636e72;
+}
+
 .btn-group {
     display: flex;
     gap: 10px;
@@ -536,7 +545,8 @@ tbody tr:last-child td {
     color: #27ae60;
 }
 
-.risk-medium {
+.risk-medium,
+.risk-moderate {
     background: #fef5e7;
     color: #d68910;
 }
