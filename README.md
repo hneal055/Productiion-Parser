@@ -4,9 +4,9 @@ Three standalone tools for film/TV production workflows — Scene Reader Studio 
 
 | Project | Version | Port | Description |
 | --- | --- | --- | --- |
-| contract-review-tool | v1.3.2 | 5001 | AI contract analysis (PDF/DOCX/TXT) |
-| production-budget-parser | v2.6.0 | 8082 | Film/TV budget parsing and risk scoring |
-| screenflow-aura | v3.1.1 | 8083 | Screenplay intelligence API |
+| contract-review-tool | v1.4.0 | 5001 | AI contract analysis (PDF/DOCX/TXT) |
+| production-budget-parser | v2.6.1 | 8082 | Film/TV budget parsing and risk scoring |
+| screenflow-aura | v3.1.2 | 8083 | Screenplay intelligence API |
 
 ---
 
@@ -41,24 +41,29 @@ Open [`index.html`](index.html) in a browser after all three servers are running
 ## Quick Start (Local / Windows)
 
 ```powershell
-# Start all three servers (each in its own terminal)
-& "c:\Projects\production-parser\contract-review-tool\Start server.BAT"
-& "c:\Projects\production-parser\production-budget-parser\Start server.BAT"
-& "c:\Projects\production-parser\screenflow-aura\Start server.BAT"
+# Start all three servers with one command
+c:\Projects\production-parser\START-ALL.bat
 
-# Stop all servers
-taskkill /F /IM python.exe
+# Or start individually
+c:\Projects\production-parser\contract-review-tool\START.bat
+c:\Projects\production-parser\production-budget-parser\START.bat
+c:\Projects\production-parser\screenflow-aura\START.bat
 ```
 
-Each `.BAT` script auto-activates the local `venv/`, installs dependencies, and prints the server URL.
+Each `START.bat` auto-activates the local `venv/`, installs dependencies, and
+opens the server URL in your browser. `START-ALL.bat` launches all three
+simultaneously in separate windows.
 
 Then open `index.html` to access all three tools from one place.
+
+> **Demo mode:** Set `DEMO_MODE=true` in each app's `.env` to run full UI
+> demos without a valid Anthropic API key. All three apps support demo mode.
 
 ---
 
 ## Projects
 
-### contract-review-tool — v1.3.2
+### contract-review-tool — v1.4.0
 
 AI-powered contract analysis. Upload PDF, DOCX, or TXT for a structured review with risk flags, fairness assessment, and negotiation points — streamed in real-time via SSE.
 
@@ -77,7 +82,7 @@ python app.py
 
 ---
 
-### production-budget-parser — v2.6.0
+### production-budget-parser — v2.6.1
 
 Film/TV budget parser with risk scoring, multi-budget comparison, Excel/PDF export, and AI-powered line-item analysis. SQLite-backed with Alembic migrations.
 

@@ -4,6 +4,27 @@ All notable changes to this project are documented here.
 
 ---
 
+## [3.1.2] — 2026-03-25
+
+### Demo Mode Support
+
+- Added `DEMO_MODE=true` env var to bypass Claude API across all analysis
+  endpoints
+- `_is_demo()` helper; demo helpers `_demo_parse()`, `_demo_analyze()`,
+  `_demo_validate()` return realistic randomised payloads from the screenplay
+  word count
+- All three protected endpoints (`/api/parse`, `/api/analyze`, `/api/validate`)
+  short-circuit to demo helpers when `DEMO_MODE=true`
+
+### Bug Fix — Back to Dashboard Button
+
+- Fixed "Back to Dashboard" button in `templates/index.html`: was `href="/"`
+  which reloaded the AURA page itself; now uses `history.back()` with a
+  fallback to `http://localhost:8082` (Production Budget Parser) when no prior
+  history exists
+
+---
+
 ## [3.1.1] — 2026-03-21
 
 ### Action Card Toolbar — Index Page

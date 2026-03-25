@@ -139,6 +139,39 @@ This is where your screenplay content goes."
                     <h4 class="font-semibold text-yellow-800 mb-2">Market Potential</h4>
                     <p class="text-sm text-yellow-700" x-text="result.detailed_analysis.market_potential.market_potential"></p>
                     <p class="text-sm text-yellow-600" x-text="'Target: ' + result.detailed_analysis.market_potential.target_audience"></p>
+
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button @click="backToDashboard()"
+                            class="flex items-center justify-center gap-2 border-2 border-blue-400 text-blue-600 rounded-lg py-2 px-4 hover:bg-blue-50 transition font-medium text-sm">
+                        <span>&#127968;</span> Back to Dashboard
+                    </button>
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open"
+                                class="w-full flex items-center justify-center gap-2 border-2 border-blue-400 text-blue-600 rounded-lg py-2 px-4 hover:bg-blue-50 transition font-medium text-sm">
+                            <span>&#9650;</span> Save to
+                        </button>
+                        <div x-show="open" @click.outside="open = false"
+                             class="absolute right-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden">
+                            <button @click="saveAsJSON(); open = false"
+                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                &#128190; Save as JSON
+                            </button>
+                            <button @click="saveAsText(); open = false"
+                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                &#128196; Save as Text
+                            </button>
+                        </div>
+                    </div>
+                    <button @click="printReport()"
+                            class="flex items-center justify-center gap-2 border-2 border-blue-400 text-blue-600 rounded-lg py-2 px-4 hover:bg-blue-50 transition font-medium text-sm">
+                        <span>&#128424;</span> Print Report
+                    </button>
+                    <button @click="copyToClipboard()"
+                            class="flex items-center justify-center gap-2 border-2 border-blue-400 text-blue-600 rounded-lg py-2 px-4 hover:bg-blue-50 transition font-medium text-sm">
+                        <span x-text="copied ? '&#9989; Copied!' : '&#128203; Copy to Clipboard'"></span>
+                    </button>
                 </div>
             </div>
             </template>
@@ -146,6 +179,14 @@ This is where your screenplay content goes."
     </div>
 </div>
 
+<style>
+@media print {
+    .lg\\:grid-cols-2 > div:first-child,
+    nav, header,
+    .grid.grid-cols-2.gap-3 { display: none !important; }
+    .lg\\:grid-cols-2 { grid-template-columns: 1fr !important; }
+}
+</style>
 <script>
 function analyzer() {
     return {
@@ -220,6 +261,93 @@ function analyzer() {
                 };
                 reader.readAsText(file);
             }
+        },
+
+        backToDashboard() {
+            window.location.href = '/';
+        },
+
+        saveAsJSON() {
+            if (!this.result) return;
+            const blob = new Blob([JSON.stringify(this.result, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'screenplay-analysis.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        },
+
+        saveAsText() {
+            if (!this.result) return;
+            const text = this._formatResultAsText();
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'screenplay-analysis.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        },
+
+        printReport() {
+            window.print();
+        },
+
+        copied: false,
+        async copyToClipboard() {
+            if (!this.result) return;
+            const text = this._formatResultAsText();
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (e) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }
+            this.copied = true;
+            setTimeout(() => { this.copied = false; }, 2500);
+        },
+
+        _formatResultAsText() {
+            const r = this.result;
+            const qv = r.quick_verdict || {};
+            const da = r.detailed_analysis || {};
+            const sb = da.structural_breakdown || {};
+            const ca = da.character_analysis || {};
+            const mp = da.market_potential || {};
+            const tm = (r.technical_metrics || {}).document_metrics || {};
+            return [
+                '== SCREENPLAY ANALYSIS REPORT ==',
+                '',
+                'Score: ' + qv.commercial_score + '/100',
+                'Recommendation: ' + qv.recommendation,
+                'Priority: ' + qv.priority_level,
+                'Estimated ROI: ' + qv.estimated_roi,
+                '',
+                '-- Structural Analysis --',
+                'Pacing Score: ' + sb.pacing_score + '/100',
+                'Act Breakdown: ' + JSON.stringify(sb.act_breakdown),
+                '',
+                '-- Character Analysis --',
+                'Main Characters: ' + ca.main_characters,
+                'Depth Score: ' + ca.character_depth_score + '/100',
+                '',
+                '-- Technical Metrics --',
+                'Genre: ' + tm.primary_genre,
+                'Pages: ' + tm.estimated_pages,
+                'Characters: ' + tm.character_count,
+                'Processing Time: ' + (r.technical_metrics && r.technical_metrics.processing_time),
+                '',
+                '-- Market Potential --',
+                mp.market_potential || '',
+                'Target Audience: ' + (mp.target_audience || ''),
+            ].join('\n');
         }
     }
 }

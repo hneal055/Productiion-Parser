@@ -1170,6 +1170,34 @@ def ai_insights(file_id):
     if analysis.ai_insights_json:
         return jsonify({'success': True, 'insights': json.loads(analysis.ai_insights_json), 'cached': True})
 
+    if os.environ.get('DEMO_MODE', '').lower() == 'true':
+        import random
+        score = random.randint(74, 91)
+        insights = {
+            'executive_summary': (
+                f"The {analysis.filename} budget of ${analysis.total_budget:,.0f} demonstrates "
+                f"{'solid financial discipline' if score >= 80 else 'reasonable allocation'} across "
+                f"{analysis.num_departments} departments. Risk profile is {analysis.risk_level.lower()} "
+                f"with a score of {analysis.risk_score:.1f}, indicating "
+                f"{'well-managed exposure' if analysis.risk_score < 50 else 'areas requiring attention'}."
+            ),
+            'key_concerns': [
+                'Above-line talent costs represent a significant portion of the total budget.',
+                'Contingency reserve should be validated against production complexity.',
+                'Post-production timeline may create cash-flow pressure in final quarter.',
+            ],
+            'top_recommendations': [
+                {'action': 'Review above-line deal structures for backend participation options.', 'rationale': 'Reduces upfront cash outlay while aligning talent incentives.', 'priority': 'HIGH'},
+                {'action': 'Increase contingency to 12% if shooting on location internationally.', 'rationale': 'Location shoots carry 15–20% higher variance than studio-based productions.', 'priority': 'MEDIUM'},
+                {'action': 'Negotiate vendor payment terms to net-45 where possible.', 'rationale': 'Improves cash flow management during peak production weeks.', 'priority': 'LOW'},
+            ],
+            'budget_health_score': score,
+            'outlook': 'POSITIVE' if score >= 80 else 'CAUTIONARY',
+        }
+        analysis.ai_insights_json = json.dumps(insights)
+        db.session.commit()
+        return jsonify({'success': True, 'insights': insights, 'cached': False})
+
     api_key = os.environ.get('ANTHROPIC_API_KEY')
     if not api_key:
         return jsonify({'error': 'ANTHROPIC_API_KEY not configured'}), 500

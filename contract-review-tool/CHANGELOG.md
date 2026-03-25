@@ -4,6 +4,39 @@ All notable changes to this project are documented here.
 
 ---
 
+## [1.4.0] — 2026-03-25
+
+### Demo Mode Support
+
+- Added `DEMO_MODE=true` env var to bypass the Anthropic API across all analysis
+  endpoints — enables full UI demos without a valid API key
+- `_is_demo()` helper checks `os.environ['DEMO_MODE']` at request time
+- `_demo_screenplay_result()` — generates realistic analysis payload (score,
+  structural breakdown, character analysis, market potential, technical metrics)
+  from screenplay word count; randomised genre and scores each call
+- `_demo_batch_result()` — per-file demo payload for `/api/batch/analyze`
+- `stream_contract_analysis()` — demo branch returns a streamed SSE `done` event
+  with mock key_terms, risks, fairness, and negotiation_points after a 1 s delay
+- `/api/analyze` — returns `_demo_screenplay_result()` directly when demo mode
+  is active (skips Claude call)
+
+### Analyze Page — Action Card Toolbar (`templates/analyze.html`)
+
+- Added four functional action buttons below the Analysis Results panel:
+  - **Back to Dashboard** — `window.location.href = '/'`
+  - **Save to ▲** — Alpine.js dropdown revealing Save as JSON and Save as Text
+    (both trigger client-side `Blob` downloads)
+  - **Print Report** — `window.print()` with `@media print` CSS that hides the
+    input panel and action bar, leaving only results
+  - **Copy to Clipboard** — formats full analysis as plain text and writes to
+    `navigator.clipboard`; button label changes to "✅ Copied!" for 2.5 s
+- New methods added to `analyzer()` Alpine component:
+  `backToDashboard()`, `saveAsJSON()`, `saveAsText()`, `printReport()`,
+  `copyToClipboard()`, `_formatResultAsText()`
+- `copied` reactive state property controls the clipboard feedback label
+
+---
+
 ## [1.3.2] — 2026-03-21
 
 ### Action Card Toolbar — Results Page

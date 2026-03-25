@@ -186,6 +186,156 @@ def _call_claude(prompt: str, max_tokens: int = 1500) -> dict:
     raise last_err
 
 
+# ── Demo mode helpers ─────────────────────────────────────────────────────────
+
+def _is_demo():
+    return os.environ.get('DEMO_MODE', '').lower() == 'true'
+
+
+def _demo_parse(screenplay, words):
+    import random
+    genres = ['Drama', 'Thriller', 'Action', 'Comedy', 'Sci-Fi', 'Horror']
+    return {
+        'document_metrics': {
+            'word_count': words,
+            'estimated_pages': round(words / 250, 1),
+            'primary_genre': random.choice(genres),
+            'complexity_score': random.randint(65, 90),
+        },
+        'quality_assessment': {
+            'overall_score': random.randint(72, 91),
+            'structure_quality': random.randint(68, 88),
+            'dialogue_effectiveness': random.randint(70, 90),
+            'pacing_analysis': random.choice(['excellent', 'good', 'balanced']),
+            'commercial_potential': random.choice(['HIGH', 'HIGH', 'MEDIUM']),
+        },
+        'ai_insights': {
+            'sentiment_analysis': {
+                'overall_sentiment': random.choice(['positive', 'complex', 'neutral']),
+                'emotional_arc': random.choice(['rising', 'balanced', 'volatile']),
+                'tone_consistency': 'consistent',
+            },
+            'theme_detection': ['Redemption', 'Ambition', 'Identity'],
+            'style_assessment': {
+                'writing_style': 'balanced',
+                'pacing': 'deliberate',
+                'originality_score': random.randint(70, 88),
+            },
+        },
+        'recommendations': [
+            'Strengthen the second-act turning point for greater audience impact.',
+            'Consider adding a subplot to deepen character relationships.',
+            'The opening scene effectively hooks the reader — maintain that energy throughout.',
+        ],
+        'processing_metadata': {
+            'processing_time_ms': 1500,
+            'ai_model_used': 'claude-sonnet-4-6',
+            'word_count_processed': words,
+        },
+    }
+
+
+def _demo_analyze(screenplay, words, analysis_type='comprehensive'):
+    import random
+    return {
+        'analysis_type': analysis_type,
+        'insights': {
+            'narrative_structure': {
+                'act_breakdown': {
+                    'act1': 'Strong setup with clear character establishment.',
+                    'act2': 'Compelling midpoint escalation and conflict.',
+                    'act3': 'Satisfying resolution with emotional payoff.',
+                },
+                'plot_points': random.randint(5, 9),
+                'climax_strength': random.choice(['strong', 'strong', 'moderate']),
+            },
+            'character_analysis': {
+                'main_characters': random.randint(3, 6),
+                'character_depth': random.choice(['deep', 'complex', 'moderate']),
+                'character_arcs': random.randint(2, 4),
+                'protagonist_strength': random.choice(['compelling', 'compelling', 'adequate']),
+            },
+            'commercial_viability': {
+                'target_audience': random.choice(['broad', 'premium', 'genre-specific']),
+                'market_potential': random.choice(['HIGH', 'HIGH', 'MEDIUM']),
+                'comparable_titles': ['Parasite', 'Get Out'],
+                'distribution_outlook': random.choice(['theatrical', 'streaming']),
+            },
+            'technical_assessment': {
+                'formatting_compliance': 'compliant',
+                'industry_standards': 'meets',
+                'readability_score': random.randint(75, 92),
+            },
+        },
+        'recommendations': [
+            'The narrative arc is compelling — consider tightening act two pacing.',
+            'Strong commercial appeal with broad audience targeting.',
+            'Character motivations are clear and well-developed throughout.',
+        ],
+        'risk_assessment': {
+            'overall_risk': 'low',
+            'commercial_risk': 'low',
+            'technical_risk': 'low',
+            'market_fit': 'strong',
+        },
+        'processing_time_ms': 1800,
+        'ai_model': 'claude-sonnet-4-6',
+    }
+
+
+def _demo_validate(screenplay, words):
+    import random
+    score = random.randint(82, 96)
+    return {
+        'compliance_report': {
+            'industry_standards': {
+                'hollywood_format': f'{random.randint(88, 97)}%',
+                'final_draft_compatibility': f'{random.randint(85, 95)}%',
+                'fountain_compatibility': f'{random.randint(90, 98)}%',
+            },
+            'quality_metrics': {
+                'structure_integrity': f'{random.randint(85, 96)}%',
+                'character_consistency': f'{random.randint(88, 97)}%',
+                'dialogue_realism': f'{random.randint(82, 94)}%',
+                'pacing_consistency': f'{random.randint(80, 93)}%',
+            },
+        },
+        'issues': [
+            {'severity': 'suggestion', 'description': 'Consider adding scene numbers for production draft.', 'location': 'Throughout'},
+        ],
+        'overall_score': score,
+        'certification_status': 'compliant',
+        'summary': 'Screenplay meets Hollywood industry standards with strong formatting compliance. Minor suggestions noted for production-ready polish.',
+        'processing_time_ms': 900,
+    }
+
+
+def _demo_batch_item(label, text):
+    import random
+    words = len(text.split()) if text else 500
+    score = random.randint(65, 92)
+    genres = ['Drama', 'Thriller', 'Action', 'Comedy', 'Sci-Fi']
+    return {
+        'item_id': label,
+        'document_metrics': {
+            'word_count': words,
+            'estimated_pages': round(words / 250, 1),
+            'primary_genre': random.choice(genres),
+        },
+        'quick_verdict': {
+            'overall_score': score,
+            'commercial_potential': 'HIGH' if score >= 80 else 'MEDIUM',
+            'recommendation': f"{'Strong greenlight candidate' if score >= 80 else 'Promising with revisions needed'} — notable commercial potential.",
+        },
+        'ai_analysis': {
+            'genre': random.choice(genres),
+            'sentiment': random.choice(['positive', 'complex', 'neutral']),
+            'key_themes': ['Ambition', 'Identity'],
+        },
+        'processing_time_ms': 950,
+    }
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.route('/')
@@ -220,6 +370,15 @@ def parse():
 
     start = time.time()
     words = len(screenplay.split())
+
+    if _is_demo():
+        time.sleep(1.5)
+        result = _demo_parse(screenplay, words)
+        record = AuraAnalysis(analysis_type='parse', screenplay_excerpt=screenplay[:500], word_count=words, result_json=json.dumps(result))
+        db.session.add(record)
+        db.session.commit()
+        result['analysis_id'] = record.id
+        return jsonify({'success': True, 'analysis': result})
 
     prompt = f"""You are a professional Hollywood screenplay analyst. Analyze the following screenplay content and return ONLY a valid JSON object — no markdown, no explanation, just JSON.
 
@@ -296,6 +455,15 @@ def analyze():
 
     start = time.time()
     words = len(screenplay.split())
+
+    if _is_demo():
+        time.sleep(1.8)
+        result = _demo_analyze(screenplay, words, analysis_type)
+        record = AuraAnalysis(analysis_type='analyze', screenplay_excerpt=screenplay[:500], word_count=words, result_json=json.dumps(result))
+        db.session.add(record)
+        db.session.commit()
+        result['analysis_id'] = record.id
+        return jsonify({'success': True, 'analysis': result})
 
     prompt = f"""You are a professional Hollywood screenplay analyst doing a {analysis_type} analysis. Return ONLY a valid JSON object — no markdown, no explanation.
 
@@ -374,6 +542,15 @@ def validate():
     start = time.time()
     words = len(screenplay.split())
 
+    if _is_demo():
+        time.sleep(1.2)
+        result = _demo_validate(screenplay, words)
+        record = AuraAnalysis(analysis_type='validate', screenplay_excerpt=screenplay[:500], word_count=words, result_json=json.dumps(result))
+        db.session.add(record)
+        db.session.commit()
+        result['analysis_id'] = record.id
+        return jsonify({'success': True, 'validation': result})
+
     prompt = f"""You are a professional screenplay format validator. Validate the following screenplay against industry standards and return ONLY a valid JSON object.
 
 SCREENPLAY ({words} words):
@@ -433,6 +610,15 @@ def batch_parse():
     screenplays = data.get('screenplays', [])
     if not screenplays:
         return jsonify({'error': 'screenplays array is required'}), 400
+
+    if _is_demo():
+        time.sleep(2.0)
+        results = []
+        for i, item in enumerate(screenplays):
+            text = item if isinstance(item, str) else item.get('content', '')
+            label = f'item-{i+1}' if isinstance(item, str) else item.get('filename', f'item-{i+1}')
+            results.append(_demo_batch_item(label, text))
+        return jsonify({'success': True, 'results': results, 'total': len(results), 'processing_time_ms': 2000})
 
     batch_start = time.time()
     results = []
@@ -639,4 +825,5 @@ if __name__ == '__main__':
         logger.warning('ANTHROPIC_API_KEY is not set — AI calls will fail.')
     if not os.environ.get('AURA_API_KEY'):
         logger.warning('AURA_API_KEY is not set — all protected endpoints will return 500.')
-    app.run(debug=False, host='127.0.0.1', port=8083)
+    port = int(os.environ.get('PORT', 5003))
+    app.run(debug=False, host='127.0.0.1', port=port)

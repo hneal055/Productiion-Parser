@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 
 ---
 
+## [2.6.1] — 2026-03-25
+
+### Demo Mode Support
+
+- Added `DEMO_MODE=true` env var to `/ajax/insights/<id>` endpoint in
+  `web_app.py`; returns a fully-formed AI insights payload (executive summary,
+  key concerns, top recommendations, budget health score, outlook) generated
+  from the existing `Analysis` record without calling the Anthropic API
+
+---
+
 ## [2.6.0] — 2026-03-21
 
 ### Action Card Toolbar — Analysis Page

@@ -142,6 +142,102 @@ with app.app_context():
 
 
 # ---------------------------------------------------------------------------
+# Demo mode helpers
+# ---------------------------------------------------------------------------
+
+def _is_demo():
+    return os.environ.get('DEMO_MODE', '').lower() == 'true'
+
+
+def _demo_screenplay_result(screenplay_text, writer_info):
+    import random, re as _re
+    words = len(screenplay_text.split())
+    pages = max(1, round(words / 250))
+    score = random.randint(72, 91)
+    writer_name = (writer_info or {}).get('name', '')
+    writer_line = f" from {writer_name}" if writer_name else ''
+    genres = ['Drama', 'Thriller', 'Action', 'Comedy', 'Sci-Fi', 'Horror']
+    genre = random.choice(genres)
+    # Extract unique speaking character names (ALL CAPS sluglines, 2+ words or 3+ chars)
+    _names = _re.findall(
+        r'^[ \t]{10,}([A-Z][A-Z .\'-]{2,})[ \t]*(?:\(.*?\))?[ \t]*$',
+        screenplay_text, _re.MULTILINE
+    )
+    # Filter out common non-character ALL-CAPS lines
+    _exclude = {'INT', 'EXT', 'INT.', 'EXT.', 'CUT TO', 'FADE IN', 'FADE OUT',
+                'SMASH CUT', 'DISSOLVE TO', 'TITLE CARD', 'THE END', 'CONTINUED',
+                'INTERCUT', 'FLASHBACK', 'END FLASHBACK', 'SUPER', 'BACK TO',
+                'TITLE', 'CARD', 'OVER BLACK', 'VOICE OVER', 'V.O.', 'O.S.', 'O.C.'}
+    _char_names = sorted({n.strip() for n in _names
+                          if n.strip() not in _exclude and len(n.strip()) >= 2})
+    char_count = len(_char_names) if _char_names else max(4, round(pages / 10))
+    # Use top extracted names for main_characters display (up to 5)
+    if _char_names:
+        main_chars = ', '.join(_char_names[:5])
+    else:
+        main_chars = 'Protagonist, Antagonist, Supporting Lead'
+    return {
+        'quick_verdict': {
+            'commercial_score': score,
+            'recommendation': f"Strong greenlight candidate{writer_line} with compelling narrative and market appeal.",
+            'priority_level': 'HIGH PRIORITY' if score >= 80 else 'MEDIUM PRIORITY',
+            'estimated_roi': '3.2x–5.1x' if score >= 80 else '2.1x–3.8x',
+        },
+        'detailed_analysis': {
+            'structural_breakdown': {
+                'pacing_score': random.randint(70, 90),
+                'act_breakdown': {
+                    'act1': 'Strong setup with clear character establishment.',
+                    'act2': 'Compelling midpoint escalation and conflict.',
+                    'act3': 'Satisfying resolution with emotional payoff.',
+                },
+            },
+            'character_analysis': {
+                'main_characters': main_chars,
+                'character_depth_score': random.randint(68, 88),
+            },
+            'market_potential': {
+                'market_potential': ('HIGH' if score >= 80 else 'MEDIUM') + ' — Strong commercial viability for theatrical release.',
+                'target_audience': 'Adults 18–49, genre enthusiasts',
+            },
+        },
+        'technical_metrics': {
+            'document_metrics': {
+                'primary_genre': genre,
+                'estimated_pages': pages,
+                'character_count': char_count,
+            },
+            'processing_time': '1.5s',
+        },
+    }
+
+
+def _demo_batch_result(filename, content):
+    import random
+    words = len(content.split()) if content else 500
+    pages = max(1, round(words / 250))
+    score = random.randint(65, 92)
+    genres = ['Drama', 'Thriller', 'Action', 'Comedy', 'Sci-Fi']
+    return {
+        'assessment_id': filename,
+        'quick_verdict': {
+            'commercial_score': score,
+            'recommendation': f"{'Recommend for development' if score >= 80 else 'Needs revision before greenlight'} — notable commercial potential.",
+            'priority_level': 'HIGH PRIORITY' if score >= 80 else 'MEDIUM PRIORITY',
+            'estimated_roi': '3.0x–4.8x' if score >= 80 else '1.8x–3.2x',
+        },
+        'technical_metrics': {
+            'document_metrics': {
+                'primary_genre': random.choice(genres),
+                'estimated_pages': pages,
+                'character_count': len(content),
+            },
+            'processing_time': '0.9s',
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
 # Auth helpers
 # ---------------------------------------------------------------------------
 
@@ -267,6 +363,23 @@ NEGOTIATION POINTS:
 
 def stream_contract_analysis(contract_text, filename):
     """Generator: streams Claude tokens as SSE, saves to DB at completion."""
+    if _is_demo():
+        import time as _t, random as _r, datetime as _dt
+        _t.sleep(1.0)
+        _d = {
+            "key_terms": ["Payment: Net 30 days","Term: 12 months","Exclusivity: North America","Deliverables: Per Schedule A"],
+            "risks": ["[MEDIUM] Net-30 delays cash flow","[LOW] Auto-renewal unless cancelled 60d prior","[MEDIUM] Liability capped at contract value"],
+            "fairness": _r.choice(["FAVORABLE","NEUTRAL","UNFAVORABLE"]),
+            "negotiation_points": ["Request Net-15 terms","Add IP ownership clause","Include force majeure"],
+            "raw_response": "Demo mode", "filename": filename,
+            "analyzed_at": _dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        try:
+            _rec = AnalysisHistory(filename=filename, fairness=_d["fairness"], results_json=json.dumps(_d))
+            db.session.add(_rec); db.session.commit(); _d["history_id"] = _rec.id
+        except Exception: pass
+        yield "data: " + json.dumps({"type": "done", "analysis": _d}) + "\n\n"
+        return
     api_key = os.environ.get('ANTHROPIC_API_KEY')
     if not api_key:
         yield f"data: {json.dumps({'type': 'error', 'message': 'ANTHROPIC_API_KEY not configured'})}\n\n"
@@ -462,6 +575,11 @@ def api_analyze():
     screenplay_text = data['screenplay']
     writer_info = data.get('writer_info', {})
 
+    if _is_demo():
+        import time
+        time.sleep(1.5)
+        return jsonify({'success': True, 'result': _demo_screenplay_result(screenplay_text, writer_info)})
+
     api_key = os.environ.get('ANTHROPIC_API_KEY')
     if not api_key:
         return jsonify({'success': False, 'error': 'ANTHROPIC_API_KEY not configured'}), 500
@@ -570,6 +688,12 @@ def api_batch_analyze():
     data = request.get_json()
     if not data or not data.get('screenplays'):
         return jsonify({'success': False, 'error': 'No screenplays provided'}), 400
+
+    if _is_demo():
+        import time
+        time.sleep(1.8)
+        results = [_demo_batch_result(item.get('filename', f'Script-{i+1}'), item.get('content', '')) for i, item in enumerate(data['screenplays'])]
+        return jsonify({'success': True, 'results': results})
 
     api_key = os.environ.get('ANTHROPIC_API_KEY')
     if not api_key:
