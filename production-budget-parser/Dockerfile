@@ -31,4 +31,4 @@ EXPOSE 8082
 # ANTHROPIC_API_KEY, SECRET_KEY, and BUDGET_API_KEY must be passed at runtime
 ENV FLASK_ENV=production
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8082", "--workers", "2", "--timeout", "120", "web_app:app"]
+CMD ["sh", "-c", "python -m gunicorn --bind 0.0.0.0:${PORT:-8080} --workers 1 --timeout 120 web_app:app"]
