@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir gunicorn
 
 COPY app.py .
 COPY templates/ templates/
@@ -21,4 +22,4 @@ EXPOSE 8083
 # ANTHROPIC_API_KEY, SECRET_KEY, AURA_API_KEY must be passed at runtime
 ENV FLASK_ENV=production
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8083", "--workers", "2", "--timeout", "120", "app:app"]
+CMD ["sh", "-c", "python -m gunicorn --bind 0.0.0.0:${PORT:-8083} --workers 2 --timeout 120 app:app"]
