@@ -108,10 +108,14 @@ def _seed_api_keys():
 
 with app.app_context():
     _migrations_dir = os.path.join(os.path.dirname(__file__), 'migrations')
-    if os.path.isdir(_migrations_dir):
+    run_migrations = os.environ.get('RUN_DB_MIGRATIONS', '').lower() == 'true'
+
+    # Railway/containers should boot fast; only run Alembic when explicitly requested.
+    if run_migrations and os.path.isdir(_migrations_dir):
         migrate_upgrade()
     else:
         db.create_all()
+
     _seed_api_keys()
 
 
