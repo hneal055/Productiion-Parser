@@ -113,7 +113,7 @@ class AnalysisHistory(db.Model):
 
 
 def _seed_admin():
-    """Create default admin user from env vars if no users exist."""
+    """Create or sync default admin user from env vars."""
     from sqlalchemy import inspect as sa_inspect
     try:
         if 'users' not in sa_inspect(db.engine).get_table_names():
@@ -122,22 +122,29 @@ def _seed_admin():
         password = os.environ.get('ADMIN_PASSWORD') or os.environ.get('APP_PASSWORD', '')
         if not password:
             return
-        if not User.query.filter_by(username=username).first():
+        user = User.query.filter_by(username=username).first()
+        if not user:
             user = User(username=username, is_admin=True)
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
             logger.info('Admin user "%s" created.', username)
+        # Keep Railway env and runtime credentials in sync across redeploys.
+        if not user.check_password(password):
+            user.set_password(password)
+            user.is_admin = True
+            db.session.commit()
+            logger.info('Admin user "%s" password updated from environment.', username)
     except Exception:
         logger.debug('_seed_admin skipped (tables not ready)', exc_info=True)
 
 
 with app.app_context():
-    _migrations_dir = os.path.join(os.path.dirname(__file__), 'migrations')
-    if os.path.isdir(_migrations_dir):
+    run_migrations = os.environ.get('RUN_DB_MIGRATIONS', '').lower() == 'true'
+    if run_migrations:
         migrate_upgrade()
     else:
-        db.create_all()  # fallback before migrations/ is initialised
+        db.create_all()
     _seed_admin()
 
 
