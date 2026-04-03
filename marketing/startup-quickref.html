@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Startup Quick Reference — Scene Reader Studio Technologies</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    padding: 32px 24px;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 28px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: #1a1f2e;
+    border: 1px solid #2d3748;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+  .card-port {
+    margin-left: auto;
+    font-size: 0.72rem;
+    background: #0f1117;
+    border: 1px solid #374151;
+    color: #94a3b8;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-family: monospace;
+  }
+  .card-body {
+    padding: 14px 18px;
+  }
+  .url-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .url-label {
+    font-size: 0.68rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    width: 52px;
+    flex-shrink: 0;
+  }
+  .url {
+    font-family: monospace;
+    font-size: 0.78rem;
+    color: #38bdf8;
+    text-decoration: none;
+  }
+  .url:hover { text-decoration: underline; color: #7dd3fc; }
+  .divider {
+    border: none;
+    border-top: 1px solid #2d3748;
+    margin: 12px 0;
+  }
+  .section-label {
+    font-size: 0.68rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .cmd-block {
+    background: #0f1117;
+    border: 1px solid #2d3748;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.75rem;
+    color: #a3e635;
+    line-height: 1.6;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .cmd-block .dim { color: #4b5563; }
+  .cmd-block .hl  { color: #facc15; }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .pill {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-family: monospace;
+    border: 1px solid;
+  }
+  .pill-blue  { color: #38bdf8; border-color: #0369a1; background: #082f49; }
+  .pill-green { color: #4ade80; border-color: #166534; background: #052e16; }
+  .pill-amber { color: #fbbf24; border-color: #92400e; background: #1c1408; }
+  .creds-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 12px;
+    font-size: 0.75rem;
+  }
+  .cred-key { color: #64748b; }
+  .cred-val { font-family: monospace; color: #f1f5f9; }
+
+  /* master section */
+  .master-card {
+    background: #1a1f2e;
+    border: 1px solid #2d3748;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+  }
+  .master-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .master-title::before {
+    content: '';
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+  }
+
+  /* print */
+  @media print {
+    body { background: #fff; color: #111; padding: 16px; }
+    .card, .master-card { background: #f9fafb; border-color: #d1d5db; break-inside: avoid; }
+    .cmd-block { background: #f3f4f6; border-color: #d1d5db; color: #166534; }
+    .url { color: #0369a1; }
+    .cred-key { color: #6b7280; }
+    .card-port { background: #f3f4f6; }
+    .pill-blue  { background: #eff6ff; color: #1d4ed8; }
+    .pill-green { background: #f0fdf4; color: #15803d; }
+    .pill-amber { background: #fffbeb; color: #92400e; }
+    .dot { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Startup Quick Reference</h1>
+<p class="subtitle">Scene Reader Studio Technologies LLC &mdash; Production Tools Suite &mdash; All servers run locally on 127.0.0.1</p>
+
+<!-- MASTER LAUNCH -->
+<div class="master-card">
+  <div class="master-title">Launch All Three Apps (Master Script)</div>
+  <p class="section-label">Double-click from project root</p>
+  <div class="cmd-block"><span class="dim">c:\Projects\production-parser\</span><span class="hl">START-ALL.bat</span></div>
+  <p style="font-size:0.72rem; color:#64748b; margin-top:10px;">Opens three separate terminal windows and auto-launches browser tabs for each dashboard.</p>
+</div>
+
+<!-- THREE CARDS -->
+<div class="grid">
+
+  <!-- Contract Review Tool -->
+  <div class="card">
+    <div class="card-header">
+      <span class="dot" style="background:#6366f1;"></span>
+      <span class="card-title">Contract Review Tool</span>
+      <span class="card-port">:5001</span>
+    </div>
+    <div class="card-body">
+      <div class="url-row">
+        <span class="url-label">Dashboard</span>
+        <a class="url" href="http://localhost:5001">http://localhost:5001</a>
+      </div>
+      <div class="url-row">
+        <span class="url-label">Batch</span>
+        <a class="url" href="http://localhost:5001/batch">http://localhost:5001/batch</a>
+      </div>
+      <div class="url-row">
+        <span class="url-label">History</span>
+        <a class="url" href="http://localhost:5001/history">http://localhost:5001/history</a>
+      </div>
+      <hr class="divider">
+      <p class="section-label">Startup</p>
+      <div class="cmd-block"><span class="dim">cd</span> contract-review-tool
+<span class="hl">"Start server.BAT"</span></div>
+      <hr class="divider">
+      <p class="section-label">Login credentials</p>
+      <div class="creds-grid">
+        <span class="cred-key">Username</span><span class="cred-val">admin</span>
+        <span class="cred-key">Password</span><span class="cred-val">NewUser1234</span>
+      </div>
+      <hr class="divider">
+      <p class="section-label">Features</p>
+      <div class="pill-row">
+        <span class="pill pill-blue">Single Screenplay</span>
+        <span class="pill pill-blue">Batch Analysis</span>
+        <span class="pill pill-green">Demo Mode ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ScreenFlow AURA -->
+  <div class="card">
+    <div class="card-header">
+      <span class="dot" style="background:#06b6d4;"></span>
+      <span class="card-title">ScreenFlow AURA</span>
+      <span class="card-port">:8083</span>
+    </div>
+    <div class="card-body">
+      <div class="url-row">
+        <span class="url-label">Dashboard</span>
+        <a class="url" href="http://localhost:8083">http://localhost:8083</a>
+      </div>
+      <div class="url-row">
+        <span class="url-label">Health</span>
+        <a class="url" href="http://localhost:8083/api/health">http://localhost:8083/api/health</a>
+      </div>
+      <div class="url-row">
+        <span class="url-label">History</span>
+        <a class="url" href="http://localhost:8083/api/history">http://localhost:8083/api/history</a>
+      </div>
+      <hr class="divider">
+      <p class="section-label">Startup</p>
+      <div class="cmd-block"><span class="dim">cd</span> screenflow-aura
+<span class="hl">"Start server.BAT"</span></div>
+      <hr class="divider">
+      <p class="section-label">API key (all endpoints)</p>
+      <div class="creds-grid">
+        <span class="cred-key">X-API-Key</span><span class="cred-val">aura1038api</span>
+        <span class="cred-key">Admin token</span><span class="cred-val">aura1038admin</span>
+      </div>
+      <hr class="divider">
+      <p class="section-label">API Endpoints</p>
+      <div class="pill-row">
+        <span class="pill pill-blue">POST /api/parse</span>
+        <span class="pill pill-blue">POST /api/analyze</span>
+        <span class="pill pill-blue">POST /api/validate</span>
+        <span class="pill pill-blue">POST /api/batch/parse</span>
+        <span class="pill pill-green">Demo Mode ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Production Budget Parser -->
+  <div class="card">
+    <div class="card-header">
+      <span class="dot" style="background:#f59e0b;"></span>
+      <span class="card-title">Production Budget Parser</span>
+      <span class="card-port">:8082</span>
+    </div>
+    <div class="card-body">
+      <div class="url-row">
+        <span class="url-label">Dashboard</span>
+        <a class="url" href="http://localhost:8082">http://localhost:8082</a>
+      </div>
+      <div class="url-row">
+        <span class="url-label">Health</span>
+        <a class="url" href="http://localhost:8082/api/health">http://localhost:8082/api/health</a>
+      </div>
+      <div class="url-row">
+        <span class="url-label">Login</span>
+        <a class="url" href="http://localhost:8082/login">http://localhost:8082/login</a>
+      </div>
+      <hr class="divider">
+      <p class="section-label">Startup</p>
+      <div class="cmd-block"><span class="dim">cd</span> production-budget-parser
+<span class="hl">"Start server.BAT"</span></div>
+      <hr class="divider">
+      <p class="section-label">Login credentials</p>
+      <div class="creds-grid">
+        <span class="cred-key">Username</span><span class="cred-val">admin</span>
+        <span class="cred-key">Password</span><span class="cred-val">NewUser1234</span>
+      </div>
+      <hr class="divider">
+      <p class="section-label">Features</p>
+      <div class="pill-row">
+        <span class="pill pill-amber">Budget Upload</span>
+        <span class="pill pill-amber">Risk Analysis</span>
+        <span class="pill pill-amber">AI Insights</span>
+        <span class="pill pill-green">Demo Mode ✓</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MANUAL PYTHON COMMANDS -->
+<div class="master-card">
+  <div class="master-title">Manual Python Startup (fallback if BAT fails)</div>
+  <div class="cmd-block"><span class="dim"># Contract Review Tool  — port 5001</span>
+cd contract-review-tool  &&  venv\Scripts\python.exe app.py
+
+<span class="dim"># ScreenFlow AURA        — port 8083</span>
+cd screenflow-aura       &&  venv\Scripts\python.exe app.py
+
+<span class="dim"># Production Budget Parser — port 8082</span>
+cd production-budget-parser  &&  venv\Scripts\python.exe web_app.py</div>
+</div>
+
+<!-- TROUBLESHOOTING -->
+<div class="master-card">
+  <div class="master-title">Troubleshooting</div>
+  <div class="cmd-block"><span class="dim"># Port already in use? Find and kill the process:</span>
+netstat -ano | findstr :<span class="hl">PORT</span>
+taskkill /PID &lt;PID&gt; /F
+
+<span class="dim"># Missing module error? Rebuild venv:</span>
+cd &lt;project-folder&gt;
+python -m venv venv
+venv\Scripts\pip install -r requirements.txt
+
+<span class="dim"># API returning 500? Demo mode must be ON in .env:</span>
+<span class="hl">DEMO_MODE=true</span>   <span class="dim">&lt;— required (no live API credits)</span></div>
+</div>
+
+<p style="font-size:0.65rem; color:#374151; text-align:center; margin-top:8px;">
+  Scene Reader Studio Technologies LLC &mdash; Internal Use Only &mdash; Confidential
+</p>
+
+</body>
+</html>

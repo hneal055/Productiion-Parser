@@ -1,113 +1,78 @@
-START_APP.bat
-```
+@echo off
+REM ============================================================================
+REM Budget Analysis App (Database Edition) - Startup Script
+REM ============================================================================
 
-Then:
-1. Open http://localhost:8080
-2. Upload a budget
-3. Should see: **"✅ Analysis complete and saved to database!"**
-4. Check: `python database_utils.py stats` (should show 1 analysis!)
+chcp 65001 >nul 2>&1
 
----
+set "SCRIPT_DIR=%~dp0"
+cd /d "%SCRIPT_DIR%"
 
-## ✨ **WHAT'S NEW:**
+cls
+echo.
+echo ================================================================================
+echo                    BUDGET ANALYSIS APP - STARTING
+echo ================================================================================
+echo.
 
-### **Before (JSON Cache):**
-```
-❌ Data lost on restart
-❌ Limited storage (~50 analyses)
-❌ Slow searches
-❌ No persistence
-```
+echo [1/4] Checking app files...
+if not exist "web_app_WITH_DATABASE.py" (
+    echo [ERROR] Cannot find web_app_WITH_DATABASE.py
+    echo         Make sure you are running this from the correct folder.
+    echo         Expected location: %CD%
+    echo.
+    pause
+    exit /b 1
+)
+echo       [OK] Found app file
+echo.
 
-### **After (SQLite Database):**
-```
-✅ Permanent storage
-✅ Unlimited analyses
-✅ Fast queries
-✅ Never lose data
-✅ Backup tools
-✅ Search capabilities
-✅ Comparison history saved
-```
+echo [2/4] Checking virtual environment...
+if exist "venv\Scripts\activate.bat" (
+    echo       [OK] Found venv - activating...
+    call venv\Scripts\activate.bat
+) else (
+    echo       [WARN] No venv found - using system Python
+)
+echo.
 
----
+echo [3/4] Checking Python packages...
+python -c "import flask" 2>nul
+if errorlevel 1 (
+    echo       Installing missing packages...
+    pip install Flask pandas openpyxl reportlab flask-sqlalchemy
+    if errorlevel 1 (
+        echo [ERROR] Failed to install packages. Run: pip install -r requirements.txt
+        pause
+        exit /b 1
+    )
+)
+echo       [OK] Packages ready
+echo.
 
-## 🎯 **KEY FEATURES:**
+echo [4/4] Starting app...
+echo.
+echo ================================================================================
+echo   App URL : http://localhost:8080
+echo   Stop    : Ctrl+C
+echo   Stats   : python database_utils.py stats
+echo ================================================================================
+echo.
 
-| Feature | Status |
-|---------|--------|
-| **File Upload** | ✅ Works - saves to database |
-| **Risk Assessment** | ✅ Works - stored in database |
-| **Optimization Tips** | ✅ Works - saved permanently |
-| **Interactive Charts** | ✅ Works - data from database |
-| **Excel Export** | ✅ Works - pulls from database |
-| **PDF Reports** | ✅ Works - uses database data |
-| **Budget Comparison** | ✅ Works - saves comparison history |
-| **Recent Analyses** | ✅ Works - queries database |
-| **Permanent Storage** | ✅ NEW - never lose data! |
-| **Database Management** | ✅ NEW - utilities included |
+python web_app_WITH_DATABASE.py
 
----
+if errorlevel 1 (
+    echo.
+    echo [ERROR] App stopped with an error. Check the output above.
+    echo.
+    echo Common fixes:
+    echo   - Port 8080 in use: close other apps or change port
+    echo   - Missing packages: pip install -r requirements.txt
+    echo.
+    pause
+    exit /b 1
+)
 
-## 📊 **VISIBLE CHANGES ON UI:**
-
-### **Homepage:**
-- Badge: "✨ **Now with Database Storage!** - Your data is saved permanently"
-- Recent Analyses table loads from database
-
-### **Analysis Page:**
-- Shows: "💾 Stored in database - Analysis ID: abc123..."
-- All data comes from database
-
-### **Upload Success:**
-- Message: "✅ Analysis complete and saved to database!"
-
-### **Comparison:**
-- Shows: "💾 Comparison saved to database"
-
----
-
-## 🧪 **TEST AFTER INSTALLING:**
-
-### **Test 1: Upload & Store**
-```
-1. Upload budget
-2. See "saved to database" message
-3. python database_utils.py stats
-4. Should show: Total Analyses: 1
-```
-
-### **Test 2: Persistence**
-```
-1. Upload budget
-2. Stop app (Ctrl+C)
-3. Restart app (START_APP.bat)
-4. Go to homepage
-5. Budget still there! ✅
-```
-
-### **Test 3: View Old Analysis**
-```
-1. Upload 2-3 budgets
-2. Click "View" on any from homepage
-3. Loads instantly from database
-4. All data preserved
-```
-
----
-
-## 🗄️ **DATABASE STRUCTURE:**
-
-**Your data is organized in 5 tables:**
-
-| Table | What It Stores |
-|-------|---------------|
-| **budget_analyses** | Main analysis records |
-| **budget_line_items** | Individual line items |
-| **budget_comparisons** | Comparison history |
-| **user_activity** | Activity tracking |
-| **app_settings** | Configuration |
-
-**Database location:**
-```
-instance/budget_analysis.db
+echo.
+echo Server stopped normally.
+pause

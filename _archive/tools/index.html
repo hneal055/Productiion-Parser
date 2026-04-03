@@ -534,7 +534,10 @@
           </div>
 
           <div class="result-window">
-            div class="result-toolbar"
+            <pre id="result-json" class="result-json result-empty"></pre>
+          </div>
+        </div>
+      </section>
 
   <script>
     const processBtn = document.getElementById("process-btn");
@@ -586,7 +589,7 @@
       setStatus("Processing…", "Sending text to backend…");
 
       try {
-        const res = await fetch("/api/parse", {
+        const res = await fetch("http://localhost:5003/api/parse", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
