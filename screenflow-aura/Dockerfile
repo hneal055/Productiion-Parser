@@ -22,4 +22,4 @@ EXPOSE 8083
 # ANTHROPIC_API_KEY, SECRET_KEY, AURA_API_KEY must be passed at runtime
 ENV FLASK_ENV=production
 
-CMD ["sh", "-c", "python -m gunicorn --bind 0.0.0.0:${PORT:-8083} --workers 2 --timeout 120 app:app"]
+CMD ["sh", "-c", "python -m gunicorn --bind 0.0.0.0:${PORT:-8083} --workers 1 --timeout 120 app:app"]
